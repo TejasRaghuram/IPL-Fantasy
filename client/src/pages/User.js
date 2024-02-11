@@ -36,6 +36,7 @@ function User() {
 
     return(
         <div id='user-content'>
+            <h2>{params.league}</h2>
             <h1>{params.username}</h1>
             <Player name={'Virat Kohli'} points={1231} mobile={width <= 768}/>
             <Player name={'Faf Du Plessis'} points={1012} mobile={width <= 768}/>
