@@ -2,16 +2,16 @@ const express = require('express');
 
 const router = express.Router();
 
-router.post('/leagues', (req, res) => {
-    
-});
+const {
+    leagues,
+    join,
+    create
+} = require('../controllers/userController');
 
-router.post('/join', (req, res) => {
-    
-});
+router.post('/leagues', leagues);
 
-router.post('/create', (req, res) => {
-    
-});
+router.post('/join', join);
+
+router.post('/create', create);
 
 module.exports = router;

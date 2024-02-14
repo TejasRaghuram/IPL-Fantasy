@@ -2,12 +2,13 @@ const express = require('express');
 
 const router = express.Router();
 
-router.post('/update', (req, res) => {
-    
-});
+const {
+    users,
+    squad
+} = require('../controllers/leagueController');
 
-router.post('/update', (req, res) => {
-    
-});
+router.post('/users', users);
+
+router.post('/squad', squad);
 
 module.exports = router;

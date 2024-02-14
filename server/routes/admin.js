@@ -2,12 +2,13 @@ const express = require('express');
 
 const router = express.Router();
 
-router.post('/verify', (req, res) => {
-    
-});
+const {
+    verify,
+    update
+} = require('../controllers/adminController');
 
-router.post('/update', (req, res) => {
-    
-});
+router.post('/verify', verify);
+
+router.post('/update', update);
 
 module.exports = router;

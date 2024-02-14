@@ -2,12 +2,13 @@ const express = require('express');
 
 const router = express.Router();
 
-router.post('/create', (req, res) => {
+const {
+    create,
+    verify
+} = require('../controllers/accountController');
 
-});
+router.post('/create', create);
 
-router.post('/verify', (req, res) => {
-    
-});
+router.post('/verify', verify);
 
 module.exports = router;

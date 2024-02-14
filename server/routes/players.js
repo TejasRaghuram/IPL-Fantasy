@@ -2,12 +2,13 @@ const express = require('express');
 
 const router = express.Router();
 
-router.post('/points', (req, res) => {
-    
-});
+const {
+    points, 
+    all
+} = require('../controllers/playersController');
 
-router.get('/all', (req, res) => {
+router.post('/points', points);
 
-});
+router.get('/all', all);
 
 module.exports = router;
