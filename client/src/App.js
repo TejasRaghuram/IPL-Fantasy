@@ -12,7 +12,7 @@ import Admin from './pages/Admin.js';
 import './App.css';
 
 function App() {
-  const [username, setUsername] = useState('TejasRaghuram');
+  const [username, setUsername] = useState(null);
 
   return (
     <UserContext.Provider value={{ username: username, setUsername: setUsername }}>

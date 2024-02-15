@@ -25,12 +25,12 @@ function Login() {
                     <br/>
                     <label for='username'>Username:</label>
                     <br/>
-                    <input class='login-input' type='text' name='username'/>
+                    <input id='login-username'class='login-input' type='text' name='username'/>
                     <br/>
                     <br/>
                     <label for='password'>Password:</label>
                     <br/>
-                    <input class='login-input' type='password' name='password'/>
+                    <input id='login-password' class='login-input' type='password' name='password'/>
                     <br/>
                     <p id='login-signup'>Don't have an account? <span id='login-signup-link' onClick={() => {
                         navigate('/signup');

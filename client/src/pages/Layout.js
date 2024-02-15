@@ -22,7 +22,7 @@ function Navbar() {
                     }}>Player Rankings</p>
                     <button id='layout-logout' onClick={() => {
                         user.setUsername(null);
-                        navigate('login');
+                        navigate('/login');
                     }}>Log Out</button>
                 </div>
                 <div id='layout-buffer'/>

@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from './../UserContext.js';
+import Load from './../images/Load.png';
 import './../styles/Home.css';
 
 function League(props) {
@@ -64,22 +65,34 @@ function Home() {
     const user = useContext(UserContext);
     const [create, setCreate] = useState(false);
     const [join, setJoin] = useState(false);
+    const navigate = useNavigate();
 
-    return(
-        <div id='home-content'>
-            <h1>Welcome, {user.username}</h1>
-            <h2 id='home-league-header'>Your Leagues</h2>
-            <League name={'SBHS24'}/>
-            <button class='home-button' onClick={() => {
-                setCreate(!create);
-            }}>Create a League</button>
-            {create && <Create/>}
-            <button class='home-button' onClick={() => {
-                setJoin(!join);
-            }}>Join a League</button>
-            {join && <Join/>}
-        </div>
-    );
+    if(user.username == null)
+    {
+        return(
+            <img src={Load} alt='' onLoad={() => {
+                navigate('/login');
+            }}/>
+        );
+    }
+    else
+    {
+        return(
+            <div id='home-content'>
+                <h1>Welcome, {user.username}</h1>
+                <h2 id='home-league-header'>Your Leagues</h2>
+                <League name={'SBHS24'}/>
+                <button class='home-button' onClick={() => {
+                    setCreate(!create);
+                }}>Create a League</button>
+                {create && <Create/>}
+                <button class='home-button' onClick={() => {
+                    setJoin(!join);
+                }}>Join a League</button>
+                {join && <Join/>}
+            </div>
+        );
+    }
 }
 
 export default Home;
