@@ -31,8 +31,29 @@ const create = async (req, res) => {
     }
 }
 
-const verify = (req, res) => {
-    
+const verify = async (req, res) => {
+    const {
+        username, 
+        password
+    } = req.body;
+
+    try {
+        const account = await User.findOne({'username': username});
+        if(!account)
+        {
+            res.status(400).json({error: "Account Does Not Exist"});
+        }
+        else if(!account.password === password)
+        {
+            res.status(400).json({error: "Invalid Password"});
+        }
+        else
+        {
+            res.status(200);
+        }
+    } catch(error) {
+        res.status(400).json({error: error.message});
+    }
 }
 
 module.exports = {

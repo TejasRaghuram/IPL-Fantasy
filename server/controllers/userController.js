@@ -1,12 +1,12 @@
-const leagues = (req, res) => {
+const leagues = async (req, res) => {
     
 };
 
-const join = (req, res) => {
+const join = async (req, res) => {
     
 };
 
-const create = (req, res) => {
+const create = async (req, res) => {
     
 };
 

@@ -1,8 +1,8 @@
-const verify = (req, res) => {
+const verify = async (req, res) => {
     
 };
 
-const update = (req, res) => {
+const update = async (req, res) => {
     
 };
 

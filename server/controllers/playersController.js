@@ -1,8 +1,8 @@
-const points = (req, res) => {
+const points = async (req, res) => {
     
 };
 
-const all = (req, res) => {
+const all = async (req, res) => {
     
 };
 

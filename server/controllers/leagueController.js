@@ -1,8 +1,8 @@
-const users = (req, res) => {
+const users = async (req, res) => {
     
 };
 
-const squad = (req, res) => {
+const squad = async (req, res) => {
     
 };
 
