@@ -44,7 +44,7 @@ const verify = async (req, res) => {
         {
             if(password === user.password)
             {
-                res.status(200).json(account);
+                res.status(200).json(user);
             }
             else
             {
