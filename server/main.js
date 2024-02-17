@@ -15,9 +15,9 @@ server.use(express.json());
 
 server.use('/api/account', accountRoutes);
 server.use('/api/admin', adminRoutes);
-server.use('./api/players', playersRoutes);
-server.use('./api/user', userRoutes);
-server.use('./api/league', leagueRoutes);
+server.use('/api/players', playersRoutes);
+server.use('/api/user', userRoutes);
+server.use('/api/league', leagueRoutes);
 
 mongoose.connect(process.env.MONGO_URI).then(() => {
     console.log('connected');

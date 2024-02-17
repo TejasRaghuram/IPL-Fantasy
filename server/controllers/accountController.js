@@ -13,7 +13,7 @@ const create = async (req, res) => {
         {
             res.status(400).json({error: 'Account Already Exists'});
         }
-        else if(username.length === 0 || password.length === 0 || !username.match('/^[a-z0-9]+$/i') || !password.match('/^[a-z0-9]+$/i'))
+        else if(username.length === 0 || password.length === 0 || !username.match(/^[\p{L}\p{N}]*$/u) || !password.match(/^[\p{L}\p{N}]*$/u))
         {
             res.status(400).json({error: 'Invalid Username or Password'});
         }
