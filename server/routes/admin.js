@@ -4,11 +4,14 @@ const router = express.Router();
 
 const {
     verify,
-    update
+    update,
+    add
 } = require('../controllers/adminController');
 
 router.post('/verify', verify);
 
 router.post('/update', update);
+
+router.post('/add', add);
 
 module.exports = router;
