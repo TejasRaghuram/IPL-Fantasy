@@ -2,7 +2,16 @@ const User = require('../models/User');
 const League = require('./../models/League');
 
 const leagues = async (req, res) => {
-    
+    const {
+        username
+    } = req.body;
+
+    try {
+        const user = await User.findOne({'username': username});
+        res.status(200).json(user.leagues);
+    } catch(error) {
+        res.status(400).json({error: error.message});
+    }
 };
 
 const join = async (req, res) => {
@@ -23,13 +32,14 @@ const join = async (req, res) => {
         {
             res.status(400).json({error: 'League Does Not Exist'});
         }
-        else if(user.password != league.password)
+        else if(password != league.password)
         {
             res.status(400).json({error: 'Invalid Password'});
         }
         else
         {
             user.leagues.push(league.name);
+            await user.save();
             res.status(200).json(league);
         }
     } catch(error) {
