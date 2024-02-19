@@ -22,7 +22,7 @@ const points = async (req, res) => {
 
 const all = async (req, res) => {
     try {
-        const players = await Player.find({}, 'name');
+        const players = await Player.find({}, 'name -_id');
         return res.status(200).json(players);
     } catch(error) {
         res.status(400).json({error: error.message});
