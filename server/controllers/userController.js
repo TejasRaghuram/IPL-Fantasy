@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const League = require('./../models/League');
+const Squad = require('./../models/Squad');
 
 const leagues = async (req, res) => {
     const {
@@ -40,7 +41,14 @@ const join = async (req, res) => {
         {
             user.leagues.push(league.name);
             await user.save();
-            res.status(200).json(league);
+            const players = [];
+            const squad = await Squad.create({
+                username: username,
+                league: name,
+                points: 0,
+                players: players
+            });
+            res.status(200).json(squad);
         }
     } catch(error) {
         res.status(400).json({error: error.message});

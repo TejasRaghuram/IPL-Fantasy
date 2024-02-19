@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const Player = require('../models/Player');
+const Player = require('./../models/Player');
 
 const verify = async (req, res) => {
     const { 
