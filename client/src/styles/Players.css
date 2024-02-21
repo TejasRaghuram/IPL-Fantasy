@@ -67,6 +67,10 @@
         font-size: 16px;
     }
 
+    .player-image {
+        height: 0;
+    }
+
     .player-name {
         margin-left: 15px;
         top: 10px;

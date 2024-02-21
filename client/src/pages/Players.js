@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Unknown from './../images/Unknown.png';
 import './../styles/Players.css';
 
@@ -14,9 +14,9 @@ function Player(props) {
     return(
         <div class='player-body'>
             <div class='player-rank-body'>
-                <p class='player-rank'>1</p>
+                <p class='player-rank'>{props.rank}</p>
             </div>
-            {!props.mobile && <img class='player-image' src={image} alt=''/>}
+            <img class='player-image' src={image} alt=''/>
             <p class='player-name'>{props.name}</p>
             <p class='player-points'>{props.points}</p>
         </div>
@@ -24,19 +24,36 @@ function Player(props) {
 }
 
 function Players() {
-    const [width, setWidth] = useState(window.screen.width);
+    const [players, setPlayers] = useState(<p>Loading...</p>);
 
-    window.addEventListener('resize', function(event) {
-        setWidth(window.screen.width)
-    }, true);
+    useEffect(() => {
+        fetch('/api/players/all')
+            .then(response => response.json())
+            .then((json) => {
+                const rank = (p1, p2) => {
+                    return p2.points - p1.points;
+                };
+                json.sort(rank);
+                const rankings = [];
+                let currentRank = 1;
+                let currentPoints = json[0].points;
+                for(let i = 0; i < json.length; i++)
+                {
+                    if(json[i].points < currentPoints)
+                    {
+                        currentRank++;
+                        currentPoints = json[i].points;
+                    }
+                    rankings.push(<Player rank={currentRank} name={json[i].name} points={json[i].points}/>);
+                }
+                setPlayers(rankings);
+            });
+    }, []);
 
     return(
         <div id='players-content'>
             <h1>Player Rankings</h1>
-            <Player name={'Virat Kohli'} points={1231} mobile={width <= 768}/>
-            <Player name={'Faf Du Plessis'} points={1012} mobile={width <= 768}/>
-            <Player name={'Glenn Maxwell'} points={954} mobile={width <= 768}/>
-            <Player name={'Mohammed Siraj'} points={912} mobile={width <= 768}/>
+            {players}
         </div>
     );
 }

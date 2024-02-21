@@ -35,9 +35,7 @@ function Signup() {
                     <p id='signup-login'>Have an account? <span id='signup-login-link' onClick={() => {
                         navigate('/login');
                     }}>Log In</span></p>
-                    <input id='signup-submit' type='button' value='Submit' onClick={async (e) => {
-                        e.preventDefault();
-
+                    <input id='signup-submit' type='button' value='Submit' onClick={async () => {
                         const username = document.getElementById('signup-username').value;
                         const password = document.getElementById('signup-password').value;
                         const response = await fetch('/api/account/create', {
