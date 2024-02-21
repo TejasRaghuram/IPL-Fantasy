@@ -25,21 +25,37 @@ function Signup() {
                     <br/>
                     <label for='username'>Username:</label>
                     <br/>
-                    <input class='signup-input' type='text' name='username'/>
+                    <input id='signup-username' class='signup-input' type='text' name='username'/>
                     <br/>
                     <br/>
                     <label for='password'>Password:</label>
                     <br/>
-                    <input class='signup-input' type='password' name='password'/>
+                    <input id='signup-password' class='signup-input' type='password' name='password'/>
                     <br/>
                     <p id='signup-login'>Have an account? <span id='signup-login-link' onClick={() => {
                         navigate('/login');
                     }}>Log In</span></p>
-                    <input id='signup-submit' type='button' value='Submit' onClick={() => {
-                        // verify validity of username and password
-                        // create user entry in database
-                        // set logged in username
-                        // redirect to home
+                    <input id='signup-submit' type='button' value='Submit' onClick={async (e) => {
+                        e.preventDefault();
+
+                        const username = document.getElementById('signup-username').value;
+                        const password = document.getElementById('signup-password').value;
+                        const response = await fetch('/api/account/create', {
+                            method: 'post',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({username, password})
+                        });
+                        
+                        if(response.ok)
+                        {
+                            user.setUsername(username);
+                            navigate('/');
+                        }
+                        else
+                        {
+                            const json = await response.json();
+                            alert(json['error']);
+                        }
                     }}/>
                 </form>
             </div>
