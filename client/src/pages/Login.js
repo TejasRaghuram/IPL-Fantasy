@@ -35,10 +35,27 @@ function Login() {
                     <p id='login-signup'>Don't have an account? <span id='login-signup-link' onClick={() => {
                         navigate('/signup');
                     }}>Sign Up</span></p>
-                    <input id='login-submit' type='button' value='Submit' onClick={() => {
-                        // verify username exists and password is correct
-                        // set logged in username
-                        // redirect to home
+                    <input id='login-submit' type='button' value='Submit' onClick={async (e) => {
+                        e.preventDefault();
+
+                        const username = document.getElementById('login-username').value;
+                        const password = document.getElementById('login-password').value;
+                        const response = await fetch('/api/account/verify', {
+                            method: 'post',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({username, password})
+                        });
+                        
+                        if(response.ok)
+                        {
+                            user.setUsername(username);
+                            navigate('/');
+                        }
+                        else
+                        {
+                            const json = await response.json();
+                            alert(json['error']);
+                        }
                     }}/>
                 </form>
             </div>
