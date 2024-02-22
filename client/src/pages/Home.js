@@ -15,23 +15,49 @@ function League(props) {
 }
 
 function Create() {
+    const user = useContext(UserContext);
+    const navigate = useNavigate();
+
     return(
         <div>
             <form id='home-join-form'>
                 <label for='league-name'>League Name:</label>
                 <br/>
-                <input class='home-input' type='text' name='league-name'/>
+                <input id='home-create-name' class='home-input' type='text' name='league-name'/>
                 <br/>
                 <br/>
                 <label for='league-password'>League Password:</label>
                 <br/>
-                <input class='home-input' type='password' name='league-password'/>
+                <input id='home-create-password' class='home-input' type='password' name='league-password'/>
                 <br/>
-                <input id='home-submit' type='button' value='Submit' onClick={() => {
+                <input id='home-submit' type='button' value='Submit' onClick={async () => {
                     // verify league validity
                     // create league
                     // add league to user list
                     // add user to league list
+                    const name = document.getElementById('home-create-name').value;
+                    const password = document.getElementById('home-create-password').value;
+                    const response = await fetch('/api/user/create', {
+                        method: 'post',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({name, password})
+                    });
+                    
+                    if(response.ok)
+                    {
+                        const username = user.username;
+                        await fetch('/api/user/join', {
+                            method: 'post',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({username, name, password})
+                        });
+                        navigate('/' + name);
+                    }
+                    else
+                    {
+                        const json = await response.json();
+                        alert(json['error']);
+                    }
                 }}/>
             </form>
         </div>
