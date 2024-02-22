@@ -31,10 +31,6 @@ function Create() {
                 <input id='home-create-password' class='home-input' type='password' name='league-password'/>
                 <br/>
                 <input id='home-submit' type='button' value='Submit' onClick={async () => {
-                    // verify league validity
-                    // create league
-                    // add league to user list
-                    // add user to league list
                     const name = document.getElementById('home-create-name').value;
                     const password = document.getElementById('home-create-password').value;
                     const response = await fetch('/api/user/create', {
@@ -65,22 +61,40 @@ function Create() {
 }
 
 function Join() {
+    const user = useContext(UserContext);
+    const navigate = useNavigate();
+
     return(
         <div>
             <form id='home-join-form'>
                 <label for='league-name'>League Name:</label>
                 <br/>
-                <input class='home-input' type='text' name='league-name'/>
+                <input id='home-join-name' class='home-input' type='text' name='league-name'/>
                 <br/>
                 <br/>
                 <label for='league-password'>League Password:</label>
                 <br/>
-                <input class='home-input' type='password' name='league-password'/>
+                <input id='home-join-password' class='home-input' type='password' name='league-password'/>
                 <br/>
-                <input id='home-submit' type='button' value='Submit' onClick={() => {
-                    // verify league exists and password is correct
-                    // add league to user list
-                    // add user to league list
+                <input id='home-submit' type='button' value='Submit' onClick={async () => {
+                    const username = user.username;
+                    const name = document.getElementById('home-join-name').value;
+                    const password = document.getElementById('home-join-password').value;
+                    const response = await fetch('/api/user/join', {
+                        method: 'post',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({username, name, password})
+                    });
+                    
+                    if(response.ok)
+                    {
+                        navigate('/' + name);
+                    }
+                    else
+                    {
+                        const json = await response.json();
+                        alert(json['error']);
+                    }
                 }}/>
             </form>
         </div>
