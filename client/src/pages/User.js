@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Unknown from './../images/Unknown.png';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import './../styles/User.css';
 
 function Player(props) {
@@ -15,9 +15,9 @@ function Player(props) {
     return(
         <div class='player-body'>
             <div class='player-rank-body'>
-                <p class='player-rank'>1</p>
+                <p class='player-rank'>{props.rank}</p>
             </div>
-            {!props.mobile && <img class='player-image' src={image} alt=''/>}
+            <img class='player-image' src={image} alt=''/>
             <p class='player-name'>{props.name}</p>
             <p class='player-points'>{props.points}</p>
         </div>
@@ -26,22 +26,63 @@ function Player(props) {
 
 function User() {
     let params = useParams();
-    const [width, setWidth] = useState(window.screen.width);
+    const navigate = useNavigate();
+    const [content, setContent] = useState(<p>Loading...</p>)
 
-    window.addEventListener('resize', function(event) {
-        setWidth(window.screen.width)
-    }, true);
-
-    // make sure user exists in league
+    useEffect(() => {
+        const username = params.username;
+        const league = params.league;
+        fetch('/api/league/squad', {
+            method: 'post',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username, league})
+        })
+            .then(response => response.json())
+            .then(async (json) =>{
+                try {
+                    const players = [];
+                    for(let i = 0; i < json.players.length; i++)
+                    {
+                        const name = json.players[i];
+                        const result = await fetch('/api/players/points', {
+                            method: 'post',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({name})
+                        });
+                        const points = await result.json();
+                        players.push({
+                            name: name,
+                            points: points
+                        });
+                    }
+                    const rank = (p1, p2) => {
+                        return p2.points - p1.points;
+                    };
+                    players.sort(rank);
+                    const rankings = [];
+                    let currentRank = 1;
+                    let currentPoints = players[0].points;
+                    for(let i = 0; i < players.length; i++)
+                    {
+                        if(players[i].points < currentPoints)
+                        {
+                            currentRank++;
+                            currentPoints = json[i].points;
+                        }
+                        rankings.push(<Player rank={currentRank} name={players[i].name} points={players[i].points}/>);
+                    }
+                    setContent(rankings);
+                } catch(error) {
+                    navigate('/');
+                }
+            });
+    }, [params.username, params.league, navigate]);
 
     return(
         <div id='user-content'>
             <h2>{params.league}</h2>
             <h1>{params.username}</h1>
-            <Player name={'Virat Kohli'} points={1231} mobile={width <= 768}/>
-            <Player name={'Faf Du Plessis'} points={1012} mobile={width <= 768}/>
-            <Player name={'Glenn Maxwell'} points={954} mobile={width <= 768}/>
-            <Player name={'Mohammed Siraj'} points={912} mobile={width <= 768}/>
+            {content}
         </div>
     );
 }

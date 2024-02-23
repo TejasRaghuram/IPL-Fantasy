@@ -27,7 +27,7 @@ const squad = async (req, res) => {
     } = req.body;
 
     try {
-        const squad = await Squad.find({'username': username, 'league': league});
+        const squad = await Squad.findOne({'username': username, 'league': league});
         if(!squad)
         {
             res.status(400).json({error: 'User or League Does Not Exist'});

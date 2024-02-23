@@ -57,8 +57,6 @@ function League() {
             });
     }, [params.league, navigate]);
 
-    // make sure league exists
-
     return(
         <div id='league-content'>
             <h1>{params.league}</h1>

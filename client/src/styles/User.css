@@ -67,6 +67,10 @@
         font-size: 16px;
     }
 
+    .user-player-image {
+        height: 0px;
+    }
+
     .user-player-name {
         margin-left: 15px;
         top: 10px;
