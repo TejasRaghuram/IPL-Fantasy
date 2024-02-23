@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from './../UserContext.js';
 import Load from './../images/Load.png';
@@ -103,9 +103,28 @@ function Join() {
 
 function Home() {
     const user = useContext(UserContext);
+    const [content, setContent] = useState(<p>Loading...</p>);
     const [create, setCreate] = useState(false);
     const [join, setJoin] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const username = user.username;
+        fetch('/api/user/leagues', {
+            method: 'post',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username})     
+        })
+            .then(response => response.json())
+            .then(json => {
+                const leagues = [];
+                for(let i = 0; i < json.length; i++)
+                {
+                    leagues.push(<League name={json[i]}/>);
+                }
+                setContent(leagues);
+            });
+    }, [user.username]);
 
     if(user.username == null)
     {
@@ -121,7 +140,7 @@ function Home() {
             <div id='home-content'>
                 <h1>Welcome, {user.username}</h1>
                 <h2 id='home-league-header'>Your Leagues</h2>
-                <League name={'SBHS24'}/>
+                {content}
                 <button class='home-button' onClick={() => {
                     setCreate(!create);
                 }}>Create a League</button>

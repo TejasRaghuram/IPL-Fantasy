@@ -29,7 +29,7 @@ function Players() {
     useEffect(() => {
         fetch('/api/players/all')
             .then(response => response.json())
-            .then((json) => {
+            .then(json => {
                 const rank = (p1, p2) => {
                     return p2.points - p1.points;
                 };
