@@ -55,23 +55,30 @@ function User() {
                             points: points
                         });
                     }
-                    const rank = (p1, p2) => {
-                        return p2.points - p1.points;
-                    };
-                    players.sort(rank);
-                    const rankings = [];
-                    let currentRank = 1;
-                    let currentPoints = players[0].points;
-                    for(let i = 0; i < players.length; i++)
+                    if(players.length > 0)
                     {
-                        if(players[i].points < currentPoints)
+                        const rank = (p1, p2) => {
+                            return p2.points - p1.points;
+                        };
+                        players.sort(rank);
+                        const rankings = [];
+                        let currentRank = 1;
+                        let currentPoints = players[0].points;
+                        for(let i = 0; i < players.length; i++)
                         {
-                            currentRank++;
-                            currentPoints = json[i].points;
+                            if(players[i].points < currentPoints)
+                            {
+                                currentRank++;
+                                currentPoints = json[i].points;
+                            }
+                            rankings.push(<Player rank={currentRank} name={players[i].name} points={players[i].points}/>);
                         }
-                        rankings.push(<Player rank={currentRank} name={players[i].name} points={players[i].points}/>);
+                        setContent(rankings);
                     }
-                    setContent(rankings);
+                    else
+                    {
+                        setContent();
+                    }
                 } catch(error) {
                     navigate('/');
                 }
