@@ -18,6 +18,39 @@ const verify = async (req, res) => {
     }
 };
 
+const matches = async (req, res) => {
+    const response = await fetch('https://api.cricapi.com/v1/cricScore?apikey=' + process.env.CRICKETDATA_KEY);
+    const json = await response.json();
+    const teams = [
+        'Rajasthan Royals [RR]', 
+        'Chennai Super Kings [CSK]',
+        'Gujarat Titans [GT]',
+        'Kolkata Knight Riders [KKR]',
+        'Punjab Kings [PBKS]',
+        'Royal Challengers Bengaluru [RCB]',
+        'Royal Challengers Bangalore [RCB]',
+        'Sunrisers Hyderabad [SRH]',
+        'Mumbai Indians [MI]',
+        'Delhi Capitals [DC]',
+        'Lucknow Super Giants [LSG]'
+    ];
+    const result = [];
+    for(let i = json.data.length - 1; i >= 0; i--)
+    {
+        if(teams.includes(json.data[i].t1) && teams.includes(json.data[i].t2))
+        {
+            result.push({
+                team1: json.data[i].t1,
+                team2: json.data[i].t2,
+                status: json.data[i].status,
+                id: json.data[i].id
+            });
+        }
+    }
+    res.status(200).json(result);
+
+}
+
 const update = async (req, res) => {
     
 };
@@ -55,6 +88,7 @@ const add = async (req, res) => {
 
 module.exports = {
     verify,
+    matches,
     update,
     add
 };
