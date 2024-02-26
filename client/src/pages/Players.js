@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import Unknown from './../images/Unknown.png';
 import './../styles/Players.css';
 
 function Player(props) {
-    const [image, setImage] = useState(Unknown);
+    const [image, setImage] = useState('https://scores.iplt20.com/ipl/images/default-player-statsImage.png?v=4');
 
     const check = new Image();
     check.src = "https://scores.iplt20.com/ipl/playerimages/" + props.name.replaceAll(' ', '%20') + '.png';

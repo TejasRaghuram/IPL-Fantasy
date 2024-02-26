@@ -3,7 +3,7 @@
     margin-top: 15px;
 }
 
-.admin-match
+.admin-element
 {
     text-align: center;
 }
@@ -12,12 +12,22 @@
 {
     width: 100px;
     height: 35px;
-    margin-left: calc(50vw - 90px);
+    margin-left: calc(50vw - 100px);
     color: white;
     background-color: darkorange;
     font-weight: bold;
     border-style: none;
     border-radius: 5px;
+}
+
+.admin-text
+{
+    width: 200px;
+    height: 20px;
+    font-size: 14px;
+    margin-bottom: 10px;
+    display: block;
+    margin-left: calc(50vw - 155px);
 }
 
 .admin-add:hover 

@@ -5,9 +5,9 @@ function Match(props)
 {
     return(
         <div class='admin-fixture'>
-            <h3 class='admin-match'>{props.fixture}</h3>
-            <p class='admin-match'>{props.status}</p>
-            <p class='admin-match'>{props.id}</p>
+            <h3 class='admin-element'>{props.fixture}</h3>
+            <p class='admin-element'>{props.status}</p>
+            <p class='admin-element'>{props.id}</p>
             <button class='admin-add' onClick={() => {
                 // add match
             }}>Add Match</button>
@@ -37,6 +37,35 @@ function Admin()
                     const json = await response.json();
                     const matches = [];
                     matches.push(<h1>Welcome, Admin</h1>)
+                    matches.push(
+                        <div>
+                            <h3 class='admin-element'>Add Player</h3>
+                            <input id='admin-player' class='admin-text' type='text' placeholder='Name'/>
+                            <input id='admin-position' class='admin-text' type='text' placeholder='Position'/>
+                            <button class='admin-add' onClick={async () => {
+                                const name = document.getElementById('admin-player').value;
+                                const position = document.getElementById('admin-position').value;
+                                if(name.length > 0 && position.length > 0)
+                                {
+                                    const result = await fetch('/api/admin/add', {
+                                        method: 'post',
+                                        headers: {'Content-Type': 'application/json'},
+                                        body: JSON.stringify({name, position})
+                                    });
+                                    if(result.ok)
+                                    {
+                                        document.getElementById('admin-player').value = '';
+                                        document.getElementById('admin-position').value = '';
+                                    }
+                                    alert(response.status);
+                                }
+                                else
+                                {
+                                    alert('Fill All Fields!');
+                                }
+                            }}>Add Player</button>
+                        </div>
+                    )
                     for(let i = 0; i < json.length; i++)
                     {
                         const match = json[i].team1 + ' vs ' + json[i].team2;
