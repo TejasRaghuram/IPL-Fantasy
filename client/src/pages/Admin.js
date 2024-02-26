@@ -7,6 +7,7 @@ function Match(props)
         <div class='admin-fixture'>
             <h3 class='admin-match'>{props.fixture}</h3>
             <p class='admin-match'>{props.status}</p>
+            <p class='admin-match'>{props.id}</p>
             <button class='admin-add' onClick={() => {
                 // add match
             }}>Add Match</button>
@@ -32,20 +33,27 @@ function Admin()
                 });
                 if(response.ok)
                 {
-                    setContent(
-                        <div id='admin-portal'>
-                            <h1>Welcome, Admin</h1>
-                            <Match fixture='RCB vs SRH' status='RCB Won'/>
-                            <Match fixture='CSK vs GT' status='CSK Won'/>
-                        </div>
-                    );
+                    const response = await fetch('/api/admin/matches');
+                    const json = await response.json();
+                    const matches = [];
+                    matches.push(<h1>Welcome, Admin</h1>)
+                    for(let i = 0; i < json.length; i++)
+                    {
+                        const match = json[i].team1 + ' vs ' + json[i].team2;
+                        const result = json[i].status;
+                        const id = json[i].id;
+                        matches.push(<Match fixture={match} status={result} id={id}/>)
+                    }
+                    setContent(matches);
                 }
                 else
                 {
                     setContent();
                 }
             }}>Submit</button>
-            {content}
+            <div id='admin-portal'>
+                {content}
+            </div>
         </div>
     );
 }
