@@ -41,7 +41,39 @@ const squad = async (req, res) => {
     }
 };
 
+const add = async (req, res) => {
+    const {
+        username,
+        league,
+        player
+    } = req.body;
+
+    try {
+        const squad = await Squad.findOne({'username': username, 'league': league});
+        if(!squad)
+        {
+            res.status(400).json({error: 'User or League Does Not Exist'});
+        }
+        else
+        {
+            if(squad.players.includes(player))
+            {
+                res.status(400).json({error: 'Player Already in Squad'});
+            }
+            else
+            {
+                squad.players.push(player);
+                await squad.save();
+                res.status(200).json(squad);
+            }
+        }
+    } catch(error) {
+        res.status(400).json({error: error.message});
+    }
+}
+
 module.exports = {
     users,
-    squad
+    squad,
+    add
 }
