@@ -4,6 +4,7 @@
     position: fixed;
     background-color: white;
     border-bottom: 2px solid rgb(210, 210, 210);
+    z-index: 1;
 }
 
 #layout-navbar-logo {

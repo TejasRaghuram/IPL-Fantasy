@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
+import { UserContext } from './../UserContext.js';
 import { useParams, useNavigate } from 'react-router-dom';
 import './../styles/User.css';
 
@@ -23,11 +24,61 @@ function Player(props) {
     );
 }
 
+function Add(props) {
+    let params = useParams();
+    const user = useContext(UserContext);
+    const [open, setOpen] = useState(false);
+
+    if(params.username === user.username)
+    {
+        return(
+            <div>
+                <button class='user-button' onClick={() =>{
+                    setOpen(!open);
+                }}>Add Player</button>
+                {open && 
+                <div id='user-add'>
+                    <label for='league-name'>Player Name:</label>
+                    <br/>
+                    <input id='home-join-name' class='home-input' type='text' name='league-name'/>
+                    <br/>
+                    <input id='home-submit' type='button' value='Submit' onClick={async () => {
+                        const username = user.username;
+                        const league = params.league;
+                        const player = document.getElementById('home-join-name').value;
+                        const response = await fetch('/api/league/add', {
+                            method: 'post',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({username, league, player})
+                        });
+                        document.getElementById('home-join-name').value = '';
+                        if(response.ok)
+                        {
+                            props.refresh(!props.current);
+                        }
+                        else
+                        {
+                            document.getElementById('home-join-name').value = '';
+                            const json = await response.json();
+                            alert(json.error);
+                        }
+                    }}/>
+                </div>}
+            </div>
+        );  
+    }
+    else
+    {
+        return;
+    }
+}
+
 function User() {
     let params = useParams();
     const navigate = useNavigate();
     const [content, setContent] = useState(<p>Loading...</p>)
-
+    const [refresh, setRefresh] = useState(false);
+    
     useEffect(() => {
         const username = params.username;
         const league = params.league;
@@ -60,7 +111,7 @@ function User() {
                             return p2.points - p1.points;
                         };
                         players.sort(rank);
-                        const rankings = [];
+                        const page = [];
                         let currentRank = 1;
                         let currentPoints = players[0].points;
                         for(let i = 0; i < players.length; i++)
@@ -70,19 +121,20 @@ function User() {
                                 currentRank++;
                                 currentPoints = json[i].points;
                             }
-                            rankings.push(<Player rank={currentRank} name={players[i].name} points={players[i].points}/>);
+                            page.push(<Player rank={currentRank} name={players[i].name} points={players[i].points}/>);
                         }
-                        setContent(rankings);
+                        page.push(<Add current={refresh} refresh={setRefresh}/>);
+                        setContent(page);
                     }
                     else
                     {
-                        setContent();
+                        setContent(<Add current={refresh} refresh={setRefresh}/>);
                     }
                 } catch(error) {
                     navigate('/');
                 }
             });
-    }, [params.username, params.league, navigate]);
+    }, [params.username, params.league, navigate, refresh]);
 
     return(
         <div id='user-content'>

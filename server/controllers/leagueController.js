@@ -1,4 +1,5 @@
 const Squad = require('./../models/Squad');
+const Player = require('./../models/Player');
 
 const users = async (req, res) => {
     const {
@@ -62,9 +63,17 @@ const add = async (req, res) => {
             }
             else
             {
-                squad.players.push(player);
-                await squad.save();
-                res.status(200).json(squad);
+                const exists = await Player.findOne({'name': player});
+                if(exists)
+                {
+                    squad.players.push(player);
+                    await squad.save();
+                    res.status(200).json(squad);
+                }
+                else
+                {
+                    res.status(400).json({error: 'Player Does Not Exist'});
+                }
             }
         }
     } catch(error) {
