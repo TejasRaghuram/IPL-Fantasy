@@ -69,15 +69,9 @@ const add = async (req, res) => {
         }
         else
         {
-            const points = 0;
-            const runs = 0;
-            const wickets = 0;
             const player = Player.create({
                 name,
-                position,
-                points,
-                runs,
-                wickets
+                position
             });
             res.status(200).json(player);
         }
