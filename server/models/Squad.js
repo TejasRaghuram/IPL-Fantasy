@@ -11,6 +11,11 @@ const squadSchema = new Schema({
         type: String,
         required: true
     },
+    base_points: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     points: {
         type: Number,
         required: true,
@@ -36,6 +41,26 @@ const squadSchema = new Schema({
         required: true,
         default: []
     },
+    not_outs: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    dismissals: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    runs: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    balls_faced: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     batting_average: {
         type: Number,
         required: true,
@@ -46,7 +71,7 @@ const squadSchema = new Schema({
         required: true,
         default: 0
     },
-    highest_score: {
+    centuries: {
         type: Number,
         required: true,
         default: 0
@@ -56,17 +81,17 @@ const squadSchema = new Schema({
         required: true,
         default: 0
     },
-    centuries: {
-        type: Number,
-        required: true,
-        default: 0
-    },
-    not_outs: {
-        type: Number,
-        required: true,
-        default: 0
-    },
     ducks: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    fours: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    sixes: {
         type: Number,
         required: true,
         default: 0
@@ -77,6 +102,16 @@ const squadSchema = new Schema({
         default: 0
     },
     dots: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    balls_bowled: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    runs_conceded: {
         type: Number,
         required: true,
         default: 0

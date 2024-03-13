@@ -38,7 +38,6 @@ function Admin()
                                     if(result.ok)
                                     {
                                         document.getElementById('admin-player').value = '';
-                                        document.getElementById('admin-position').value = '';
                                     }
                                 }
                                 else

@@ -11,6 +11,16 @@ const playerSchema = new Schema({
         type: String,
         required: true
     },
+    base_points: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    bonuses: {
+        type: [String],
+        required: true,
+        default: []
+    },
     points: {
         type: Number,
         required: true,
@@ -121,7 +131,7 @@ const playerSchema = new Schema({
         required: true,
         default: 0
     },
-    overs_bowled: {
+    balls_bowled: {
         type: Number,
         required: true,
         default: 0
