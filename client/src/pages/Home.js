@@ -52,7 +52,7 @@ function Create() {
                     else
                     {
                         const json = await response.json();
-                        alert(json['error']);
+                        alert(json.error);
                     }
                 }}/>
             </form>
@@ -93,7 +93,7 @@ function Join() {
                     else
                     {
                         const json = await response.json();
-                        alert(json['error']);
+                        alert(json.error);
                     }
                 }}/>
             </form>
@@ -120,7 +120,7 @@ function Home() {
                 const leagues = [];
                 for(let i = 0; i < json.length; i++)
                 {
-                    leagues.push(<League name={json[i]}/>);
+                    leagues.push(<League name={json[i].league}/>);
                 }
                 setContent(leagues);
             });

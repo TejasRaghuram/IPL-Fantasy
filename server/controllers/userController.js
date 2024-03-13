@@ -1,4 +1,3 @@
-const User = require('../models/User');
 const League = require('./../models/League');
 const Squad = require('./../models/Squad');
 
@@ -8,8 +7,8 @@ const leagues = async (req, res) => {
     } = req.body;
 
     try {
-        const user = await User.findOne({'username': username});
-        res.status(200).json(user.leagues);
+        const leagues = await Squad.find({'username': username}, 'league -_id');
+        res.status(200).json(leagues);
     } catch(error) {
         res.status(400).json({error: error.message});
     }
@@ -23,9 +22,9 @@ const join = async (req, res) => {
     } = req.body;
 
     try {
-        const user = await User.findOne({'username': username});
         const league = await League.findOne({'name': name});
-        if(user.leagues.includes(name))
+        const squad = await Squad.findOne({'username': username, 'league': name});
+        if(squad)
         {
             res.status(400).json({error: 'Already In League'});
         }
@@ -39,8 +38,6 @@ const join = async (req, res) => {
         }
         else
         {
-            user.leagues.push(league.name);
-            await user.save();
             const squad = await Squad.create({
                 username: username,
                 league: name

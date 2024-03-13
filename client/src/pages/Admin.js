@@ -1,20 +1,6 @@
 import { useState } from 'react';
 import './../styles/Admin.css';
 
-function Match(props)
-{
-    return(
-        <div class='admin-fixture'>
-            <h3 class='admin-element'>{props.fixture}</h3>
-            <p class='admin-element'>{props.status}</p>
-            <p class='admin-element'>{props.id}</p>
-            <button class='admin-add' onClick={() => {
-                // add match
-            }}>Add Match</button>
-        </div>
-    );
-}
-
 function Admin()
 {
     const [content, setContent] = useState();
@@ -33,12 +19,9 @@ function Admin()
                 });
                 if(response.ok)
                 {
-                    const response = await fetch('/api/admin/matches');
-                    const json = await response.json();
-                    const matches = [];
-                    matches.push(<h1>Welcome, Admin</h1>)
-                    matches.push(
+                    setContent(
                         <div>
+                            <h1>Welcome, Admin</h1>
                             <h3 class='admin-element'>Add Player</h3>
                             <input id='admin-player' class='admin-text' type='text' placeholder='Name'/>
                             <input id='admin-position' class='admin-text' type='text' placeholder='Position'/>
@@ -57,23 +40,17 @@ function Admin()
                                         document.getElementById('admin-player').value = '';
                                         document.getElementById('admin-position').value = '';
                                     }
-                                    alert(response.status);
                                 }
                                 else
                                 {
                                     alert('Fill All Fields!');
                                 }
                             }}>Add Player</button>
+                            <button class='admin-button' onClick={async () => {
+
+                            }}>Refresh</button>
                         </div>
-                    )
-                    for(let i = 0; i < json.length; i++)
-                    {
-                        const match = json[i].team1 + ' vs ' + json[i].team2;
-                        const result = json[i].status;
-                        const id = json[i].id;
-                        matches.push(<Match fixture={match} status={result} id={id}/>)
-                    }
-                    setContent(matches);
+                    );
                 }
                 else
                 {

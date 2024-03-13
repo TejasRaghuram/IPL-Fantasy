@@ -52,7 +52,33 @@ const matches = async (req, res) => {
 }
 
 const update = async (req, res) => {
+    /*const {
+        id
+    } = req.body;
     
+    try {
+        const response = await fetch('https://api.cricapi.com/v1/match_scorecard?apikey='+process.env.CRICKETDATA_KEY+'&offset=0&id='+id);
+        const json = await response.json();
+        res.status(200).json(json);
+    } catch(error) {
+        res.status(400).json({error: error.message});
+    }*/
+    const url = 'https://cricbuzz-cricket.p.rapidapi.com/matches/v1/recent';
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': 'a78c28eb75msh0fa7f3a74717e82p15a973jsn721026a5c1e2',
+            'X-RapidAPI-Host': 'cricbuzz-cricket.p.rapidapi.com'
+        }
+    };
+
+    try {
+        const response = await fetch(url, options);
+        const result = await response.json();
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(400).json(error);
+    }
 };
 
 const add = async (req, res) => {

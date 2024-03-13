@@ -1,6 +1,33 @@
-.admin-fixture
-{
-    margin-top: 15px;
+#admin-prompt {
+    margin-left: 15px;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+#admin-password {
+    width: 260px;
+    height: 30px;
+    margin-left: 15px;
+    margin-top: 10px;
+    font-size: 18px;
+    display: inline-block;
+}
+
+#admin-submit {
+    width: 100px;
+    height: 35px;
+    margin-left: 15px;
+    margin-top: 10px;
+    color: white;
+    background-color: darkorange;
+    font-weight: bold;
+    border-style: none;
+    border-radius: 5px;
+}
+
+#admin-submit:hover {
+    background-color: rgb(210, 110, 0);
+    cursor: pointer;
 }
 
 .admin-element
@@ -36,41 +63,26 @@
     cursor: pointer;
 }
 
+.admin-button {
+    width: 100%;
+    height: 50px;
+    margin-top: 25px;
+    color: white;
+    background-color: darkorange;
+    font-size: 18px;
+    font-weight: bold;
+    border-style: none;
+    border-radius: 25px;
+}
+
+.admin-button:hover {
+    background-color: rgb(210, 110, 0);
+    cursor: pointer;
+}
+
 #admin-content
 {
     padding: 25px;
-}
-
-#admin-prompt {
-    margin-left: 15px;
-    margin-top: 10px;
-    display: inline-block;
-}
-
-#admin-password {
-    width: 260px;
-    height: 30px;
-    margin-left: 15px;
-    margin-top: 10px;
-    font-size: 18px;
-    display: inline-block;
-}
-
-#admin-submit {
-    width: 100px;
-    height: 35px;
-    margin-left: 15px;
-    margin-top: 10px;
-    color: white;
-    background-color: darkorange;
-    font-weight: bold;
-    border-style: none;
-    border-radius: 5px;
-}
-
-#admin-submit:hover {
-    background-color: rgb(210, 110, 0);
-    cursor: pointer;
 }
 
 #admin-portal {

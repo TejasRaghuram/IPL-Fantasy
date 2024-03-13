@@ -140,6 +140,11 @@ const playerSchema = new Schema({
         type: Number,
         required: true,
         default: 0
+    },
+    man_of_matches: {
+        type: Number,
+        required: true,
+        default: 0
     }
 }, { timestamps: true });
 

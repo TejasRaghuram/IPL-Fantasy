@@ -16,6 +16,16 @@ const squadSchema = new Schema({
         required: true,
         default: 0
     },
+    captain: {
+        type: String,
+        required: true,
+        default: ' '
+    },
+    vice_captain: {
+        type: String,
+        required: true,
+        default: ' '
+    },
     players: {
         type: [String],
         required: true,
@@ -86,6 +96,11 @@ const squadSchema = new Schema({
         required: true,
         default: 0
     },
+    man_of_matches: {
+        type: Number,
+        required: true,
+        default: 0
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Squad', squadSchema);
