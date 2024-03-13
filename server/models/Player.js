@@ -66,6 +66,11 @@ const playerSchema = new Schema({
         required: true,
         default: 0
     },
+    dismissals: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     highest_score: {
         type: Number,
         required: true,
@@ -117,6 +122,11 @@ const playerSchema = new Schema({
         default: 0
     },
     overs_bowled: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    runs_conceded: {
         type: Number,
         required: true,
         default: 0

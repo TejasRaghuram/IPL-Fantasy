@@ -41,12 +41,9 @@ const join = async (req, res) => {
         {
             user.leagues.push(league.name);
             await user.save();
-            const players = [];
             const squad = await Squad.create({
                 username: username,
-                league: name,
-                points: 0,
-                players: players
+                league: name
             });
             res.status(200).json(squad);
         }
