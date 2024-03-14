@@ -33,13 +33,14 @@
 .admin-element
 {
     text-align: center;
+    margin-top: 25px;
 }
 
 .admin-add
 {
-    width: 100px;
+    width: 200px;
     height: 35px;
-    margin-left: calc(50vw - 100px);
+    margin-left: calc(50vw - 140px);
     color: white;
     background-color: darkorange;
     font-weight: bold;
@@ -54,7 +55,7 @@
     font-size: 14px;
     margin-bottom: 10px;
     display: block;
-    margin-left: calc(50vw - 155px);
+    margin-left: calc(50vw - 145px);
 }
 
 .admin-add:hover 

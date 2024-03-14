@@ -7,10 +7,21 @@ function Player(props) {
     const [image, setImage] = useState('https://scores.iplt20.com/ipl/images/default-player-statsImage.png?v=4');
 
     const check = new Image();
-    check.src = "https://scores.iplt20.com/ipl/playerimages/" + props.name.replaceAll(' ', '%20') + '.png';
+    check.src = "https://scores.iplt20.com/ipl/playerimages/" + props.player.name.replaceAll(' ', '%20') + '.png';
     check.onload = () => {
         setImage(check.src);
     };
+
+    var name = props.player.name;
+    var points = props.player.points;
+    if(props.player.captain)
+    {
+        name += ' (C)';
+    }
+    else if(props.player.vice_captain)
+    {
+        name += ' (VC)';
+    }
 
     return(
         <div class='player-body'>
@@ -18,8 +29,8 @@ function Player(props) {
                 <p class='player-rank'>{props.rank}</p>
             </div>
             <img class='player-image' src={image} alt=''/>
-            <p class='player-name'>{props.name}</p>
-            <p class='player-points'>{props.points}</p>
+            <p class='player-name'>{name}</p>
+            <p class='player-points'>{points}</p>
         </div>
     );
 }
@@ -93,16 +104,31 @@ function User() {
                     const players = [];
                     for(let i = 0; i < json.players.length; i++)
                     {
-                        const name = json.players[i];
+                        var name = json.players[i];
                         const result = await fetch('/api/players/points', {
                             method: 'post',
                             headers: {'Content-Type': 'application/json'},
                             body: JSON.stringify({name})
                         });
-                        const points = await result.json();
+                        var points = await result.json();
+                        var captain = false;
+                        var vice_captain = false;
+                        if(name === json.captain)
+                        {
+                            captain = true;
+                            points *= 2;
+                        }
+                        else if(name === json.vice_captain)
+                        {
+                            vice_captain = true;
+                            points *= 1.5;
+                            points = Math.round(points);
+                        }
                         players.push({
                             name: name,
-                            points: points
+                            points: points,
+                            captain: captain,
+                            vice_captain: vice_captain
                         });
                     }
                     if(players.length > 0)
@@ -121,7 +147,7 @@ function User() {
                                 currentRank++;
                                 currentPoints = players[i].points;
                             }
-                            page.push(<Player rank={currentRank} name={players[i].name} points={players[i].points}/>);
+                            page.push(<Player rank={currentRank} player={players[i]}/>);
                         }
                         page.push(<Add current={refresh} refresh={setRefresh}/>);
                         setContent(page);

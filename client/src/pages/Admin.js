@@ -39,14 +39,83 @@ function Admin()
                                     {
                                         document.getElementById('admin-player').value = '';
                                     }
+                                    else
+                                    {
+                                        const json = await result.json();
+                                        alert(json.error);
+                                    }
                                 }
                                 else
                                 {
                                     alert('Fill All Fields!');
                                 }
                             }}>Add Player</button>
+                            <h3 class='admin-element'>Add Man of the Match</h3>
+                            <input id='admin-man-of-match' class='admin-text' type='text' placeholder='Name'/>
+                            <button class='admin-add' onClick={async () => {
+                                const name = document.getElementById('admin-man-of-match').value;
+                                if(name.length > 0)
+                                {
+                                    const result = await fetch('/api/admin/man_of_match', {
+                                        method: 'post',
+                                        headers: {'Content-Type': 'application/json'},
+                                        body: JSON.stringify({name})
+                                    });
+                                    if(result.ok)
+                                    {
+                                        document.getElementById('admin-man-of-match').value = '';
+                                    }
+                                    else
+                                    {
+                                        const json = await result.json();
+                                        alert(json.error);
+                                    }
+                                }
+                                else
+                                {
+                                    alert('Fill All Fields!');
+                                }
+                            }}>Add Man of the Match</button>
+                            <h3 class='admin-element'>Add Hat Trick</h3>
+                            <input id='admin-hat-trick' class='admin-text' type='text' placeholder='Name'/>
+                            <button class='admin-add' onClick={async () => {
+                                const name = document.getElementById('admin-hat-trick').value;
+                                if(name.length > 0)
+                                {
+                                    const result = await fetch('/api/admin/hat_trick', {
+                                        method: 'post',
+                                        headers: {'Content-Type': 'application/json'},
+                                        body: JSON.stringify({name})
+                                    });
+                                    if(result.ok)
+                                    {
+                                        document.getElementById('admin-hat-trick').value = '';
+                                    }
+                                    else
+                                    {
+                                        const json = await result.json();
+                                        alert(json.error);
+                                    }
+                                }
+                                else
+                                {
+                                    alert('Fill All Fields!');
+                                }
+                            }}>Add Hat Trick</button>
                             <button class='admin-button' onClick={async () => {
-
+                                const result = await fetch('/api/admin/update', {
+                                    method: 'get',
+                                    headers: {'Content-Type': 'application/json'}
+                                });
+                                if(result.ok)
+                                {
+                                    alert('Success!')
+                                }
+                                else
+                                {
+                                    const json = await result.json();
+                                    alert(json.error);
+                                }
                             }}>Refresh</button>
                         </div>
                     );

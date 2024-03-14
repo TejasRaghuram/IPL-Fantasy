@@ -221,6 +221,69 @@ const add = async (req, res) => {
     }
 }
 
+const man_of_match = async (req, res) => {
+    const {
+        name
+    } = req.body;
+
+    try {
+        const player = await Player.findOne({'name': name});
+        if(player)
+        {
+            player.man_of_matches++;
+            player.base_points += 100;
+            await player.save();
+            await calculate_player_bonuses();
+            const leagues = await League.find({});
+            for(var i = 0; i < leagues.length; i++)
+            {
+                await update_league(leagues[i].name);
+            }
+        }
+        else
+        {
+            res.status(400).json({error: 'Player Does Not Exist'});
+        }
+    } catch(error) {
+        res.status(400).json({error: error.message});
+    }
+}
+
+const hat_trick = async (req, res) => {
+    const {
+        name
+    } = req.body;
+
+    try {
+        const player = await Player.findOne({'name': name});
+        if(player)
+        {
+            player.hat_tricks++;
+            if(player.position === 'Batsman')
+            {
+                player.base_points += 1500;
+            }
+            else
+            {
+                player.base_points += 750;
+            }
+            await player.save();
+            await calculate_player_bonuses();
+            const leagues = await League.find({});
+            for(var i = 0; i < leagues.length; i++)
+            {
+                await update_league(leagues[i].name);
+            }
+        }
+        else
+        {
+            res.status(400).json({error: 'Player Does Not Exist'});
+        }
+    } catch(error) {
+        res.status(400).json({error: error.message});
+    }
+}
+
 async function update_league(league) {
     const squads = await Squad.find({'league': league});
     for(var i = 0; i < squads.length; i++)
@@ -1115,5 +1178,7 @@ async function add_bonus(bonus, max)
 module.exports = {
     verify,
     update,
-    add
+    add,
+    hat_trick,
+    man_of_match
 };
