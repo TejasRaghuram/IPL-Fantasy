@@ -226,6 +226,25 @@ async function update_league(league) {
     for(var i = 0; i < squads.length; i++)
     {
         squads[i].base_points = 0;
+        squads[i].not_outs = 0;
+        squads[i].dismissals = 0;
+        squads[i].runs = 0;
+        squads[i].balls_faced = 0;
+        squads[i].centuries = 0;
+        squads[i].half_centuries = 0;
+        squads[i].ducks = 0;
+        squads[i].fours = 0;
+        squads[i].sixes = 0;
+        squads[i].wickets = 0;
+        squads[i].dots = 0;
+        squads[i].balls_bowled = 0;
+        squads[i].runs_conceded = 0;
+        squads[i].maidens = 0;
+        squads[i].man_of_matches = 0;
+        squads[i].strike_rate = 0;
+        squads[i].economy = 0;
+        squads[i].batting_average = 0;
+        squads[i].bowling_average = 0;
         for(var j = 0; j < squads[i].players.length; j++)
         {
             const player = await Player.findOne({'name': squads[i].players[j]});

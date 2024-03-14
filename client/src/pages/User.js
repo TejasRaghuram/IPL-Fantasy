@@ -119,7 +119,7 @@ function User() {
                             if(players[i].points < currentPoints)
                             {
                                 currentRank++;
-                                currentPoints = json[i].points;
+                                currentPoints = players[i].points;
                             }
                             page.push(<Player rank={currentRank} name={players[i].name} points={players[i].points}/>);
                         }
@@ -131,6 +131,7 @@ function User() {
                         setContent(<Add current={refresh} refresh={setRefresh}/>);
                     }
                 } catch(error) {
+                    alert(error.stack);
                     navigate('/');
                 }
             });
