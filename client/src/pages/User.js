@@ -102,15 +102,15 @@ function User() {
             .then(async (json) =>{
                 try {
                     const players = [];
+                    const result = await fetch('/api/players/all', {
+                        method: 'get',
+                        headers: {'Content-Type': 'application/json'},
+                    });
+                    const player_data = await result.json();
                     for(let i = 0; i < json.players.length; i++)
                     {
                         var name = json.players[i];
-                        const result = await fetch('/api/players/points', {
-                            method: 'post',
-                            headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify({name})
-                        });
-                        var points = await result.json();
+                        var points = player_data.find(player => player.name === json.players[i]).points;
                         var captain = false;
                         var vice_captain = false;
                         if(name === json.captain)
