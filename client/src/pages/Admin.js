@@ -12,7 +12,7 @@ function Admin()
             <button id='admin-submit' onClick={async () => {
                 setContent(<p>Loading...</p>);
                 const password = document.getElementById('admin-password').value;
-                const response = await fetch('/api/admin/verify', {
+                const response = await fetch('https://ipl-fantasy-api.onrender.com/api/admin/verify', {
                     method: 'post',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({password})
@@ -30,7 +30,7 @@ function Admin()
                                 const position = document.getElementById('admin-position').value;
                                 if(name.length > 0 && position.length > 0)
                                 {
-                                    const result = await fetch('/api/admin/add', {
+                                    const result = await fetch('https://ipl-fantasy-api.onrender.com/api/admin/add', {
                                         method: 'post',
                                         headers: {'Content-Type': 'application/json'},
                                         body: JSON.stringify({name, position})
@@ -56,7 +56,7 @@ function Admin()
                                 const name = document.getElementById('admin-man-of-match').value;
                                 if(name.length > 0)
                                 {
-                                    const result = await fetch('/api/admin/man_of_match', {
+                                    const result = await fetch('https://ipl-fantasy-api.onrender.com/api/admin/man_of_match', {
                                         method: 'post',
                                         headers: {'Content-Type': 'application/json'},
                                         body: JSON.stringify({name})
@@ -82,7 +82,7 @@ function Admin()
                                 const name = document.getElementById('admin-hat-trick').value;
                                 if(name.length > 0)
                                 {
-                                    const result = await fetch('/api/admin/hat_trick', {
+                                    const result = await fetch('https://ipl-fantasy-api.onrender.com/api/admin/hat_trick', {
                                         method: 'post',
                                         headers: {'Content-Type': 'application/json'},
                                         body: JSON.stringify({name})
@@ -103,7 +103,7 @@ function Admin()
                                 }
                             }}>Add Hat Trick</button>
                             <button class='admin-button' onClick={async () => {
-                                const result = await fetch('/api/admin/update', {
+                                const result = await fetch('https://ipl-fantasy-api.onrender.com/api/admin/update', {
                                     method: 'get',
                                     headers: {'Content-Type': 'application/json'}
                                 });

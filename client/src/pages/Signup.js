@@ -38,7 +38,7 @@ function Signup() {
                     <input id='signup-submit' type='button' value='Submit' onClick={async () => {
                         const username = document.getElementById('signup-username').value;
                         const password = document.getElementById('signup-password').value;
-                        const response = await fetch('/api/account/create', {
+                        const response = await fetch('https://ipl-fantasy-api.onrender.com/api/account/create', {
                             method: 'post',
                             headers: {'Content-Type': 'application/json'},
                             body: JSON.stringify({username, password})

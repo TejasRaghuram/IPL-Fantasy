@@ -26,7 +26,7 @@ function Players() {
     const [players, setPlayers] = useState(<p>Loading...</p>);
 
     useEffect(() => {
-        fetch('/api/players/all')
+        fetch('https://ipl-fantasy-api.onrender.com/api/players/all')
             .then(response => response.json())
             .then(json => {
                 const rank = (p1, p2) => {

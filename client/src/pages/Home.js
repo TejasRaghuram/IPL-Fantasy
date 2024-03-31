@@ -33,7 +33,7 @@ function Create() {
                 <input id='home-submit' type='button' value='Submit' onClick={async () => {
                     const name = document.getElementById('home-create-name').value;
                     const password = document.getElementById('home-create-password').value;
-                    const response = await fetch('/api/user/create', {
+                    const response = await fetch('https://ipl-fantasy-api.onrender.com/api/user/create', {
                         method: 'post',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({name, password})
@@ -42,7 +42,7 @@ function Create() {
                     if(response.ok)
                     {
                         const username = user.username;
-                        await fetch('/api/user/join', {
+                        await fetch('https://ipl-fantasy-api.onrender.com/api/user/join', {
                             method: 'post',
                             headers: {'Content-Type': 'application/json'},
                             body: JSON.stringify({username, name, password})
@@ -80,7 +80,7 @@ function Join() {
                     const username = user.username;
                     const name = document.getElementById('home-join-name').value;
                     const password = document.getElementById('home-join-password').value;
-                    const response = await fetch('/api/user/join', {
+                    const response = await fetch('https://ipl-fantasy-api.onrender.com/api/user/join', {
                         method: 'post',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({username, name, password})
@@ -110,7 +110,7 @@ function Home() {
 
     useEffect(() => {
         const username = user.username;
-        fetch('/api/user/leagues', {
+        fetch('https://ipl-fantasy-api.onrender.com/api/user/leagues', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({username})     

@@ -26,7 +26,7 @@ function League() {
 
     useEffect(() => {
         const league = params.league;
-        fetch('/api/league/users', {
+        fetch('https://ipl-fantasy-api.onrender.com/api/league/users', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({league})

@@ -57,7 +57,7 @@ function Add(props) {
                         const username = user.username;
                         const league = params.league;
                         const player = document.getElementById('home-join-name').value;
-                        const response = await fetch('/api/league/add', {
+                        const response = await fetch('https://ipl-fantasy-api.onrender.com/api/league/add', {
                             method: 'post',
                             headers: {'Content-Type': 'application/json'},
                             body: JSON.stringify({username, league, player})
@@ -93,7 +93,7 @@ function User() {
     useEffect(() => {
         const username = params.username;
         const league = params.league;
-        fetch('/api/league/squad', {
+        fetch('https://ipl-fantasy-api.onrender.com/api/league/squad', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({username, league})
@@ -102,7 +102,7 @@ function User() {
             .then(async (json) =>{
                 try {
                     const players = [];
-                    const result = await fetch('/api/players/all', {
+                    const result = await fetch('https://ipl-fantasy-api.onrender.com/api/players/all', {
                         method: 'get',
                         headers: {'Content-Type': 'application/json'},
                     });
