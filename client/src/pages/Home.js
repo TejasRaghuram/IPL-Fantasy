@@ -149,6 +149,9 @@ function Home() {
                     setJoin(!join);
                 }}>Join a League</button>
                 {join && <Join/>}
+                {user.username === 'TejasRaghuram' && <button class='home-button' onClick={() => {
+                    navigate('/admin');
+                }}>Admin Portal</button>}
             </div>
         );
     }
