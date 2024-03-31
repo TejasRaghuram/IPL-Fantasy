@@ -11,7 +11,7 @@ function User(props) {
             navigate('/' + params.league + '/' + props.username)
         }}>
             <div class='league-user-rank-body'>
-                <p class='league-user-rank'>1</p>
+                <p class='league-user-rank'>{props.rank}</p>
             </div>
             <p class='league-user-name'>{props.username}</p>
             <p class='league-user-points'>{props.points}</p>
@@ -39,8 +39,8 @@ function League() {
                     };
                     json.sort(rank);
                     const rankings = [];
-                    let currentRank = 1;
-                    let currentPoints = json[0].points;
+                    var currentRank = 1;
+                    var currentPoints = json[0].points;
                     for(let i = 0; i < json.length; i++)
                     {
                         if(json[i].points < currentPoints)
