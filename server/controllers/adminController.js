@@ -63,6 +63,7 @@ const update = async (req, res) => {
         }
         res.status(200).json({});
     } catch(error) {
+        console.log(error.stack);
         res.status(400).json({error: error.message});
     }
 }
@@ -363,6 +364,7 @@ async function update_league(league) {
         {
             squads[i].bowling_average = squads[i].runs_conceded / squads[i].wickets;
         }
+        squads[i].points = squads[i].base_points;
         squads[i].bonuses = [];
         squads[i].save();
     }
@@ -384,14 +386,40 @@ async function update_league(league) {
     await add_league_bonus(league, 'man_of_matches', true);
 
     const teams = await Squad.find({'league': league});
-    for(var i = 0; i < teams.length; i++)
+    const bonuses = [
+        'not_outs',
+        'runs',
+        'batting_average', 
+        'strike_rate', 
+        'centuries', 
+        'half_centuries', 
+        'fours', 
+        'sixes',
+        'wickets',
+        'dots',
+        'economy',
+        'bowling_average',
+        'maidens',
+        'man_of_matches'
+    ];
+    for(var i = 0; i < bonuses.length; i++)
     {
-        teams[i].points = teams[i].base_points + 1000 * (teams[i].bonuses.length);
-        if(teams[i].bonuses.includes('ducks'))
+        const winners = teams.filter((team) => {
+            return team.bonuses.includes(bonuses[i]);
+        });
+        for(var j = 0; j < winners.length; j++)
         {
-            teams[i].points -= 2000;
+            winners[j].points += Math.round(1000 / winners.length);
+            await winners[j].save();
         }
-        await teams[i].save();
+    }
+    const losers = teams.filter((team) => {
+        return team.bonuses.includes('ducks');
+    });
+    for(var i = 0; i < losers.length; i++)
+    {
+        losers[i].points -= Math.round(1000 / losers.length);
+        await losers[i].save();
     }
 }
 
@@ -1053,6 +1081,7 @@ async function calculate_player_bonuses() {
     const refresh = await Player.find({});
     for(var i = 0; i < refresh.length; i++)
     {
+        refresh[i].points = refresh[i].base_points;
         refresh[i].bonuses = [];
         refresh[i].save();
     }
@@ -1074,14 +1103,40 @@ async function calculate_player_bonuses() {
     await add_bonus('man_of_matches', true);
 
     const players = await Player.find({});
-    for(var i = 0; i < players.length; i++)
+    const bonuses = [
+        'not_outs',
+        'runs',
+        'batting_average', 
+        'strike_rate', 
+        'centuries', 
+        'half_centuries', 
+        'fours', 
+        'sixes',
+        'wickets',
+        'dots',
+        'economy',
+        'bowling_average',
+        'maidens',
+        'man_of_matches'
+    ];
+    for(var i = 0; i < bonuses.length; i++)
     {
-        players[i].points = players[i].base_points + 1000 * (players[i].bonuses.length);
-        if(players[i].bonuses.includes('ducks'))
+        const winners = players.filter((player) => {
+            return player.bonuses.includes(bonuses[i]);
+        });
+        for(var j = 0; j < winners.length; j++)
         {
-            players[i].points -= 2000;
+            winners[j].points += Math.round(1000 / winners.length);
+            await winners[j].save();
         }
-        await players[i].save();
+    }
+    const losers = players.filter((player) => {
+        return player.bonuses.includes('ducks');
+    });
+    for(var i = 0; i < losers.length; i++)
+    {
+        losers[i].points -= Math.round(1000 / losers.length);
+        await losers[i].save();
     }
 }
 
