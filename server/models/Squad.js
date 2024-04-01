@@ -41,6 +41,11 @@ const squadSchema = new Schema({
         required: true,
         default: []
     },
+    bonuses_points: {
+        type: [Number],
+        required: true,
+        default: []
+    },
     not_outs: {
         type: Number,
         required: true,

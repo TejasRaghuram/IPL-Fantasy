@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './../styles/User.css';
 
 function Player(props) {
+    const navigate = useNavigate();
     const [image, setImage] = useState('https://scores.iplt20.com/ipl/images/default-player-statsImage.png?v=4');
 
     const check = new Image();
@@ -24,13 +25,15 @@ function Player(props) {
     }
 
     return(
-        <div class='player-body'>
-            <div class='player-rank-body'>
-                <p class='player-rank'>{props.rank}</p>
+        <div class='user-player-body'>
+            <div class='user-player-rank-body'>
+                <p class='user-player-rank'>{props.rank}</p>
             </div>
-            <img class='player-image' src={image} alt=''/>
-            <p class='player-name'>{name}</p>
-            <p class='player-points'>{points}</p>
+            <img class='user-player-image' src={image} alt=''/>
+            <p class='user-player-name' onClick={() => {
+                navigate('/profile/' + props.player.name.replaceAll(' ', '%20'));
+            }}>{name}</p>
+            <p class='user-player-points'>{points}</p>
         </div>
     );
 }

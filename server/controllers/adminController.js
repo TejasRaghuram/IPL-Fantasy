@@ -366,6 +366,7 @@ async function update_league(league) {
         }
         squads[i].points = squads[i].base_points;
         squads[i].bonuses = [];
+        squads[i].bonuses_points = [];
         squads[i].save();
     }
 
@@ -410,6 +411,7 @@ async function update_league(league) {
         for(var j = 0; j < winners.length; j++)
         {
             winners[j].points += Math.round(1000 / winners.length);
+            winners[j].bonuses_points.push(Math.round(1000 / winners.length));
             await winners[j].save();
         }
     }
@@ -419,6 +421,7 @@ async function update_league(league) {
     for(var i = 0; i < losers.length; i++)
     {
         losers[i].points -= Math.round(1000 / losers.length);
+        losers[i].bonuses_points.push(Math.round(1000 / losers.length));
         await losers[i].save();
     }
 }
@@ -1083,6 +1086,7 @@ async function calculate_player_bonuses() {
     {
         refresh[i].points = refresh[i].base_points;
         refresh[i].bonuses = [];
+        refresh[i].bonuses_points = [];
         refresh[i].save();
     }
 
@@ -1095,6 +1099,7 @@ async function calculate_player_bonuses() {
     await add_bonus('ducks', true);
     await add_bonus('fours', true);
     await add_bonus('sixes', true);
+    await add_bonus('highest_score', true);
     await add_bonus('wickets', true);
     await add_bonus('dots', true);
     await add_bonus('economy', false);
@@ -1112,6 +1117,7 @@ async function calculate_player_bonuses() {
         'half_centuries', 
         'fours', 
         'sixes',
+        'highest_score',
         'wickets',
         'dots',
         'economy',
@@ -1127,6 +1133,7 @@ async function calculate_player_bonuses() {
         for(var j = 0; j < winners.length; j++)
         {
             winners[j].points += Math.round(1000 / winners.length);
+            winners[j].bonuses_points.push(Math.round(1000 / winners.length));
             await winners[j].save();
         }
     }
@@ -1136,6 +1143,7 @@ async function calculate_player_bonuses() {
     for(var i = 0; i < losers.length; i++)
     {
         losers[i].points -= Math.round(1000 / losers.length);
+        losers[i].bonuses_points.push(Math.round(1000 / losers.length));
         await losers[i].save();
     }
 }

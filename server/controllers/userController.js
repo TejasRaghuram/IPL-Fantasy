@@ -54,7 +54,6 @@ const create = async (req, res) => {
         name, 
         password
     } = req.body;
-    const leagues = [];
 
     try {
         const exists = await League.findOne({'name': name});
@@ -62,7 +61,7 @@ const create = async (req, res) => {
         {
             res.status(400).json({error: 'League Already Exists'});
         }
-        else if(name.length === 0 || password.length === 0 || !name.match(/^[\p{L}\p{N}]*$/u) || !password.match(/^[\p{L}\p{N}]*$/u) || name === 'admin')
+        else if(name.length === 0 || password.length === 0 || !name.match(/^[\p{L}\p{N}]*$/u) || !password.match(/^[\p{L}\p{N}]*$/u) || name === 'admin' || name === 'profile')
         {
             res.status(400).json({error: 'Invalid Name or Password'});
         }

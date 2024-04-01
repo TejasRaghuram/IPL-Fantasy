@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './../styles/Players.css';
 
 function Player(props) {
+    const navigate = useNavigate();
     const [image, setImage] = useState('https://scores.iplt20.com/ipl/images/default-player-statsImage.png?v=4');
 
     const check = new Image();
-    check.src = "https://scores.iplt20.com/ipl/playerimages/" + props.name.replaceAll(' ', '%20') + '.png';
+    check.src = 'https://scores.iplt20.com/ipl/playerimages/' + props.name.replaceAll(' ', '%20') + '.png';
     check.onload = () => {
         setImage(check.src);
     };
@@ -16,7 +18,9 @@ function Player(props) {
                 <p class='player-rank'>{props.rank}</p>
             </div>
             <img class='player-image' src={image} alt=''/>
-            <p class='player-name'>{props.name}</p>
+            <p class='player-name' onClick={() => {
+                navigate('/profile/' + props.name.replaceAll(' ', '%20'));
+            }}>{props.name}</p>
             <p class='player-points'>{props.points}</p>
         </div>
     );

@@ -39,6 +39,11 @@
     font-weight: bold;
 }
 
+.player-name:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 .player-points {
     margin-left: calc(100% - 100px);
     position: relative;

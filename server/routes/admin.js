@@ -16,7 +16,7 @@ router.get('/update', update);
 
 router.post('/add', add);
 
-router.post('/hat_trick', add);
+router.post('/hat_trick', hat_trick);
 
 router.post('/man_of_match', man_of_match);
 

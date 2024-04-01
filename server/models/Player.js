@@ -21,6 +21,11 @@ const playerSchema = new Schema({
         required: true,
         default: []
     },
+    bonuses_points: {
+        type: [Number],
+        required: true,
+        default: []
+    },
     points: {
         type: Number,
         required: true,
