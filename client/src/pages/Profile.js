@@ -159,7 +159,7 @@ function Profile() {
                                     <tr class='profile-table-odd'>
                                         <td class='profile-table-element'>Strike Rate</td>
                                         <td class='profile-table-element'>{json.balls_faced > 0 ? json.strike_rate:'-'}</td>
-                                        <td class='profile-table-element'>{json.position === 'Bowler' ? strike_rate_points*2:strike_rate_points}</td>
+                                        <td class='profile-table-element'>{strike_rate_points}</td>
                                     </tr>
                                     <tr class='profile-table-even'>
                                         <td class='profile-table-element'>Balls Faced</td>
@@ -232,7 +232,7 @@ function Profile() {
                                     <tr class='profile-table-even'>
                                         <td class='profile-table-element'>Economy</td>
                                         <td class='profile-table-element'>{json.balls_bowled > 0 ? json.economy:'-'}</td>
-                                        <td class='profile-table-element'>{json.position === 'Batsman' ? economy_points*2:economy_points}</td>
+                                        <td class='profile-table-element'>{economy_points}</td>
                                     </tr>
                                     <tr class='profile-table-odd'>
                                         <td class='profile-table-element'>Bowling Average</td>

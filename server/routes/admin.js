@@ -5,6 +5,7 @@ const router = express.Router();
 const {
     verify,
     update,
+    refresh,
     add,
     hat_trick,
     man_of_match
@@ -13,6 +14,8 @@ const {
 router.post('/verify', verify);
 
 router.get('/update', update);
+
+router.get('/refresh', refresh);
 
 router.post('/add', add);
 

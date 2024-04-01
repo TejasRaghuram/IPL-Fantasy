@@ -63,7 +63,114 @@ const update = async (req, res) => {
         }
         res.status(200).json({});
     } catch(error) {
-        console.log(error.stack);
+        res.status(400).json({error: error.message});
+    }
+}
+
+const refresh = async (req, res) => {
+    try {
+        const players = Player.find({});
+        for(var i = 0; i < players.length; i++)
+        {
+            players[i] = compute_points(players[i]);
+            await players[i].save();
+        }
+        await calculate_player_bonuses();
+        const leagues = await League.find({});
+        for(var i = 0; i < leagues.length; i++)
+        {
+            await update_league(leagues[i].name);
+        }
+        res.status(200).json({});
+    } catch(error) {
+        res.status(400).json({error: error.message});
+    }
+}
+
+const add = async (req, res) => {
+    const {
+        name,
+        position
+    } = req.body;
+
+    try {
+        const exists = await Player.findOne({'name': name});
+        if(exists)
+        {
+            res.status(400).json({error: 'Player Already Exists'});
+        }
+        else
+        {
+            const player = Player.create({
+                name,
+                position
+            });
+            res.status(200).json(player);
+        }
+    } catch(error) {
+        res.status(400).json({error: error.message});
+    }
+}
+
+const man_of_match = async (req, res) => {
+    const {
+        name
+    } = req.body;
+
+    try {
+        const player = await Player.findOne({'name': name});
+        if(player)
+        {
+            player.man_of_matches++;
+            player.base_points += 100;
+            await player.save();
+            await calculate_player_bonuses();
+            const leagues = await League.find({});
+            for(var i = 0; i < leagues.length; i++)
+            {
+                await update_league(leagues[i].name);
+            }
+        }
+        else
+        {
+            res.status(400).json({error: 'Player Does Not Exist'});
+        }
+    } catch(error) {
+        res.status(400).json({error: error.message});
+    }
+}
+
+const hat_trick = async (req, res) => {
+    const {
+        name
+    } = req.body;
+
+    try {
+        const player = await Player.findOne({'name': name});
+        if(player)
+        {
+            player.hat_tricks++;
+            if(player.position === 'Batsman')
+            {
+                player.base_points += 1500;
+            }
+            else
+            {
+                player.base_points += 750;
+            }
+            await player.save();
+            await calculate_player_bonuses();
+            const leagues = await League.find({});
+            for(var i = 0; i < leagues.length; i++)
+            {
+                await update_league(leagues[i].name);
+            }
+        }
+        else
+        {
+            res.status(400).json({error: 'Player Does Not Exist'});
+        }
+    } catch(error) {
         res.status(400).json({error: error.message});
     }
 }
@@ -194,94 +301,6 @@ async function add_match(data) {
                 await player.save();
             }
         }
-    }
-}
-
-const add = async (req, res) => {
-    const {
-        name,
-        position
-    } = req.body;
-
-    try {
-        const exists = await Player.findOne({'name': name});
-        if(exists)
-        {
-            res.status(400).json({error: 'Player Already Exists'});
-        }
-        else
-        {
-            const player = Player.create({
-                name,
-                position
-            });
-            res.status(200).json(player);
-        }
-    } catch(error) {
-        res.status(400).json({error: error.message});
-    }
-}
-
-const man_of_match = async (req, res) => {
-    const {
-        name
-    } = req.body;
-
-    try {
-        const player = await Player.findOne({'name': name});
-        if(player)
-        {
-            player.man_of_matches++;
-            player.base_points += 100;
-            await player.save();
-            await calculate_player_bonuses();
-            const leagues = await League.find({});
-            for(var i = 0; i < leagues.length; i++)
-            {
-                await update_league(leagues[i].name);
-            }
-        }
-        else
-        {
-            res.status(400).json({error: 'Player Does Not Exist'});
-        }
-    } catch(error) {
-        res.status(400).json({error: error.message});
-    }
-}
-
-const hat_trick = async (req, res) => {
-    const {
-        name
-    } = req.body;
-
-    try {
-        const player = await Player.findOne({'name': name});
-        if(player)
-        {
-            player.hat_tricks++;
-            if(player.position === 'Batsman')
-            {
-                player.base_points += 1500;
-            }
-            else
-            {
-                player.base_points += 750;
-            }
-            await player.save();
-            await calculate_player_bonuses();
-            const leagues = await League.find({});
-            for(var i = 0; i < leagues.length; i++)
-            {
-                await update_league(leagues[i].name);
-            }
-        }
-        else
-        {
-            res.status(400).json({error: 'Player Does Not Exist'});
-        }
-    } catch(error) {
-        res.status(400).json({error: error.message});
     }
 }
 
@@ -421,7 +440,7 @@ async function update_league(league) {
     for(var i = 0; i < losers.length; i++)
     {
         losers[i].points -= Math.round(1000 / losers.length);
-        losers[i].bonuses_points.push(Math.round(1000 / losers.length));
+        losers[i].bonuses_points.push(Math.round(-1000 / losers.length));
         await losers[i].save();
     }
 }
@@ -517,546 +536,86 @@ async function add_league_bonus(league, bonus, max)
 }
 
 function compute_points(player) {
-    if(player.position === 'Batsman')
+    var points = 0;
+    
+    points += player.position === 'Bowler' ? player.runs * 4 : player.runs * 2;
+    points += player.position === 'Bowler' ? player.fours * 8 : player.fours * 4;
+    points += player.position === 'Bowler' ? player.sixes * 16 : player.sixes * 8;
+    points += player.position === 'Bowler' ? player.ducks * -3 : player.ducks * -6;
+    points += player.position === 'Bowler' ? player.half_centuries * 100 : player.half_centuries * 50;
+    points += player.position === 'Bowler' ? player.centuries * 200 : player.centuries * 100;
+
+    points += player.position === 'Batsman' ? player.wickets * 100 : player.wickets * 50;
+    points += player.position === 'Batsman' ? player.dots * 10 : player.dots * 5;
+    points += player.position === 'Batsman' ? player.four_wicket_hauls * 500 : player.four_wicket_hauls * 250;
+    points += player.position === 'Batsman' ? player.five_wicket_hauls * 1000 : player.five_wicket_hauls * 500;
+    points += player.position === 'Batsman' ? player.six_wicket_hauls * 2000 : player.six_wicket_hauls * 1000;
+    points += player.position === 'Batsman' ? player.maidens * 300 : player.maidens * 150;
+    points += player.position === 'Batsman' ? player.hat_tricks * 1500 : player.hat_tricks * 750;
+
+    points += player.catches * 25;
+    points += player.stumpings * 50;
+    points += player.man_of_matches * 100;
+
+    var run_points = 0;
+    if(player.runs >= 850) run_points = 5000;
+    else if(player.runs >= 800) run_points = 4500;
+    else if(player.runs >= 750) run_points = 4000;
+    else if(player.runs >= 700) run_points = 3500;
+    else if(player.runs >= 650) run_points = 3000;
+    else if(player.runs >= 600) run_points = 2500;
+    else if(player.runs >= 550) run_points = 2000;
+    else if(player.runs >= 500) run_points = 1500;
+    else if(player.runs >= 450) run_points = 1000;
+    else if(player.runs >= 400) run_points = 750;
+    else if(player.runs >= 350) run_points = 500;
+    else if(player.runs >= 300) run_points = 250;
+    points += player.position === 'Bowler' ? run_points * 2 : run_points;
+
+    var strike_rate_points = 0;
+    if(player.balls_faced > 15)
     {
-        var points = 0;
-
-        points += 2 * player.runs;
-        points += 4 * player.fours;
-        points += 8 * player.sixes;
-        points -= 6 * player.ducks;
-        points += 50 * player.half_centuries;
-        points += 100 * player.centuries;
-        if(player.balls_faced >= 15)
-        {
-            if(player.strike_rate >= 200)
-            {
-                points += 1000;
-            }
-            else if(player.strike_rate >= 175)
-            {
-                points += 800;
-            }
-            else if(player.strike_rate >= 150)
-            {
-                points += 600;
-            }
-            else if(player.strike_rate >= 125)
-            {
-                points += 400;
-            }
-            else if(player.strike_rate >= 100)
-            {
-                points += 200;
-            }
-            else if(player.strike_rate >= 75)
-            {
-                points += -100;
-            }
-            else if(player.strike_rate >= 50)
-            {
-                points += -200;
-            }
-            else if(player.strike_rate >= 25)
-            {
-                points += -300;
-            }
-            else
-            {
-                points += -500;
-            }
-        }
-        if(player.runs >= 850)
-        {
-            points += 5000;
-        }
-        else if(player.runs >= 800)
-        {
-            points += 4500;
-        }
-        else if(player.runs >= 750)
-        {
-            points += 4000;
-        }
-        else if(player.runs >= 700)
-        {
-            points += 3500;
-        }
-        else if(player.runs >= 650)
-        {
-            points += 3000;
-        }
-        else if(player.runs >= 600)
-        {
-            points += 2500;
-        }
-        else if(player.runs >= 550)
-        {
-            points += 2000;
-        }
-        else if(player.runs >= 500)
-        {
-            points += 1500;
-        }
-        else if(player.runs >= 450)
-        {
-            points += 1000;
-        }
-        else if(player.runs >= 400)
-        {
-            points += 750;
-        }
-        else if(player.runs >= 350)
-        {
-            points += 500;
-        }
-        else if(player.runs >= 300)
-        {
-            points += 250;
-        }
-
-        points += 100 * player.wickets;
-        points += 10 * player.dots;
-        points += 500 * player.four_wicket_hauls;
-        points += 1000 * player.five_wicket_hauls;
-        points += 2000 * player.six_wicket_hauls;
-        points += 300 * player.maidens;
-        points += 1500 * player.hat_tricks;
-        if(player.balls_bowled >= 30)
-        {
-            if(player.economy >= 11)
-            {
-                points -= 250;
-            }
-            else if(player.economy >= 10)
-            {
-                points -= 200;
-            }
-            else if(player.economy >= 9)
-            {
-                points -= 100;
-            }
-            else if(player.economy >= 8)
-            {
-                points -= 50;
-            }
-            else if(player.economy >= 6)
-            {
-                points += 200;
-            }
-            else if(player.economy >= 5)
-            {
-                points += 500;
-            }
-            else if(player.economy >= 4)
-            {
-                points += 1000;
-            }
-            else if(player.economy >= 3)
-            {
-                points += 1600;
-            }
-            else if(player.economy >= 2)
-            {
-                points += 2400;
-            }
-            else if(player.economy >= 1)
-            {
-                points += 3000;
-            }
-            else 
-            {
-                points += 4000;
-            }
-        }
-        if(player.wickets >= 35)
-        {
-            points += 10000;
-        }
-        else if(player.wickets >= 30)
-        {
-            points += 8000;
-        }
-        else if(player.wickets >= 25)
-        {
-            points += 6000;
-        }
-        else if(player.wickets >= 20)
-        {
-            points += 4000;
-        }
-        else if(player.wickets >= 15)
-        {
-            points += 2000;
-        }
-        
-        points += 25 * player.catches;
-        points += 50 * player.stumpings;
-
-        points += 100 * player.man_of_matches;
-
-        return points;
+        if(player.strike_rate > 200) strike_rate_points = 1000;
+        else if(player.strike_rate > 175) strike_rate_points = 800;
+        else if(player.strike_rate > 150) strike_rate_points = 600;
+        else if(player.strike_rate > 125) strike_rate_points = 400;
+        else if(player.strike_rate > 100) strike_rate_points = 200;
+        else if(player.strike_rate > 75) strike_rate_points = -100;
+        else if(player.strike_rate > 50) strike_rate_points = -200;
+        else if(player.strike_rate > 25) strike_rate_points = -300;
+        else strike_rate_points = -500;
+        if(player.position === 'Bowler') strike_rate_points = strike_rate_points > 0 ? strike_rate_points * 2 : strike_rate_points / 2;
     }
-    else if(player.position === 'Bowler')
+    points += strike_rate_points;
+    
+
+    var wicket_points = 0;
+    if(player.wickets >= 35) wicket_points = 5000;
+    else if(player.wickets >= 30) wicket_points = 4000;
+    else if(player.wickets >= 25) wicket_points = 3000;
+    else if(player.wickets >= 20) wicket_points = 2000;
+    else if(player.wickets >= 15) wicket_points = 1000;
+    points += player.position === 'Batsman' ? wicket_points * 2 : wicket_points;
+
+    var economy_points = 0;
+    if(player.balls_bowled >= 30)
     {
-        var points = 0;
-
-        points += 4 * player.runs;
-        points += 8 * player.fours;
-        points += 16 * player.sixes;
-        points -= 3 * player.ducks;
-        points += 100 * player.half_centuries;
-        points += 200 * player.centuries;
-        if(player.balls_faced >= 15)
-        {
-            if(player.strike_rate >= 200)
-            {
-                points += 2000;
-            }
-            else if(player.strike_rate >= 175)
-            {
-                points += 1600;
-            }
-            else if(player.strike_rate >= 150)
-            {
-                points += 1200;
-            }
-            else if(player.strike_rate >= 125)
-            {
-                points += 800;
-            }
-            else if(player.strike_rate >= 100)
-            {
-                points += 400;
-            }
-            else if(player.strike_rate >= 75)
-            {
-                points += -50;
-            }
-            else if(player.strike_rate >= 50)
-            {
-                points += -100;
-            }
-            else if(player.strike_rate >= 25)
-            {
-                points += -150;
-            }
-            else
-            {
-                points += -250;
-            }
-        }
-        if(player.runs >= 850)
-        {
-            points += 10000;
-        }
-        else if(player.runs >= 800)
-        {
-            points += 9000;
-        }
-        else if(player.runs >= 750)
-        {
-            points += 8000;
-        }
-        else if(player.runs >= 700)
-        {
-            points += 7000;
-        }
-        else if(player.runs >= 650)
-        {
-            points += 6000;
-        }
-        else if(player.runs >= 600)
-        {
-            points += 5000;
-        }
-        else if(player.runs >= 550)
-        {
-            points += 4000;
-        }
-        else if(player.runs >= 500)
-        {
-            points += 3000;
-        }
-        else if(player.runs >= 450)
-        {
-            points += 2000;
-        }
-        else if(player.runs >= 400)
-        {
-            points += 1500;
-        }
-        else if(player.runs >= 350)
-        {
-            points += 1000;
-        }
-        else if(player.runs >= 300)
-        {
-            points += 500;
-        }
-
-        points += 50 * player.wickets;
-        points += 5 * player.dots;
-        points += 250 * player.four_wicket_hauls;
-        points += 500 * player.five_wicket_hauls;
-        points += 1000 * player.six_wicket_hauls;
-        points += 150 * player.maidens;
-        points += 750 * player.hat_tricks;
-        if(player.balls_bowled >= 30)
-        {
-            if(player.economy >= 11)
-            {
-                points -= 500;
-            }
-            else if(player.economy >= 10)
-            {
-                points -= 400;
-            }
-            else if(player.economy >= 9)
-            {
-                points -= 200;
-            }
-            else if(player.economy >= 8)
-            {
-                points -= 100;
-            }
-            else if(player.economy >= 6)
-            {
-                points += 100;
-            }
-            else if(player.economy >= 5)
-            {
-                points += 250;
-            }
-            else if(player.economy >= 4)
-            {
-                points += 500;
-            }
-            else if(player.economy >= 3)
-            {
-                points += 800;
-            }
-            else if(player.economy >= 2)
-            {
-                points += 1200;
-            }
-            else if(player.economy >= 1)
-            {
-                points += 1500;
-            }
-            else 
-            {
-                points += 2000;
-            }
-        }
-        if(player.wickets >= 35)
-        {
-            points += 5000;
-        }
-        else if(player.wickets >= 30)
-        {
-            points += 4000;
-        }
-        else if(player.wickets >= 25)
-        {
-            points += 3000;
-        }
-        else if(player.wickets >= 20)
-        {
-            points += 2000;
-        }
-        else if(player.wickets >= 15)
-        {
-            points += 1000;
-        }
-        
-        points += 25 * player.catches;
-        points += 50 * player.stumpings;
-
-        points += 100 * player.man_of_matches;
-
-        return points;
+        if(player.economy > 11) economy_points = -500;
+        else if(player.economy > 10) economy_points = -400;
+        else if(player.economy > 9) economy_points = -200;
+        else if(player.economy > 8) economy_points = -100;
+        else if(player.economy > 6) economy_points = 100;
+        else if(player.economy > 5) economy_points = 250;
+        else if(player.economy > 4) economy_points = 500;
+        else if(player.economy > 3) economy_points = 800;
+        else if(player.economy > 2) economy_points = 1200;
+        else if(player.economy > 1) economy_points = 1500;
+        else economy_points = 2000;
+        if(player.position === 'Batsman') economy_points = economy_points > 0 ? economy_points * 2 : economy_points / 2;
     }
-    else
-    {
-        var points = 0;
+    points += economy_points;
 
-        points += 2 * player.runs;
-        points += 4 * player.fours;
-        points += 8 * player.sixes;
-        points -= 6 * player.ducks;
-        points += 50 * player.half_centuries;
-        points += 100 * player.centuries;
-        if(player.balls_faced >= 15)
-        {
-            if(player.strike_rate >= 200)
-            {
-                points += 1000;
-            }
-            else if(player.strike_rate >= 175)
-            {
-                points += 800;
-            }
-            else if(player.strike_rate >= 150)
-            {
-                points += 600;
-            }
-            else if(player.strike_rate >= 125)
-            {
-                points += 400;
-            }
-            else if(player.strike_rate >= 100)
-            {
-                points += 200;
-            }
-            else if(player.strike_rate >= 75)
-            {
-                points += -100;
-            }
-            else if(player.strike_rate >= 50)
-            {
-                points += -200;
-            }
-            else if(player.strike_rate >= 25)
-            {
-                points += -300;
-            }
-            else
-            {
-                points += -500;
-            }
-        }
-        if(player.runs >= 850)
-        {
-            points += 5000;
-        }
-        else if(player.runs >= 800)
-        {
-            points += 4500;
-        }
-        else if(player.runs >= 750)
-        {
-            points += 4000;
-        }
-        else if(player.runs >= 700)
-        {
-            points += 3500;
-        }
-        else if(player.runs >= 650)
-        {
-            points += 3000;
-        }
-        else if(player.runs >= 600)
-        {
-            points += 2500;
-        }
-        else if(player.runs >= 550)
-        {
-            points += 2000;
-        }
-        else if(player.runs >= 500)
-        {
-            points += 1500;
-        }
-        else if(player.runs >= 450)
-        {
-            points += 1000;
-        }
-        else if(player.runs >= 400)
-        {
-            points += 750;
-        }
-        else if(player.runs >= 350)
-        {
-            points += 500;
-        }
-        else if(player.runs >= 300)
-        {
-            points += 250;
-        }
-
-        points += 50 * player.wickets;
-        points += 5 * player.dots;
-        points += 250 * player.four_wicket_hauls;
-        points += 500 * player.five_wicket_hauls;
-        points += 1000 * player.six_wicket_hauls;
-        points += 150 * player.maidens;
-        points += 750 * player.hat_tricks;
-        if(player.balls_bowled >= 30)
-        {
-            if(player.economy >= 11)
-            {
-                points -= 500;
-            }
-            else if(player.economy >= 10)
-            {
-                points -= 400;
-            }
-            else if(player.economy >= 9)
-            {
-                points -= 200;
-            }
-            else if(player.economy >= 8)
-            {
-                points -= 100;
-            }
-            else if(player.economy >= 6)
-            {
-                points += 100;
-            }
-            else if(player.economy >= 5)
-            {
-                points += 250;
-            }
-            else if(player.economy >= 4)
-            {
-                points += 500;
-            }
-            else if(player.economy >= 3)
-            {
-                points += 800;
-            }
-            else if(player.economy >= 2)
-            {
-                points += 1200;
-            }
-            else if(player.economy >= 1)
-            {
-                points += 1500;
-            }
-            else 
-            {
-                points += 2000;
-            }
-        }
-        if(player.wickets >= 35)
-        {
-            points += 5000;
-        }
-        else if(player.wickets >= 30)
-        {
-            points += 4000;
-        }
-        else if(player.wickets >= 25)
-        {
-            points += 3000;
-        }
-        else if(player.wickets >= 20)
-        {
-            points += 2000;
-        }
-        else if(player.wickets >= 15)
-        {
-            points += 1000;
-        }
-        
-        points += 25 * player.catches;
-        points += 50 * player.stumpings;
-
-        points += 100 * player.man_of_matches;
-
-        return points;
-    }
+    return points;
 }
 
 function convert_name(name, data, innings) {
@@ -1143,7 +702,7 @@ async function calculate_player_bonuses() {
     for(var i = 0; i < losers.length; i++)
     {
         losers[i].points -= Math.round(1000 / losers.length);
-        losers[i].bonuses_points.push(Math.round(1000 / losers.length));
+        losers[i].bonuses_points.push(Math.round(-1000 / losers.length));
         await losers[i].save();
     }
 }
@@ -1241,6 +800,7 @@ async function add_bonus(bonus, max)
 module.exports = {
     verify,
     update,
+    refresh,
     add,
     hat_trick,
     man_of_match

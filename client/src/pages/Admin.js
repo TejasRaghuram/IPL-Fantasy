@@ -64,6 +64,7 @@ function Admin()
                                     if(result.ok)
                                     {
                                         document.getElementById('admin-man-of-match').value = '';
+                                        alert('Success!');
                                     }
                                     else
                                     {
@@ -90,6 +91,7 @@ function Admin()
                                     if(result.ok)
                                     {
                                         document.getElementById('admin-hat-trick').value = '';
+                                        alert('Success!');
                                     }
                                     else
                                     {
@@ -102,6 +104,21 @@ function Admin()
                                     alert('Fill All Fields!');
                                 }
                             }}>Add Hat Trick</button>
+                            <button class='admin-button' onClick={async () => {
+                                const result = await fetch('https://ipl-fantasy-api.onrender.com/api/admin/refresh', {
+                                    method: 'get',
+                                    headers: {'Content-Type': 'application/json'}
+                                });
+                                if(result.ok)
+                                {
+                                    alert('Success!')
+                                }
+                                else
+                                {
+                                    const json = await result.json();
+                                    alert(json.error);
+                                }
+                            }}>Refresh</button>
                             <button class='admin-button' onClick={async () => {
                                 const result = await fetch('https://ipl-fantasy-api.onrender.com/api/admin/update', {
                                     method: 'get',
@@ -116,7 +133,7 @@ function Admin()
                                     const json = await result.json();
                                     alert(json.error);
                                 }
-                            }}>Refresh</button>
+                            }}>Update</button>
                         </div>
                     );
                 }
