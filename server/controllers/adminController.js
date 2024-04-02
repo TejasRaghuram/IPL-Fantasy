@@ -575,14 +575,14 @@ function compute_points(player) {
     var strike_rate_points = 0;
     if(player.balls_faced > 15)
     {
-        if(player.strike_rate > 200) strike_rate_points = 1000;
-        else if(player.strike_rate > 175) strike_rate_points = 800;
-        else if(player.strike_rate > 150) strike_rate_points = 600;
-        else if(player.strike_rate > 125) strike_rate_points = 400;
-        else if(player.strike_rate > 100) strike_rate_points = 200;
-        else if(player.strike_rate > 75) strike_rate_points = -100;
-        else if(player.strike_rate > 50) strike_rate_points = -200;
-        else if(player.strike_rate > 25) strike_rate_points = -300;
+        if(player.strike_rate >= 200) strike_rate_points = 1000;
+        else if(player.strike_rate >= 175) strike_rate_points = 800;
+        else if(player.strike_rate >= 150) strike_rate_points = 600;
+        else if(player.strike_rate >= 125) strike_rate_points = 400;
+        else if(player.strike_rate >= 100) strike_rate_points = 200;
+        else if(player.strike_rate >= 75) strike_rate_points = -100;
+        else if(player.strike_rate >= 50) strike_rate_points = -200;
+        else if(player.strike_rate >= 25) strike_rate_points = -300;
         else strike_rate_points = -500;
         if(player.position === 'Bowler') strike_rate_points = strike_rate_points > 0 ? strike_rate_points * 2 : strike_rate_points / 2;
     }
@@ -619,7 +619,7 @@ function compute_points(player) {
 }
 
 function convert_name(name, data, innings) {
-    if(innings = 0)
+    if(innings === 0)
     {
         innings = 1;
     }

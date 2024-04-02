@@ -38,14 +38,14 @@ function Profile() {
                     var strike_rate_points = 0;
                     if(json.balls_faced > 15)
                     {
-                        if(json.strike_rate > 200) strike_rate_points = 1000;
-                        else if(json.strike_rate > 175) strike_rate_points = 800;
-                        else if(json.strike_rate > 150) strike_rate_points = 600;
-                        else if(json.strike_rate > 125) strike_rate_points = 400;
-                        else if(json.strike_rate > 100) strike_rate_points = 200;
-                        else if(json.strike_rate > 75) strike_rate_points = -100;
-                        else if(json.strike_rate > 50) strike_rate_points = -200;
-                        else if(json.strike_rate > 25) strike_rate_points = -300;
+                        if(json.strike_rate >= 200) strike_rate_points = 1000;
+                        else if(json.strike_rate >= 175) strike_rate_points = 800;
+                        else if(json.strike_rate >= 150) strike_rate_points = 600;
+                        else if(json.strike_rate >= 125) strike_rate_points = 400;
+                        else if(json.strike_rate >= 100) strike_rate_points = 200;
+                        else if(json.strike_rate >= 75) strike_rate_points = -100;
+                        else if(json.strike_rate >= 50) strike_rate_points = -200;
+                        else if(json.strike_rate >= 25) strike_rate_points = -300;
                         else strike_rate_points = -500;
                         if(json.position === 'Bowler') strike_rate_points = strike_rate_points > 0 ? strike_rate_points * 2: strike_rate_points / 2;
                     }
@@ -158,7 +158,7 @@ function Profile() {
                                     </tr>
                                     <tr class='profile-table-odd'>
                                         <td class='profile-table-element'>Strike Rate</td>
-                                        <td class='profile-table-element'>{json.balls_faced > 0 ? json.strike_rate:'-'}</td>
+                                        <td class='profile-table-element'>{json.balls_faced > 0 ? Math.round(json.strike_rate*1000)/1000:'-'}</td>
                                         <td class='profile-table-element'>{strike_rate_points}</td>
                                     </tr>
                                     <tr class='profile-table-even'>

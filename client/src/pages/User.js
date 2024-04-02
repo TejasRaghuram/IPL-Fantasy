@@ -49,7 +49,7 @@ function Add(props) {
             <div>
                 <button class='user-button' onClick={() =>{
                     setOpen(!open);
-                }}>Add Player</button>
+                }}>Add {props.caption}</button>
                 {open && 
                 <div id='user-add'>
                     <label for='league-name'>Player Name:</label>
@@ -152,12 +152,12 @@ function User() {
                             }
                             page.push(<Player rank={currentRank} player={players[i]}/>);
                         }
-                        page.push(<Add current={refresh} refresh={setRefresh}/>);
+                        page.push(<Add current={refresh} refresh={setRefresh} caption={players.length === 1? 'Vice Captain':'Player'}/>);
                         setContent(page);
                     }
                     else
                     {
-                        setContent(<Add current={refresh} refresh={setRefresh}/>);
+                        setContent(<Add current={refresh} refresh={setRefresh} caption={'Captain'}/>);
                     }
                 } catch(error) {
                     alert(error.stack);
