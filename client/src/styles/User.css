@@ -78,6 +78,52 @@
     border-radius: 25px;
 }
 
+#user-stats {
+    margin-top: 25px;
+    background-color: white;
+    border-radius: 25px;
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+
+#user-stats-header {
+    text-align: center;
+}
+
+.user-table {
+    width: calc(100% - 30px);
+    margin-left: 15px;
+    table-layout: fixed;
+    border-spacing: 0;
+    border-style: solid;
+    border-width: 1px;
+    border-color: gray;
+}
+
+.user-header {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.user-table-header {
+    background-color: silver;
+}
+
+.user-table-element {
+    text-align: center;
+    border-style: solid;
+    border-width: 1px;
+    border-color: gray;
+}
+
+.user-table-odd {
+    background-color: white;
+}
+
+.user-table-even {
+    background-color: gainsboro;
+}
+
 #user-content {
     padding: 25px;
 }

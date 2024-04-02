@@ -168,7 +168,7 @@ function Profile() {
                                     </tr>
                                     <tr class='profile-table-odd'>
                                         <td class='profile-table-element'>Batting Average</td>
-                                        <td class='profile-table-element'>{json.balls_faced > 0 ? json.batting_average:'-'}</td>
+                                        <td class='profile-table-element'>{json.balls_faced > 0 ? Math.round(json.batting_average*1000)/1000:'-'}</td>
                                         <td class='profile-table-element'>N/A</td>
                                     </tr>
                                     <tr class='profile-table-even'>
@@ -231,12 +231,12 @@ function Profile() {
                                     </tr>
                                     <tr class='profile-table-even'>
                                         <td class='profile-table-element'>Economy</td>
-                                        <td class='profile-table-element'>{json.balls_bowled > 0 ? json.economy:'-'}</td>
+                                        <td class='profile-table-element'>{json.balls_bowled > 0 ? Math.round(json.economy*1000)/1000:'-'}</td>
                                         <td class='profile-table-element'>{economy_points}</td>
                                     </tr>
                                     <tr class='profile-table-odd'>
                                         <td class='profile-table-element'>Bowling Average</td>
-                                        <td class='profile-table-element'>{json.balls_bowled > 0 ? json.bowling_average:'-'}</td>
+                                        <td class='profile-table-element'>{json.balls_bowled > 0 ? Math.round(json.bowling_average*1000)/1000:'-'}</td>
                                         <td class='profile-table-element'>N/A</td>
                                     </tr>
                                     <tr class='profile-table-even'>

@@ -102,7 +102,7 @@ function User() {
             body: JSON.stringify({username, league})
         })
             .then(response => response.json())
-            .then(async (json) =>{
+            .then(async (json) => {
                 try {
                     const players = [];
                     const result = await fetch('https://ipl-fantasy-api.onrender.com/api/players/all', {
@@ -152,6 +152,132 @@ function User() {
                             }
                             page.push(<Player rank={currentRank} player={players[i]}/>);
                         }
+                        page.push(
+                            <div id='user-stats'>
+                                <h2 id='user-stats-header'>Team Stats</h2>
+                                <h3 class='user-header'>Batting Stats</h3>
+                                <table class='user-table'>
+                                    <tr class='user-table-header'>
+                                        <th class='user-table-element'>Name</th>
+                                        <th class='user-table-element'>Amount</th>
+                                    </tr>
+                                    <tr class='user-table-odd'>
+                                        <td class='user-table-element'>Runs</td>
+                                        <td class='user-table-element'>{json.runs}</td>
+                                    </tr>
+                                    <tr class='user-table-even'>
+                                        <td class='user-table-element'>Fours</td>
+                                        <td class='user-table-element'>{json.fours}</td>
+                                    </tr>
+                                    <tr class='user-table-odd'>
+                                        <td class='user-table-element'>Sixes</td>
+                                        <td class='user-table-element'>{json.sixes}</td>
+                                    </tr>
+                                    <tr class='user-table-even'>
+                                        <td class='user-table-element'>Ducks</td>
+                                        <td class='user-table-element'>{json.ducks}</td>
+                                    </tr>
+                                    <tr class='user-table-odd'>
+                                        <td class='user-table-element'>Half Centuries</td>
+                                        <td class='user-table-element'>{json.half_centuries}</td>
+                                    </tr>
+                                    <tr class='user-table-even'>
+                                        <td class='user-table-element'>Centuries</td>
+                                        <td class='user-table-element'>{json.centuries}</td>
+                                    </tr>
+                                    <tr class='user-table-odd'>
+                                        <td class='user-table-element'>Strike Rate</td>
+                                        <td class='user-table-element'>{json.balls_faced > 0 ? Math.round(json.strike_rate*1000)/1000:'-'}</td>
+                                    </tr>
+                                    <tr class='user-table-even'>
+                                        <td class='user-table-element'>Balls Faced</td>
+                                        <td class='user-table-element'>{json.balls_faced}</td>
+                                    </tr>
+                                    <tr class='user-table-odd'>
+                                        <td class='user-table-element'>Batting Average</td>
+                                        <td class='user-table-element'>{json.balls_faced > 0 ? Math.round(json.batting_average*1000)/1000:'-'}</td>
+                                    </tr>
+                                    <tr class='user-table-even'>
+                                        <td class='user-table-element'>Not Outs</td>
+                                        <td class='user-table-element'>{json.not_outs}</td>
+                                    </tr>
+                                    <tr class='user-table-odd'>
+                                        <td class='user-table-element'>Dismissals</td>
+                                        <td class='user-table-element'>{json.dismissals}</td>
+                                    </tr>
+                                </table>
+                                <h3 class='user-header'>Bowling Stats</h3>
+                                <table class='user-table'>
+                                    <tr class='user-table-header'>
+                                        <th class='user-table-element'>Name</th>
+                                        <th class='user-table-element'>Amount</th>
+                                    </tr>
+                                    <tr class='user-table-odd'>
+                                        <td class='user-table-element'>Wickets</td>
+                                        <td class='user-table-element'>{json.wickets}</td>
+                                    </tr>
+                                    <tr class='user-table-even'>
+                                        <td class='user-table-element'>Dots</td>
+                                        <td class='user-table-element'>{json.dots}</td>
+                                    </tr>
+                                    <tr class='user-table-odd'>
+                                        <td class='user-table-element'>Four Wicket Hauls</td>
+                                        <td class='user-table-element'>{json.four_wicket_hauls}</td>
+                                    </tr>
+                                    <tr class='user-table-even'>
+                                        <td class='user-table-element'>Five Wicket Hauls</td>
+                                        <td class='user-table-element'>{json.five_wicket_hauls}</td>
+                                    </tr>
+                                    <tr class='user-table-odd'>
+                                        <td class='user-table-element'>Six Wicket Hauls</td>
+                                        <td class='user-table-element'>{json.six_wicket_hauls}</td>
+                                    </tr>
+                                    <tr class='user-table-even'>
+                                        <td class='user-table-element'>Maidens</td>
+                                        <td class='user-table-element'>{json.maidens}</td>
+                                    </tr>
+                                    <tr class='user-table-odd'>
+                                        <td class='user-table-element'>Hat Tricks</td>
+                                        <td class='user-table-element'>{json.hat_tricks}</td>
+                                    </tr>
+                                    <tr class='user-table-even'>
+                                        <td class='user-table-element'>Economy</td>
+                                        <td class='user-table-element'>{json.balls_bowled > 0 ? Math.round(json.economy*1000)/1000:'-'}</td>
+                                    </tr>
+                                    <tr class='user-table-odd'>
+                                        <td class='user-table-element'>Bowling Average</td>
+                                        <td class='user-table-element'>{json.balls_bowled > 0 ? Math.round(json.bowling_average*1000)/1000:'-'}</td>
+                                    </tr>
+                                    <tr class='user-table-even'>
+                                        <td class='user-table-element'>Balls Bowled</td>
+                                        <td class='user-table-element'>{json.balls_bowled}</td>
+                                    </tr>
+                                    <tr class='user-table-odd'>
+                                        <td class='user-table-element'>Runs Conceded</td>
+                                        <td class='user-table-element'>{json.runs_conceded}</td>
+                                    </tr>
+                                </table>
+                                <h3 class='user-header'>General Stats</h3>    
+                                <table class='user-table'>
+                                    <tr class='user-table-header'>
+                                        <th class='user-table-element'>Name</th>
+                                        <th class='user-table-element'>Amount</th>
+                                    </tr>
+                                    <tr class='user-table-odd'>
+                                        <td class='user-table-element'>Catches</td>
+                                        <td class='user-table-element'>{json.catches}</td>
+                                    </tr>
+                                    <tr class='user-table-even'>
+                                        <td class='user-table-element'>Stumpings</td>
+                                        <td class='user-table-element'>{json.stumpings}</td>
+                                    </tr>
+                                    <tr class='user-table-odd'>
+                                        <td class='user-table-element'>Man of the Match Awards</td>
+                                        <td class='user-table-element'>{json.man_of_matches}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        );
                         page.push(<Add current={refresh} refresh={setRefresh} caption={players.length === 1? 'Vice Captain':'Player'}/>);
                         setContent(page);
                     }
