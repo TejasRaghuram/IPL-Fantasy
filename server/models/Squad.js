@@ -111,6 +111,21 @@ const squadSchema = new Schema({
         required: true,
         default: 0
     },
+    four_wicket_hauls: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    five_wicket_hauls: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    six_wicket_hauls: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     balls_bowled: {
         type: Number,
         required: true,
@@ -131,7 +146,27 @@ const squadSchema = new Schema({
         required: true,
         default: 0
     },
+    bowling_strike_rate: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     maidens: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    hat_tricks: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    catches: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    stumpings: {
         type: Number,
         required: true,
         default: 0

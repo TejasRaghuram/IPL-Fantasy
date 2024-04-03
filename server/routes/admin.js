@@ -5,15 +5,18 @@ const router = express.Router();
 const {
     verify,
     update,
+    refresh_points,
     refresh,
     add,
     hat_trick,
-    man_of_match
+    man_of_match,
 } = require('../controllers/adminController');
 
 router.post('/verify', verify);
 
 router.get('/update', update);
+
+router.get('/refresh_points', refresh_points);
 
 router.get('/refresh', refresh);
 

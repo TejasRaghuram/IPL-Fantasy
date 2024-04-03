@@ -88,7 +88,8 @@ function Profile() {
                             'Batting Average',
                             'Highest Score',
                             'Economy',
-                            'Bowling Average'
+                            'Bowling Average',
+                            'Bowling Strike Rate'
                         ];
                         if(best.includes(bonus))
                         {
@@ -240,11 +241,16 @@ function Profile() {
                                         <td class='profile-table-element'>N/A</td>
                                     </tr>
                                     <tr class='profile-table-even'>
+                                        <td class='profile-table-element'>Bowling Strike Rate</td>
+                                        <td class='profile-table-element'>{json.balls_bowled > 0 ? Math.round(json.bowling_strike_rate*1000)/1000:'-'}</td>
+                                        <td class='profile-table-element'>N/A</td>
+                                    </tr>
+                                    <tr class='profile-table-odd'>
                                         <td class='profile-table-element'>Balls Bowled</td>
                                         <td class='profile-table-element'>{json.balls_bowled}</td>
                                         <td class='profile-table-element'>N/A</td>
                                     </tr>
-                                    <tr class='profile-table-odd'>
+                                    <tr class='profile-table-even'>
                                         <td class='profile-table-element'>Runs Conceded</td>
                                         <td class='profile-table-element'>{json.runs_conceded}</td>
                                         <td class='profile-table-element'>N/A</td>

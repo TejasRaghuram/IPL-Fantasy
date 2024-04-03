@@ -105,7 +105,7 @@ function Admin()
                                 }
                             }}>Add Hat Trick</button>
                             <button class='admin-button' onClick={async () => {
-                                const result = await fetch('https://ipl-fantasy-api.onrender.com/api/admin/refresh', {
+                                const result = await fetch('http://localhost:4000/api/admin/refresh_points', {
                                     method: 'get',
                                     headers: {'Content-Type': 'application/json'}
                                 });
@@ -118,9 +118,24 @@ function Admin()
                                     const json = await result.json();
                                     alert(json.error);
                                 }
-                            }}>Refresh</button>
+                            }}>Refresh Points</button>
                             <button class='admin-button' onClick={async () => {
-                                const result = await fetch('https://ipl-fantasy-api.onrender.com/api/admin/update', {
+                                const result = await fetch('http://localhost:4000/api/admin/refresh', {
+                                    method: 'get',
+                                    headers: {'Content-Type': 'application/json'}
+                                });
+                                if(result.ok)
+                                {
+                                    alert('Success!')
+                                }
+                                else
+                                {
+                                    const json = await result.json();
+                                    alert(json.error);
+                                }
+                            }}>Refresh Data</button>
+                            <button class='admin-button' onClick={async () => {
+                                const result = await fetch('http://localhost:4000/api/admin/update', {
                                     method: 'get',
                                     headers: {'Content-Type': 'application/json'}
                                 });

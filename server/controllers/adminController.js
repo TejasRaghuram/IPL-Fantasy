@@ -67,7 +67,7 @@ const update = async (req, res) => {
     }
 }
 
-const refresh = async (req, res) => {
+const refresh_points = async (req, res) => {
     try {
         const players = Player.find({});
         for(var i = 0; i < players.length; i++)
@@ -80,6 +80,38 @@ const refresh = async (req, res) => {
         for(var i = 0; i < leagues.length; i++)
         {
             await update_league(leagues[i].name);
+        }
+        res.status(200).json({});
+    } catch(error) {
+        res.status(400).json({error: error.message});
+    }
+}
+
+const refresh = async (req, res) => {
+    try {
+        const player = await Player.find({});
+        for(var i = 0; i < player.length; i++)
+        {
+            const name = player[i].name;
+            const position = player[i].position;
+            await Player.deleteOne({name: name});
+            await Player.create({name, position});
+        }
+        const squads = await Squad.find({});
+        for(var i = 0; i < squads.length; i++)
+        {
+            const username = squads[i].username;
+            const league = squads[i].league;
+            const players = squads[i].players;
+            const captain = squads[i].captain;
+            const vice_captain = squads[i].captain;
+            await Squad.deleteOne({username: username, league: league});
+            await Squad.create({username, league, players, captain, vice_captain})
+        }
+        const matches = await Match.find({});
+        for(var i = 0; i < matches.length; i++)
+        {
+            await Match.deleteOne({match_id: matches[i].match_id});
         }
         res.status(200).json({});
     } catch(error) {
@@ -293,6 +325,7 @@ async function add_match(data) {
                 else
                 {
                     player.bowling_average = player.runs_conceded / player.wickets;
+                    player.bowling_strike_rate = player.balls_bowled / player.wickets;
                 }
                 player.economy = 6 * (player.runs_conceded / player.balls_bowled);
 
@@ -354,9 +387,15 @@ async function update_league(league) {
             squads[i].sixes += player.sixes;
             squads[i].wickets += player.wickets;
             squads[i].dots += player.dots;
+            squads[i].four_wicket_hauls += player.four_wicket_hauls;
+            squads[i].five_wicket_hauls += player.five_wicket_hauls;
+            squads[i].six_wicket_hauls += player.six_wicket_hauls;
             squads[i].balls_bowled += player.balls_bowled;
             squads[i].runs_conceded += player.runs_conceded;
             squads[i].maidens += player.maidens;
+            squads[i].hat_tricks += player.hat_tricks;
+            squads[i].catches += player.catches;
+            squads[i].stumpings += player.stumpings;
             squads[i].man_of_matches += player.man_of_matches;
         }
         if(squads[i].dismissals === 0)
@@ -378,10 +417,12 @@ async function update_league(league) {
         if(squads[i].wickets === 0)
         {
             squads[i].bowling_average = squads[i].runs_conceded;
+            squads[i].bowling_strike_rate = squads[i].balls_bowled;
         }
         else
         {
             squads[i].bowling_average = squads[i].runs_conceded / squads[i].wickets;
+            squads[i].bowling_strike_rate = squads[i].balls_bowled / squads[i].wickets;
         }
         squads[i].points = squads[i].base_points;
         squads[i].bonuses = [];
@@ -395,15 +436,19 @@ async function update_league(league) {
     await add_league_bonus(league, 'strike_rate', true);
     await add_league_bonus(league, 'centuries', true);
     await add_league_bonus(league, 'half_centuries', true);
-    await add_league_bonus(league, 'ducks', true);
     await add_league_bonus(league, 'fours', true);
     await add_league_bonus(league, 'sixes', true);
     await add_league_bonus(league, 'wickets', true);
+    await add_league_bonus(league, 'four_wicket_hauls', true);
+    await add_league_bonus(league, 'five_wicket_hauls', true);
+    await add_league_bonus(league, 'six_wicket_hauls', true);
     await add_league_bonus(league, 'dots', true);
     await add_league_bonus(league, 'economy', false);
     await add_league_bonus(league, 'bowling_average', false);
+    await add_league_bonus(league, 'bowling_strike_rate', false);
     await add_league_bonus(league, 'maidens', true);
     await add_league_bonus(league, 'man_of_matches', true);
+    await add_league_bonus(league, 'ducks', true);
 
     const teams = await Squad.find({'league': league});
     const bonuses = [
@@ -416,9 +461,13 @@ async function update_league(league) {
         'fours', 
         'sixes',
         'wickets',
+        'four_wicket_hauls',
+        'five_wicket_hauls',
+        'six_wicket_hauls',
         'dots',
         'economy',
         'bowling_average',
+        'bowling_strike_rate',
         'maidens',
         'man_of_matches'
     ];
@@ -451,7 +500,7 @@ async function add_league_bonus(league, bonus, max)
     var best;
     if(max)
     {
-        best = teams[0][bonus];
+        best = 0;
         for(var i = 0; i < teams.length; i++)
         {
             if(teams[i][bonus] > best)
@@ -484,7 +533,7 @@ async function add_league_bonus(league, bonus, max)
                         best = teams[i][bonus];
                     }
                 }
-                else if(bonus === 'bowling_average')
+                else if(bonus === 'bowling_average' || bonus === 'bowling_strike_rate')
                 {
                     if(teams[i].balls_bowled > 0)
                     {
@@ -516,7 +565,7 @@ async function add_league_bonus(league, bonus, max)
                 await teams[i].save();
             }
         }
-        else if(bonus === 'bowling_average')
+        else if(bonus === 'bowling_average' || bonus === 'bowling_strike_rate')
         {
             if(teams[i][bonus] === best && teams[i].balls_bowled > 0)
             {
@@ -655,16 +704,19 @@ async function calculate_player_bonuses() {
     await add_bonus('strike_rate', true);
     await add_bonus('centuries', true);
     await add_bonus('half_centuries', true);
-    await add_bonus('ducks', true);
     await add_bonus('fours', true);
     await add_bonus('sixes', true);
     await add_bonus('highest_score', true);
     await add_bonus('wickets', true);
+    await add_bonus('four_wicket_hauls', true);
+    await add_bonus('five_wicket_hauls', true);
+    await add_bonus('six_wicket_hauls', true);
     await add_bonus('dots', true);
     await add_bonus('economy', false);
     await add_bonus('bowling_average', false);
+    await add_bonus('bowling_strike_rate', false);
     await add_bonus('maidens', true);
-    await add_bonus('man_of_matches', true);
+    await add_bonus('ducks', true);
 
     const players = await Player.find({});
     const bonuses = [
@@ -678,11 +730,14 @@ async function calculate_player_bonuses() {
         'sixes',
         'highest_score',
         'wickets',
+        'four_wicket_hauls',
+        'five_wicket_hauls',
+        'six_wicket_hauls',
         'dots',
         'economy',
         'bowling_average',
-        'maidens',
-        'man_of_matches'
+        'bowling_strike_rate',
+        'maidens'
     ];
     for(var i = 0; i < bonuses.length; i++)
     {
@@ -746,7 +801,7 @@ async function add_bonus(bonus, max)
                         best = players[i][bonus];
                     }
                 }
-                else if(bonus === 'bowling_average')
+                else if(bonus === 'bowling_average' || bonus === 'bowling_strike_rate')
                 {
                     if(players[i].balls_bowled > 0)
                     {
@@ -778,7 +833,7 @@ async function add_bonus(bonus, max)
                 await players[i].save();
             }
         }
-        else if(bonus === 'bowling_average')
+        else if(bonus === 'bowling_average' || bonus === 'bowling_strike_rate')
         {
             if(players[i][bonus] === best && players[i].balls_bowled > 0)
             {
@@ -800,6 +855,7 @@ async function add_bonus(bonus, max)
 module.exports = {
     verify,
     update,
+    refresh_points,
     refresh,
     add,
     hat_trick,

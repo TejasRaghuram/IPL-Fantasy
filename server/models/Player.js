@@ -136,6 +136,11 @@ const playerSchema = new Schema({
         required: true,
         default: 0
     },
+    bowling_strike_rate: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     balls_bowled: {
         type: Number,
         required: true,

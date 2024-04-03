@@ -152,6 +152,42 @@ function User() {
                             }
                             page.push(<Player rank={currentRank} player={players[i]}/>);
                         }
+
+                        var bonuses = [];
+                        for(var i = 0; i < json.bonuses.length; i++)
+                        {
+                            var bonus = json.bonuses[i].replaceAll('_', ' ');
+                            for(var j = 0; j < bonus.length; j++)
+                            {
+                                if(j === 0 || bonus.charAt(j - 1) === ' ')
+                                {
+                                    bonus = bonus.substring(0, j) + bonus.charAt(j).toUpperCase() + bonus.substring(j + 1);
+                                }
+                            }
+                            const best = [
+                                'Strike Rate',
+                                'Batting Average',
+                                'Highest Score',
+                                'Economy',
+                                'Bowling Average',
+                                'Bowling Strike Rate'
+                            ];
+                            if(best.includes(bonus))
+                            {
+                                bonus = 'Best ' + bonus;
+                            }
+                            else
+                            {
+                                bonus = 'Most ' + bonus;
+                            }
+                            bonuses.push(
+                                <tr class={i % 2 === 0 ? 'profile-table-odd':'profile-table-even'}>
+                                    <td class='profile-table-element'>{bonus}</td>
+                                    <td class='profile-table-element'>{json.bonuses_points[i]}</td>
+                                </tr>
+                            );
+                        }
+
                         page.push(
                             <div id='user-stats'>
                                 <h2 id='user-stats-header'>Team Stats</h2>
@@ -249,10 +285,14 @@ function User() {
                                         <td class='user-table-element'>{json.balls_bowled > 0 ? Math.round(json.bowling_average*1000)/1000:'-'}</td>
                                     </tr>
                                     <tr class='user-table-even'>
+                                        <td class='user-table-element'>Bowling Strike Rate</td>
+                                        <td class='user-table-element'>{json.balls_bowled > 0 ? Math.round(json.bowling_strike_rate*1000)/1000:'-'}</td>
+                                    </tr>
+                                    <tr class='user-table-odd'>
                                         <td class='user-table-element'>Balls Bowled</td>
                                         <td class='user-table-element'>{json.balls_bowled}</td>
                                     </tr>
-                                    <tr class='user-table-odd'>
+                                    <tr class='user-table-even'>
                                         <td class='user-table-element'>Runs Conceded</td>
                                         <td class='user-table-element'>{json.runs_conceded}</td>
                                     </tr>
@@ -276,6 +316,31 @@ function User() {
                                         <td class='user-table-element'>{json.man_of_matches}</td>
                                     </tr>
                                 </table>
+                                {bonuses.length > 0 &&
+                                    <div>
+                                        <h3 class='user-header'>Bonus Points</h3>
+                                        <table class='user-table'>
+                                            <tr class='user-table-header'>
+                                                <th class='user-table-element'>Name</th>
+                                                <th class='user-table-element'>Points</th>
+                                            </tr>
+                                            {bonuses}
+                                        </table>
+                                    </div>
+                                }
+                                <h3 class='user-header'>Total Points</h3>
+                                <table class='user-table'>
+                                    <tr class='user-table-header'>
+                                        <th class='user-table-element'>Base Points</th>
+                                        <th class='user-table-element'>Bonus Points</th>
+                                        <th class='user-table-element'>Total Points</th>
+                                    </tr>
+                                    <tr class='user-table-odd'>
+                                        <td class='user-table-element'>{json.base_points}</td>
+                                        <td class='user-table-element'>{json.points - json.base_points}</td>
+                                        <td class='user-table-element'>{json.points}</td>
+                                    </tr>
+                                </table>      
                             </div>
                         );
                         page.push(<Add current={refresh} refresh={setRefresh} caption={players.length === 1? 'Vice Captain':'Player'}/>);
