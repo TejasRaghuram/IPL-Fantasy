@@ -6,6 +6,10 @@ const matchSchema = new Schema({
     match_id: {
         type: Number,
         required: true
+    },
+    source: {
+        type: String,
+        required: true
     }
 }, { timestamps: true });
 

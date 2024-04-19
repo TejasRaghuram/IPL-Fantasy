@@ -23,21 +23,22 @@ const verify = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const matches_response = await fetch('https://cricket-live-data.p.rapidapi.com/fixtures-by-series/' + process.env.IPL_SERIES_ID, {
+        const matches_data_response = await fetch('https://cricket-live-data.p.rapidapi.com/fixtures-by-series/' + process.env.IPL_DATA_SERIES_ID, {
             method: 'GET',
             headers: {
                 'X-RapidAPI-Key': process.env.CRICKET_DATA_KEY,
                 'X-RapidAPI-Host': 'cricket-live-data.p.rapidapi.com'
             }
         });
-        const matches_json = await matches_response.json();
-        const matches = matches_json.results;
-        for(var i = 0; i < matches.length; i++)
+        const matches_data_json = await matches_data_response.json();
+        const matches_data = matches_data_json.results;
+        for(var i = 0; i < matches_data.length; i++)
         {
-            if(matches[i].status === 'Complete')
+            if(matches_data[i].status === 'Complete')
             {
-                const match_id = matches[i].id;
-                const exists = await Match.findOne({'match_id': match_id});
+                const match_id = matches_data[i].id;
+                const source = 'DATA'
+                const exists = await Match.findOne({'match_id': match_id}, {'source': source});
                 if(!exists)
                 {
                     const match_response = await fetch('https://cricket-live-data.p.rapidapi.com/match/' + match_id, {
@@ -48,13 +49,81 @@ const update = async (req, res) => {
                         }
                     });
                     const match_json = await match_response.json();
-                    await add_match(match_json);
+                    await add_match_data(match_json);
                     await Match.create({
-                        match_id
+                        match_id,
+                        source
                     });
                 }
             }
         }
+        
+        const matches_buzz_response = await fetch('https://cricbuzz-cricket.p.rapidapi.com/series/v1/' + process.env.IPL_BUZZ_SERIES_ID, {
+            method: 'GET',
+            headers: {
+              'X-RapidAPI-Key': 'a78c28eb75msh0fa7f3a74717e82p15a973jsn721026a5c1e2',
+              'X-RapidAPI-Host': 'cricbuzz-cricket.p.rapidapi.com'
+            }
+        });
+        const matches_buzz_json = await matches_buzz_response.json();
+        const matches_buzz = matches_buzz_json.matchDetails;
+        for(var i = 0; i < matches_buzz.length; i++)
+        {
+            if(matches_buzz[i].hasOwnProperty('matchDetailsMap'))
+            {
+                if(matches_buzz[i].matchDetailsMap.match[0].matchInfo.state === 'Complete')
+                {
+                    const match_id = matches_buzz[i].matchDetailsMap.match[0].matchInfo.matchId;
+                    const source = 'BUZZ';
+                    const exists = await Match.findOne({'match_id': match_id, 'source': source});
+
+                    if(!exists)
+                    {
+                        const players = {};
+                        const teams = [];
+                        teams.push(matches_buzz[i].matchDetailsMap.match[0].matchInfo.team1.teamId);
+                        teams.push(matches_buzz[i].matchDetailsMap.match[0].matchInfo.team2.teamId);
+                        for(var i = 0; i < teams.length; i++)
+                        {
+                            const players_response = await fetch('https://cricbuzz-cricket.p.rapidapi.com/mcenter/v1/'+match_id+'/team/'+teams[i], {
+                                method: 'GET',
+                                headers: {
+                                'X-RapidAPI-Key': process.env.CRICKET_DATA_KEY,
+                                'X-RapidAPI-Host': 'cricbuzz-cricket.p.rapidapi.com'
+                                }
+                            });
+
+                            const players_json = await players_response.json();
+                            for(var j = 0; j < players_json.players['playing XI'].length; j++)
+                            {
+                                players[players_json.players['playing XI'][j].id] = players_json.players['playing XI'][j].fullName;
+                            }
+                            for(var j = 0; j < players_json.players['bench'].length; j++)
+                            {
+                                players[players_json.players['bench'][j].id] = players_json.players['bench'][j].fullName;
+                            }
+                        }
+
+                        const match_response = await fetch('https://cricbuzz-cricket.p.rapidapi.com/mcenter/v1/'+match_id+'/scard', {
+                            method: 'GET',
+                            headers: {
+                                'X-RapidAPI-Key': process.env.CRICKET_DATA_KEY,
+                                'X-RapidAPI-Host': 'cricbuzz-cricket.p.rapidapi.com'
+                            }
+                        });
+                        const match_json = await match_response.json();
+
+                        await add_match_buzz(match_json, players);
+
+                        await Match.create({
+                            match_id,
+                            source
+                        });
+                    }
+                }
+            }
+        }
+        
         await calculate_player_bonuses();
         const leagues = await League.find({});
         for(var i = 0; i < leagues.length; i++)
@@ -104,7 +173,7 @@ const refresh = async (req, res) => {
             const league = squads[i].league;
             const players = squads[i].players;
             const captain = squads[i].captain;
-            const vice_captain = squads[i].captain;
+            const vice_captain = squads[i].vice_captain;
             await Squad.deleteOne({username: username, league: league});
             await Squad.create({username, league, players, captain, vice_captain})
         }
@@ -207,7 +276,7 @@ const hat_trick = async (req, res) => {
     }
 }
 
-async function add_match(data) {
+async function add_match_data(data) {
     const scorecard = data.results.live_details.scorecard;
     for(var innings = 0; innings < scorecard.length; innings++)
     {
@@ -244,32 +313,6 @@ async function add_match(data) {
                     if(batsman.runs === 0)
                     {
                         player.ducks++;
-                    }
-                    if(batsman.how_out.charAt(0) === 'c')
-                    {
-                        const dismissal = batsman.how_out.substring(2);
-                        const dismissal_names = dismissal.split(' b ');
-                        const catcher = convert_name(dismissal_names[0], data, innings);
-                        const catcher_player = await Player.findOne({'name': catcher});
-                        if(catcher_player)
-                        {
-                            catcher_player.catches++;
-                            catcher_player.base_points = compute_points(catcher_player);
-                            await catcher_player.save();
-                        }
-                    }
-                    else if(batsman.how_out.charAt(0) === 's')
-                    {
-                        const dismissal = batsman.how_out.substring(3);
-                        const dismissal_names = dismissal.split(' b ');
-                        const stumper = convert_name(dismissal_names[0], data, innings);
-                        const stumper_player = await Player.findOne({'name': stumper});
-                        if(stumper_player)
-                        {
-                            stumper_player.stumpings++;
-                            stumper_player.base_points = compute_points(stumper_player);
-                            await stumper_player.save();
-                        }
                     }
                 }
                 if(player.balls_faced > 0)
@@ -332,6 +375,52 @@ async function add_match(data) {
                 player.base_points = compute_points(player);
 
                 await player.save();
+            }
+        }
+    }
+}
+
+async function add_match_buzz(data, players) {
+    const man_of_match = data.matchHeader.playersOfTheMatch[0].fullName;
+    const player = await Player.findOne({'name': man_of_match});
+    player.man_of_matches++;
+    await player.save();
+
+    for(var i = 0; i < data.scoreCard.length; i++)
+    {
+        const batsmen = data.scoreCard[i].batTeamDetails.batsmenData;
+        for(var key in batsmen)
+        {
+            if(batsmen.hasOwnProperty(key))
+            {
+                if(batsmen[key].wicketCode === 'CAUGHT')
+                {
+                    const catcher = players[batsmen[key].fielderId1];
+                    const fielder = await Player.findOne({'name': catcher});
+                    if(fielder)
+                    {
+                        fielder.catches++;
+                        await fielder.save();
+                    }
+                    else
+                    {
+                        console.log(catcher);
+                    }
+                }
+                else if(batsmen[key].wicketCode === 'STUMPED')
+                {
+                    const stumper = players[batsmen[key].fielderId1];
+                    const fielder = await Player.findOne({'name': stumper});
+                    if(fielder)
+                    {
+                        fielder.stumpings++;
+                        await fielder.save();
+                    }
+                    else
+                    {
+                        console.log(stumper);
+                    }
+                }
             }
         }
     }
@@ -521,7 +610,7 @@ async function add_league_bonus(league, bonus, max)
     }
     else
     {
-        var best = teams[0][bonus];
+        var best = Number.MAX_SAFE_INTEGER;
         for(var i = 0; i < teams.length; i++)
         {
             if(teams[i][bonus] < best)
@@ -535,7 +624,7 @@ async function add_league_bonus(league, bonus, max)
                 }
                 else if(bonus === 'bowling_average' || bonus === 'bowling_strike_rate')
                 {
-                    if(teams[i].balls_bowled > 0)
+                    if(teams[i].wickets > 0)
                     {
                         best = teams[i][bonus];
                     }
@@ -567,7 +656,7 @@ async function add_league_bonus(league, bonus, max)
         }
         else if(bonus === 'bowling_average' || bonus === 'bowling_strike_rate')
         {
-            if(teams[i][bonus] === best && teams[i].balls_bowled > 0)
+            if(teams[i][bonus] === best && teams[i].wickets > 0)
             {
                 teams[i].bonuses.push(bonus);
                 await teams[i].save();
@@ -667,27 +756,6 @@ function compute_points(player) {
     return points;
 }
 
-function convert_name(name, data, innings) {
-    if(innings === 0)
-    {
-        innings = 1;
-    }
-    else
-    {
-        innings = 0;
-    }
-
-    const players = data.results.live_details.scorecard[innings].batting.concat(data.results.live_details.scorecard[innings].still_to_bat);
-    for(var i = 0; i < players.length; i++)
-    {
-        if(players[i].player_name.includes(name))
-        {
-            return players[i].player_name;
-        }
-    }
-    return '';
-}
-
 async function calculate_player_bonuses() {
     const refresh = await Player.find({});
     for(var i = 0; i < refresh.length; i++)
@@ -768,7 +836,7 @@ async function add_bonus(bonus, max)
     var best;
     if(max)
     {
-        best = players[0][bonus];
+        best = 0;
         for(var i = 0; i < players.length; i++)
         {
             if(players[i][bonus] > best)
@@ -789,7 +857,7 @@ async function add_bonus(bonus, max)
     }
     else
     {
-        var best = players[0][bonus];
+        best = Number.MAX_SAFE_INTEGER;
         for(var i = 0; i < players.length; i++)
         {
             if(players[i][bonus] < best)
@@ -803,7 +871,7 @@ async function add_bonus(bonus, max)
                 }
                 else if(bonus === 'bowling_average' || bonus === 'bowling_strike_rate')
                 {
-                    if(players[i].balls_bowled > 0)
+                    if(players[i].wickets > 0)
                     {
                         best = players[i][bonus];
                     }
@@ -835,7 +903,7 @@ async function add_bonus(bonus, max)
         }
         else if(bonus === 'bowling_average' || bonus === 'bowling_strike_rate')
         {
-            if(players[i][bonus] === best && players[i].balls_bowled > 0)
+            if(players[i][bonus] === best && players[i].wickets > 0)
             {
                 players[i].bonuses.push(bonus);
                 await players[i].save();
