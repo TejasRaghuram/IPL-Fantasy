@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { UserContext } from './UserContext.js'
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import Layout from './pages/Layout.js';
 import Home from './pages/Home.js';
 import League from './pages/League.js';
@@ -17,7 +17,7 @@ function App() {
 
   return (
     <UserContext.Provider value={{ username: username, setUsername: setUsername }}>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           <Route path='/' element={<Layout/>}>
             <Route index element={<Home/>}/>
@@ -30,7 +30,7 @@ function App() {
             <Route path='admin' element={<Admin/>}/>
           </Route>
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </UserContext.Provider>
   );
 }

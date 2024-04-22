@@ -1,12 +1,10 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { UserContext } from './../UserContext.js';
-import { useContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './../styles/Profile.css';
 
 function Profile() {
     const params = useParams();
     const navigate = useNavigate();
-    const user = useContext(UserContext);
     const [content, setContent] = useState(<p>Loading...</p>);
     const [image, setImage] = useState('https://scores.iplt20.com/ipl/images/default-player-statsImage.png?v=4');
 
@@ -315,18 +313,11 @@ function Profile() {
             });
     }, [navigate, params.player, image]);
 
-    if(user.username === null)
-    {
-        navigate('/');
-    }
-    else
-    {
-        return (
-            <div id='profile-content'>
-                {content}
-            </div>
-        );
-    }
+    return (
+        <div id='profile-content'>
+            {content}
+        </div>
+    );
 }
 
 export default Profile;
