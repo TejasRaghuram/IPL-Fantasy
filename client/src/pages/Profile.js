@@ -50,25 +50,27 @@ function Profile() {
                         if(json.position === 'Bowler') strike_rate_points = strike_rate_points > 0 ? strike_rate_points * 2: strike_rate_points / 2;
                     }
                     var wicket_points = 0;
-                    if(json.wickets >= 35) wicket_points = 5000;
-                    else if(json.wickets >= 30) wicket_points = 4000;
-                    else if(json.wickets >= 25) wicket_points = 3000;
-                    else if(json.wickets >= 20) wicket_points = 2000;
-                    else if(json.wickets >= 15) wicket_points = 1000;
+                    if(json.wickets >= 30) wicket_points = 5000;
+                    else if(json.wickets >= 25) wicket_points = 4000;
+                    else if(json.wickets >= 20) wicket_points = 2500;
+                    else if(json.wickets >= 15) wicket_points = 1250;
+                    else if(json.wickets >= 10) wicket_points = 750;
+                    else if(json.wickets >= 5) wicket_points = 250;
                     var economy_points = 0;
                     if(json.balls_bowled >= 30)
                     {
-                        if(json.economy > 11) economy_points = -500;
-                        else if(json.economy > 10) economy_points = -400;
-                        else if(json.economy > 9) economy_points = -200;
-                        else if(json.economy > 8) economy_points = -100;
-                        else if(json.economy > 6) economy_points = 100;
-                        else if(json.economy > 5) economy_points = 250;
-                        else if(json.economy > 4) economy_points = 500;
-                        else if(json.economy > 3) economy_points = 800;
-                        else if(json.economy > 2) economy_points = 1200;
-                        else if(json.economy > 1) economy_points = 1500;
-                        else economy_points = 2000;
+                        if(json.economy > 13) economy_points = -500;
+                        else if(json.economy > 12) economy_points = -400;
+                        else if(json.economy > 11) economy_points = -300;
+                        else if(json.economy > 10) economy_points = -200;
+                        else if(json.economy > 9) economy_points = -100;
+                        else if(json.economy > 8) economy_points = 100;
+                        else if(json.economy > 7) economy_points = 250;
+                        else if(json.economy > 6) economy_points = 500;
+                        else if(json.economy > 5) economy_points = 1000;
+                        else if(json.economy > 4) economy_points = 1500;
+                        else if(json.economy > 3) economy_points = 2000;
+                        else economy_points = 2500;
                         if(json.position === 'Batsman') economy_points = economy_points > 0 ? economy_points * 2: economy_points / 2;
                     }
 

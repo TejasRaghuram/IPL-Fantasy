@@ -138,10 +138,10 @@ const update = async (req, res) => {
 
 const refresh_points = async (req, res) => {
     try {
-        const players = Player.find({});
+        const players = await Player.find({});
         for(var i = 0; i < players.length; i++)
         {
-            players[i] = compute_points(players[i]);
+            players[i].base_points = compute_points(players[i]);
             await players[i].save();
         }
         await calculate_player_bonuses();
@@ -271,6 +271,20 @@ const hat_trick = async (req, res) => {
         {
             res.status(400).json({error: 'Player Does Not Exist'});
         }
+    } catch(error) {
+        res.status(400).json({error: error.message});
+    }
+}
+
+const averages = async (req, res) => {
+    try {
+        const players = await Player.find({position: 'All Rounder'});
+        var points = 0;
+        for(let i = 0; i < players.length; i++)
+        {
+            points += players[i].points;
+        }
+        res.status(200).json(points / players.length);
     } catch(error) {
         res.status(400).json({error: error.message});
     }
@@ -442,6 +456,9 @@ async function update_league(league) {
         squads[i].sixes = 0;
         squads[i].wickets = 0;
         squads[i].dots = 0;
+        squads[i].four_wicket_hauls = 0;
+        squads[i].five_wicket_hauls = 0;
+        squads[i].six_wicket_hauls = 0;
         squads[i].balls_bowled = 0;
         squads[i].runs_conceded = 0;
         squads[i].maidens = 0;
@@ -450,6 +467,9 @@ async function update_league(league) {
         squads[i].economy = 0;
         squads[i].batting_average = 0;
         squads[i].bowling_average = 0;
+        squads[i].catches = 0;
+        squads[i].stumpings = 0;
+        squads[i].hat_tricks = 0;
         for(var j = 0; j < squads[i].players.length; j++)
         {
             const player = await Player.findOne({'name': squads[i].players[j]});
@@ -683,6 +703,11 @@ function compute_points(player) {
     points += player.position === 'Bowler' ? player.half_centuries * 100 : player.half_centuries * 50;
     points += player.position === 'Bowler' ? player.centuries * 200 : player.centuries * 100;
 
+    if(player.name === 'Jasprit Bumrah')
+    {
+        console.log(points);
+    }
+
     points += player.position === 'Batsman' ? player.wickets * 100 : player.wickets * 50;
     points += player.position === 'Batsman' ? player.dots * 10 : player.dots * 5;
     points += player.position === 'Batsman' ? player.four_wicket_hauls * 500 : player.four_wicket_hauls * 250;
@@ -691,9 +716,19 @@ function compute_points(player) {
     points += player.position === 'Batsman' ? player.maidens * 300 : player.maidens * 150;
     points += player.position === 'Batsman' ? player.hat_tricks * 1500 : player.hat_tricks * 750;
 
+    if(player.name === 'Jasprit Bumrah')
+    {
+        console.log(points);
+    }
+
     points += player.catches * 25;
     points += player.stumpings * 50;
     points += player.man_of_matches * 100;
+
+    if(player.name === 'Jasprit Bumrah')
+    {
+        console.log(points);
+    }
 
     var run_points = 0;
     if(player.runs >= 850) run_points = 5000;
@@ -710,6 +745,11 @@ function compute_points(player) {
     else if(player.runs >= 300) run_points = 250;
     points += player.position === 'Bowler' ? run_points * 2 : run_points;
 
+    if(player.name === 'Jasprit Bumrah')
+    {
+        console.log(points);
+    }
+
     var strike_rate_points = 0;
     if(player.balls_faced > 15)
     {
@@ -725,33 +765,49 @@ function compute_points(player) {
         if(player.position === 'Bowler') strike_rate_points = strike_rate_points > 0 ? strike_rate_points * 2 : strike_rate_points / 2;
     }
     points += strike_rate_points;
-    
+
+    if(player.name === 'Jasprit Bumrah')
+    {
+        console.log(points);
+    }
 
     var wicket_points = 0;
-    if(player.wickets >= 35) wicket_points = 5000;
-    else if(player.wickets >= 30) wicket_points = 4000;
-    else if(player.wickets >= 25) wicket_points = 3000;
-    else if(player.wickets >= 20) wicket_points = 2000;
-    else if(player.wickets >= 15) wicket_points = 1000;
+    if(player.wickets >= 30) wicket_points = 5000;
+    else if(player.wickets >= 25) wicket_points = 4000;
+    else if(player.wickets >= 20) wicket_points = 2500;
+    else if(player.wickets >= 15) wicket_points = 1250;
+    else if(player.wickets >= 10) wicket_points = 750;
+    else if(player.wickets >= 5) wicket_points = 250;
     points += player.position === 'Batsman' ? wicket_points * 2 : wicket_points;
+
+    if(player.name === 'Jasprit Bumrah')
+    {
+        console.log(points);
+    }
 
     var economy_points = 0;
     if(player.balls_bowled >= 30)
     {
-        if(player.economy > 11) economy_points = -500;
-        else if(player.economy > 10) economy_points = -400;
-        else if(player.economy > 9) economy_points = -200;
-        else if(player.economy > 8) economy_points = -100;
-        else if(player.economy > 6) economy_points = 100;
-        else if(player.economy > 5) economy_points = 250;
-        else if(player.economy > 4) economy_points = 500;
-        else if(player.economy > 3) economy_points = 800;
-        else if(player.economy > 2) economy_points = 1200;
-        else if(player.economy > 1) economy_points = 1500;
-        else economy_points = 2000;
+        if(player.economy > 13) economy_points = -500;
+        else if(player.economy > 12) economy_points = -400;
+        else if(player.economy > 11) economy_points = -300;
+        else if(player.economy > 10) economy_points = -200;
+        else if(player.economy > 9) economy_points = -100;
+        else if(player.economy > 8) economy_points = 100;
+        else if(player.economy > 7) economy_points = 250;
+        else if(player.economy > 6) economy_points = 500;
+        else if(player.economy > 5) economy_points = 1000;
+        else if(player.economy > 4) economy_points = 1500;
+        else if(player.economy > 3) economy_points = 2000;
+        else economy_points = 2500;
         if(player.position === 'Batsman') economy_points = economy_points > 0 ? economy_points * 2 : economy_points / 2;
     }
     points += economy_points;
+
+    if(player.name === 'Jasprit Bumrah')
+    {
+        console.log(points);
+    }
 
     return points;
 }
@@ -927,5 +983,7 @@ module.exports = {
     refresh,
     add,
     hat_trick,
-    man_of_match
+    man_of_match,
+
+    averages
 };

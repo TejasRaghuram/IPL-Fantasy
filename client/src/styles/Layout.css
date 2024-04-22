@@ -29,7 +29,7 @@
 #layout-logout {
     width: 100px;
     height: 35px;
-    margin-left: calc(100vw - 115px);
+    margin-left: calc(100% - 115px);
     position: relative;
     bottom: 45px;
     color: white;
@@ -75,7 +75,7 @@
 
     #layout-logout {
         width: 80px;
-        margin-left: calc(100vw - 90px);
+        margin-left: calc(100% - 90px);
         bottom: 37.5px;
     }
 
