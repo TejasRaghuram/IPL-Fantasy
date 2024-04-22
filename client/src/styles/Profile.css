@@ -19,6 +19,15 @@
     background-image: linear-gradient(transparent, black);
 }
 
+#profile-gradient-navbarless { 
+    width: calc(100% - 50px);
+    height: 200px;
+    position: absolute;
+    left: 25px;
+    top: 150px;
+    background-image: linear-gradient(transparent, black);
+}
+
 #profile-name {
     width: 100%;
     position: absolute;
@@ -28,11 +37,29 @@
     color: white;
 }
 
+#profile-name-navbarless {
+    width: 100%;
+    position: absolute;
+    left: 0px;
+    top: 280px;
+    text-align: center;
+    color: white;
+}
+
 #profile-position {
     width: 100%;
     position: absolute;
     left: 0px;
     top: 400px;
+    text-align: center;
+    color: white;
+}
+
+#profile-position-navbarless {
+    width: 100%;
+    position: absolute;
+    left: 0px;
+    top: 320px;
     text-align: center;
     color: white;
 }

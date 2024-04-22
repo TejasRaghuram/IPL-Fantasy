@@ -1,10 +1,12 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { UserContext } from './../UserContext.js';
+import { useContext, useState, useEffect } from 'react';
 import './../styles/Profile.css';
 
 function Profile() {
     const params = useParams();
     const navigate = useNavigate();
+    const user = useContext(UserContext);
     const [content, setContent] = useState(<p>Loading...</p>);
     const [image, setImage] = useState('https://scores.iplt20.com/ipl/images/default-player-statsImage.png?v=4');
 
@@ -117,9 +119,9 @@ function Profile() {
                         <div>
                             <div id='profile-card'>
                                 <img id='profile-image' src={image} alt=''/>
-                                <div id='profile-gradient'/>
-                                <h2 id='profile-name'>{name}</h2>
-                                <p id='profile-position'>{json.position}</p> 
+                                <div id={user.username != null ? 'profile-gradient':'profile-gradient-navbarless'}/>
+                                <h2 id={user.username != null ? 'profile-name':'profile-name-navbarless'}>{name}</h2>
+                                <p id={user.username != null ? 'profile-position':'profile-position-navbarless'}>{json.position}</p> 
                                 <h3 class='profile-header'>Batting Stats</h3>
                                 <table class='profile-table'>
                                     <tr class='profile-table-header'>
