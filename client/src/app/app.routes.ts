@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
-import { LandingComponent } from './landing/landing.component';
-import { SignupComponent } from './signup/signup.component';
-import { LoginComponent } from './login/login.component';
-import { HomeComponent } from './home/home.component';
-import { RankingsComponent } from './rankings/rankings.component';
-import { CreateComponent } from './create/create.component';
-import { JoinComponent } from './join/join.component';
-import { PlayerComponent } from './player/player.component';
+import { LandingComponent } from './features/landing/landing.component';
+import { SignupComponent } from './features/signup/signup.component';
+import { LoginComponent } from './features/login/login.component';
+import { HomeComponent } from './features/home/home.component';
+import { RankingsComponent } from './features/rankings/rankings.component';
+import { CreateComponent } from './features/create/create.component';
+import { JoinComponent } from './features/join/join.component';
+import { PlayerComponent } from './features/player/player.component';
 
 export const routes: Routes = [
     {
