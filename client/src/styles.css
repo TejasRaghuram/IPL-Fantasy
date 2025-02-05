@@ -1,1 +1,26 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Space Grotesk';
+}
+
+body {
+    background-color: #EEEEEE;
+}
+
+button {
+    padding: 10px;
+    color: white;
+    background-color: #FAAA4B;
+    font-weight: bold;
+    border-radius: 15px;
+    border: none;
+    border-bottom: 5px solid #C8823C;
+}
+
+button:hover {
+    background-color: #E19143;
+    cursor: pointer;
+}
