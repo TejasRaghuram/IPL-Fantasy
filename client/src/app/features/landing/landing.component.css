@@ -45,3 +45,19 @@
     opacity: 0.1;
     z-index: -1;
 }
+
+@media (max-width: 768px) {
+
+    #logo-container {
+        margin-top: calc(50vh - 350px/2);
+    }
+
+    #title {
+        font-size: 60px;
+    }
+
+    #subtitle {
+        font-size: 18px;
+    }
+
+}
