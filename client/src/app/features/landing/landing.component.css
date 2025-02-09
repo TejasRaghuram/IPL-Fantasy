@@ -30,6 +30,7 @@
     height: 70px;
     margin-left: calc(50vw - 250px/2);
     margin-top: 25px;
+    margin-bottom: calc(100vh - (50vh - 380px/2) - 480px);
 }
 
 #background {
