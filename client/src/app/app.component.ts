@@ -19,6 +19,6 @@ export class AppComponent {
   constructor(private router: Router) {}
 
   visibleHeader(): boolean {
-    return this.router.url !== '/' && this.router.url !== '/login' && this.router.url !== 'signup';
+    return this.router.url !== '/' && this.router.url !== '/login' && this.router.url !== '/signup';
   }
 }

@@ -1,1 +1,17 @@
-<p>signup works!</p>
+<div id="logo-container">
+    <img id="logo" ngSrc="assets/images/logo.png" width="45" height="45" alt="IPL Fantasy"/>
+</div>
+<div id="form">
+    <h1 id="title">Sign Up</h1>
+    <p id="login-prompt" class="text prompt">Already have an account? <span id="login-link" (click)="handleLogIn()">Log In</span></p>
+    <h3 id="username-prompt" class="text prompt">Username</h3>
+    <input type="text" id="username" class="text input">
+    <h3 id="name-prompt" class="text prompt">Name</h3>
+    <input type="text" id="name" class="text input">
+    <h3 id="password-prompt" class="text prompt">Password</h3>
+    <input type="password" id="password" class="text input">
+    <div id="remember" (click)="handleRemember()" [class.checked]="rememberUser" [class.unchecked]="!rememberUser"></div>
+    <h3 id="remember-prompt" class="text">Keep me logged in</h3>
+    <button id="submit" (click)="handleSignUp()">Sign Up</button>
+</div>
+<div id="background"></div>

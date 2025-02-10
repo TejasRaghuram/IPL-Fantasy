@@ -4,3 +4,9 @@
     text-align: center;
     opacity: 0.35;  
 }
+
+.stuck {
+    width: 100%;
+    position: absolute;
+    bottom: -30px;
+}
