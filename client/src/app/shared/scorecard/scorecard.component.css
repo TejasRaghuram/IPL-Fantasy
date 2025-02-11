@@ -1,0 +1,38 @@
+#scorecard {
+    width: 180px;
+    height: 80px;
+    padding: 10px;
+    background-color: white;
+    border-style: solid;
+    border-radius: 10px;
+    border-width: 2px;
+    border-color: #CCCCCC;
+    line-height: 14px;
+}
+
+.info {
+    font-size: 10px;
+    line-height: 10px;
+}
+
+.text {
+    font-size: 14px;
+}
+
+#scores {
+    margin-top: 10px;
+}
+
+.team {
+    font-weight: bold;
+    float: left;
+}
+
+.score {
+    font-weight: bold;
+    float: right;
+}
+
+#result {
+    margin-top: 10px;
+}
