@@ -8,6 +8,7 @@
 
 body {
     background-color: #EEEEEE;
+    overflow-x: hidden;
 }
 
 button {

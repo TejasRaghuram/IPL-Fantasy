@@ -1,0 +1,19 @@
+#results {
+    width: 100vw;
+    height: 125px;
+    background-color: #2A5D8B;
+    display: flex;
+    overflow-x: scroll;
+}
+
+#results::-webkit-scrollbar {
+    display: none;
+}
+
+@media (max-width: 768px) {
+
+    #results {
+        display: none;
+    }
+
+}
