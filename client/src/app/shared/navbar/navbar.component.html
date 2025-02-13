@@ -1,1 +1,8 @@
-<p>navbar works!</p>
+<div id="navbar">
+    <div id="logo-container" class="navbar-component">
+        <img id="logo" ngSrc="assets/images/logo.png" width="45" height="45" alt="IPL Fantasy"/>
+    </div>
+    <p class="navbar-component navbar-link" (click)="handleHome()">Home</p>
+    <p class="navbar-component navbar-link" (click)="handlePlayerRankings()">Player Rankings</p>
+    <button id="logout" class="navbar-component" (click)="handleLogOut()">Log Out</button>
+</div>
