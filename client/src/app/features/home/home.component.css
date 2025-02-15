@@ -1,0 +1,179 @@
+#home {
+    padding: 25px;
+    padding-bottom: 0;
+}
+
+#welcome {
+    font-size: 40px;
+}
+
+#selector {
+    width: 500px;
+    margin-top: 10px;
+    padding: 10px;
+    position: absolute;
+    background-color: white;
+    border-style: solid;
+    border-radius: 10px;
+    border-width: 2px;
+    border-color: #CCCCCC;
+    z-index: 1;
+}
+
+#selection {
+    margin-left: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    font-size: 32px;
+    display: inline-block;
+}
+
+#dropdown-icon {
+    margin-right: 15px;
+    margin-top: 25px;
+    float: right;
+}
+
+#dropdown-left {
+    width: 15px;
+    height: 3px;
+    position: relative;
+    left: 3px;
+    background-color: #CCCCCC;
+    border-radius: 1.5px;
+    transform: rotate(45deg);
+    display: inline-block;
+    transition: 0.25s;
+}
+
+#selector:hover #dropdown-left {
+    transform: rotate(-45deg);
+}
+
+#dropdown-right {
+    width: 15px;
+    height: 3px;
+    position: relative;
+    right: 3px;
+    background-color: #CCCCCC;
+    border-radius: 1.5px;
+    transform: rotate(-45deg);
+    display: inline-block;
+    transition: 0.25s;
+}
+
+#selector:hover #dropdown-right {
+    transform: rotate(45deg);
+}
+
+#dropdown-contents {
+    margin-top: 10px;
+}
+
+.league-option {
+    margin-top: 5px;
+    padding: 10px;
+    font-size: 16px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.league-option:hover {
+    background-color: #CCCCCC;
+    cursor: pointer;
+}
+
+.dropdown-button {
+    width: 100%;
+    margin-top: 5px;
+    padding: 5px;
+    font-size: 18px;
+}
+
+#dropdown-contents {
+    display: none;
+}
+
+#selector:hover #dropdown-contents {
+    display: block;
+}
+
+#selector-space {
+    height: 95px;
+    margin-top: 10px;
+}
+
+#league-rankings-border {
+    margin-top: 15px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #CCCCCC;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#league-rankings {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#league-rankings tr {
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    border-bottom-color: #CCCCCC;
+}
+
+#league-rankings tr:last-child {
+    border-bottom-style: none;
+}
+
+#league-header {
+    color: white;
+    background-color: #073763;
+}
+
+.rank {
+    width: 65px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.team {
+    text-align: left;
+}
+
+.points {
+    width: 85px;
+    padding-right: 20px;
+    text-align: right;
+}
+
+.league-team {
+    background-color: white;
+}
+
+.gold {
+    background-color: #C9B037;
+}
+
+.silver {
+    background-color: #B4B4B4;
+}
+
+.bronze {
+    background-color: #C28E4D;
+}
+
+@media (max-width: 768px) {
+    #selector {
+        width: calc(100% - 74px);
+    }
+
+    .rank {
+        width: 40px;
+    }
+
+    .points {
+        width: 55px;
+    }
+}

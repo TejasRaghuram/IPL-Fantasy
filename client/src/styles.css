@@ -25,3 +25,15 @@ button:hover {
     background-color: #E19143;
     cursor: pointer;
 }
+
+td, th {
+    padding: 5px;
+    padding-left: 15px;
+    font-size: 24px;
+}
+
+@media (max-width: 768px) {
+    td, th {
+        font-size: 18px;
+    }
+}
