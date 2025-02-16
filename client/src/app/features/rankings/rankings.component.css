@@ -1,0 +1,114 @@
+#rankings {
+    padding: 25px;
+    padding-bottom: 0;
+}
+
+#title {
+    font-size: 40px;
+}
+
+#rankings-table-border {
+    margin-top: 15px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #CCCCCC;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#rankings-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#rankings-table tr {
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    border-bottom-color: #CCCCCC;
+}
+
+#rankings-table tr:last-child {
+    border-bottom-style: none;
+}
+
+#rankings-header {
+    color: white;
+    background-color: #073763;
+}
+
+.rank {
+    width: 65px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.bio {
+    padding-top: 0;
+    padding-bottom: 0;
+    text-align: left;
+}
+
+.photo {
+    height: 75px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.data {
+    font-size: 14px;
+}
+
+.player-text {
+    margin-left: 10px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.points {
+    width: 85px;
+    padding-right: 20px;
+    text-align: right;
+}
+
+.player {
+    background-color: white;
+}
+
+.gold {
+    background-color: #C9B037;
+}
+
+.silver {
+    background-color: #B4B4B4;
+}
+
+.bronze {
+    background-color: #C28E4D;
+}
+
+@media (max-width: 768px) {
+    .rank {
+        width: 40px;
+    }
+
+    .bio {
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+
+    .photo {
+        display: none;
+    }
+
+    .player-text {
+        margin-left: 0;
+    }
+
+    .data {
+        font-size: 12px;
+    }
+
+    .points {
+        width: 55px;
+    }
+}
