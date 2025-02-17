@@ -1,0 +1,47 @@
+#join {
+    padding: 25px;
+    padding-bottom: 0;
+}
+
+#header {
+    font-size: 40px;
+    text-align: center;
+}
+
+#form {
+    width: 500px;
+    margin-left: calc(50% - 250px);
+}
+
+.text {
+    font-size: 18px;
+}
+
+.prompt {
+    margin-top: 10px;
+}
+
+.input {
+    width: calc(100% - 24px);
+    height: 35px;
+    margin-top: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-style: solid;
+    border-radius: 5px;
+    border-width: 2px;
+    border-color: #CCCCCC;
+}
+
+#submit {
+    width: 100%;
+    height: 50px;
+    margin-top: 15px;
+}
+
+@media (max-width: 768px) {
+    #form {
+        width: 100%;
+        margin-left: 0;
+    }
+}

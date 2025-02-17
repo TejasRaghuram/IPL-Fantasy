@@ -42,7 +42,7 @@
 }
 
 .input {
-    width: calc(100% - 20px);
+    width: calc(100% - 24px);
     height: 35px;
     margin-top: 5px;
     padding-left: 10px;
