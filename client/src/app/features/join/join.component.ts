@@ -21,7 +21,6 @@ export class JoinComponent {
   }
 
   handleJoin(): void {
-    alert(this.players);
     this.router.navigate(["/home"]);
   }
 }

@@ -1,1 +1,30 @@
-<p>create works!</p>
+<div id="create">
+    @if (leagueName === '') {
+        <h1 id="header">Create a League</h1>
+    } @else {
+        <h1 id="header">Join {{leagueName}}</h1>
+    }
+    <div id="form">
+        @if (leagueName === '') {
+            <h3 class="text prompt">League Name:</h3>
+            <input type="text" id="name" class="text input" #name>
+            <h3 class="text prompt">League Password:</h3>
+            <input type="password" id="password" class="text input" #password>
+            <h3 class="text prompt">Team Size:</h3>
+            <input type="number" id="size" class="text input" #size>
+            <button id="submit" (click)="handleCreate(name.value, password.value, size.value)">Create</button>
+        } @else {
+            @for (player of players; track $index; let i = $index;) {
+                @if (i == 0) {
+                    <h3 class="text prompt">Captain:</h3>
+                } @else if (i == 1) {
+                    <h3 class="text prompt">Vice Captain:</h3>
+                } @else {
+                    <h3 class="text prompt">Player {{i - 1}}:</h3>
+                }
+                <input type="text" class="text input" [(ngModel)]="players[i]">
+            }
+            <button id="submit" (click)="handleJoin()">Join</button>
+        }
+    </div>
+</div>
