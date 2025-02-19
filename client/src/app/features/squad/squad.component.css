@@ -1,13 +1,17 @@
-#rankings {
+#squad {
     padding: 25px;
     padding-bottom: 0;
 }
 
-#title {
+#league {
+    font-size: 24px;
+}
+
+#name {
     font-size: 40px;
 }
 
-#rankings-table-border {
+#squad-table-border {
     margin-top: 15px;
     border-style: solid;
     border-width: 2px;
@@ -16,22 +20,22 @@
     overflow: hidden;
 }
 
-#rankings-table {
+#squad-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-#rankings-table tr {
+#squad-table tr {
     border-bottom-style: solid;
     border-bottom-width: 2px;
     border-bottom-color: #CCCCCC;
 }
 
-#rankings-table tr:last-child {
+#squad-table tr:last-child {
     border-bottom-style: none;
 }
 
-#rankings-header {
+#squad-header {
     color: white;
     background-color: #073763;
 }
@@ -72,27 +76,6 @@
 
 .player {
     background-color: white;
-}
-
-.player:hover {
-    cursor: pointer;
-}
-
-.player:hover .name {
-    font-weight: bold;
-    text-decoration: underline;
-}
-
-.gold {
-    background-color: #C9B037;
-}
-
-.silver {
-    background-color: #B4B4B4;
-}
-
-.bronze {
-    background-color: #C28E4D;
 }
 
 @media (max-width: 768px) {

@@ -7,6 +7,7 @@ import { RankingsComponent } from './features/rankings/rankings.component';
 import { CreateComponent } from './features/create/create.component';
 import { JoinComponent } from './features/join/join.component';
 import { PlayerComponent } from './features/player/player.component';
+import { SquadComponent } from './features/squad/squad.component';
 
 export const routes: Routes = [
     {
@@ -45,8 +46,13 @@ export const routes: Routes = [
         component: JoinComponent
     },
     {
-        path: 'player',
+        path: ':name',
         title: 'Player | IPL Fantasy',
         component: PlayerComponent
+    },
+    {
+        path: ':league/:name',
+        title: 'Squad | IPL Fantasy',
+        component: SquadComponent
     }
 ];

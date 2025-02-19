@@ -152,6 +152,15 @@
     background-color: white;
 }
 
+.league-team:hover {
+    cursor: pointer;
+}
+
+.league-team:hover .team {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
 .gold {
     background-color: #C9B037;
 }

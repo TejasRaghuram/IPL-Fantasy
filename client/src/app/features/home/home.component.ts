@@ -8,16 +8,21 @@ import { Router } from '@angular/router';
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  name = "Name";
-  selection = "League 0";
+  name = 'Name';
+  league = 'League 0';
 
   constructor(private router: Router) {}
 
   handleJoinLeague(): void {
-    this.router.navigate(["/join"]);
+    this.router.navigate(['/join']);
   }
 
   handleCreateLeague(): void {
-    this.router.navigate(["/create"]);
+    this.router.navigate(['/create']);
+  }
+
+  handleSquad(name: string): void {
+    let route = '/' + this.league + '/' + name;
+    this.router.navigate([route]);
   }
 }
