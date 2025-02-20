@@ -1,0 +1,154 @@
+#player {
+    padding: 25px;
+    padding-bottom: 0;
+}
+
+#card {
+    width: 246px;
+    height: 246px;
+    position: fixed;
+    background-color: white;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 10px;
+    border-color: #CCCCCC;
+    overflow: hidden;
+}
+
+#photo {
+    width: auto;
+    height: 100%;
+    position: absolute;
+    left: 50%;
+    object-fit: contain;
+    transform: translateX(-50%);
+    z-index: -1;
+}
+
+#player-text {
+    margin-left: 25px;
+    margin-right: 25px;
+    margin-top: 180px;
+}
+
+#name {
+    color: white;
+    font-size: 24px;
+}
+
+#bio {
+    color: white;
+    font-size: 18px;
+}
+
+#background {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    background: linear-gradient(to top, black 15%, transparent 60%);
+    z-index: -1;
+}
+
+#content {
+    width: calc(100% - 260px);
+    margin-left: 260px;
+}
+
+.stats-section {
+    width: calc(100% - 44px);
+    margin-top: 10px;
+    padding: 20px;
+    background-color: white;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #CCCCCC;
+    border-radius: 10px;
+}
+
+.first {
+    margin-top: 0;
+}
+
+.stats-header {
+    font-size: 24px;
+}
+
+#stats-table-border {
+    margin-top: 5px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #CCCCCC;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+#stats-table tr {
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    border-bottom-color: #CCCCCC;
+}
+
+#stats-table tr:last-child {
+    border-bottom-style: none;
+}
+
+#stats-header {
+    color: white;
+    background-color: #073763;
+}
+
+.text {
+    padding: 5px;
+    font-size: 18px;
+    text-align: center;
+}
+
+.stats-row:nth-child(odd) {
+    background-color: #EEEEEE;
+}
+
+.stats-row td {
+    border-right-style: solid;
+    border-right-width: 2px;
+    border-right-color: #CCCCCC;
+}
+
+.stats-row td:last-child {
+    border-right-style: none;
+}
+
+@media (max-width: 768px) {
+    #card {
+        width: 100%;
+        position: relative;
+        z-index: -1;
+    }
+
+    #name {
+        text-align: center;
+    }
+    
+    #bio {
+        text-align: center;
+    }
+
+    #content {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .first {
+        margin-top: 10px;
+    }
+
+    .text {
+        font-size: 16px;
+    }
+}

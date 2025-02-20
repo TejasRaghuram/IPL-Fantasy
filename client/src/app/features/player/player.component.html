@@ -1,1 +1,219 @@
-<p>player works!</p>
+<div id="player">
+    <div id="card">
+        <img id="photo" src="img src" (error)="invalidImage($event)"/>
+        <div id="player-text">
+            <h3 id="name">{{name}}</h3>
+            <p id="bio">Team | Position</p>
+        </div>
+        <div id="background"></div>
+    </div>
+    <div id="content">
+        <div class="stats-section first">
+            <h3 class="stats-header">Batting Stats</h3>
+            <div id="stats-table-border">
+                <table id="stats-table">
+                    <tr id="stats-header">
+                        <th class="text">Name</th>
+                        <th class="text">Amount</th>
+                        <th class="text">Points</th>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Runs</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Fours</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Sixes</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Ducks</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Half Centuries</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Centuries</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Strike Rate</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Balls Faced</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Batting Average</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Not Outs</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Dismissals</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Highest Score</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="stats-section">
+            <h3 class="stats-header">Bowling Stats</h3>
+            <div id="stats-table-border">
+                <table id="stats-table">
+                    <tr id="stats-header">
+                        <th class="text">Name</th>
+                        <th class="text">Amount</th>
+                        <th class="text">Points</th>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Wickets</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Dots</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Four Wicket Hauls</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Five Wicket Hauls</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Six Wicket Hauls</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Maidens</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Hat Tricks</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Economy</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Bowling Average</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Bowling Strike Rate</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Balls Bowled</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Runs Conceded</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="stats-section">
+            <h3 class="stats-header">General Stats</h3>
+            <div id="stats-table-border">
+                <table id="stats-table">
+                    <tr id="stats-header">
+                        <th class="text">Name</th>
+                        <th class="text">Amount</th>
+                        <th class="text">Points</th>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Catches</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Stumpings</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Man of the Match Awards</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="stats-section">
+            <h3 class="stats-header">Bonus Points</h3>
+            <div id="stats-table-border">
+                <table id="stats-table">
+                    <tr id="stats-header">
+                        <th class="text">Name</th>
+                        <th class="text">Points</th>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Bonus 1</td>
+                        <td class="text">0</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Bonus 2</td>
+                        <td class="text">0</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="stats-section">
+            <h3 class="stats-header">Total Points</h3>
+            <div id="stats-table-border">
+                <table id="stats-table">
+                    <tr id="stats-header">
+                        <th class="text">Base Points</th>
+                        <th class="text">Bonus Points</th>
+                        <th class="text">Total Points</th>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                        <td class="text">0</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
