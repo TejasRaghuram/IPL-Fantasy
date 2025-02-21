@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-player',
@@ -10,12 +10,15 @@ import { ActivatedRoute } from '@angular/router';
 export class PlayerComponent implements OnInit {
   name = ''
 ;
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.name = params.get('name') || '';
     });
+    if (this.name != 'name') {
+      this.router.navigate(['/error']);
+    }
   }
   invalidImage(event: any): void {
     event.target.src = "https://scores.iplt20.com/ipl/images/default-player-statsImage.png?v=4";

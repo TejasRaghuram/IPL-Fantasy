@@ -12,6 +12,10 @@ export class FooterComponent {
   constructor (private router: Router) {}
 
   isStuck(): string {
-    return this.router.url == "/" || this.router.url == "/login" || this.router.url == "/signup" ? "stuck" : "";
+    return this.router.url == '/' 
+      || this.router.url == '/login' 
+      || this.router.url == '/signup' 
+      || this.router.url == '/error' 
+      || (this.router.url.match(/\//g) || []).length >= 3 ? 'stuck' : '';
   }
 }

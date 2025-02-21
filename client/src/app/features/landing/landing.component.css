@@ -33,21 +33,20 @@
 }
 
 #background {
-    width: calc(100vw + 150px);
-    height: calc(100vh + 150px);
+    width: 100vw;
+    height: 100vh;
     position: absolute;
     left: 0;
     top: 0;
     background-image: url("/assets/images/bail.png");
     background-repeat: repeat;
     background-size: 150px;
-    background-position: -75px -75px;
+    background-position: center;
     opacity: 0.1;
     z-index: -1;
 }
 
 @media (max-width: 768px) {
-
     #logo-container {
         margin-top: calc(50vh - 350px/2);
     }
@@ -59,5 +58,4 @@
     #subtitle {
         font-size: 18px;
     }
-
 }

@@ -8,6 +8,7 @@ import { CreateComponent } from './features/create/create.component';
 import { JoinComponent } from './features/join/join.component';
 import { PlayerComponent } from './features/player/player.component';
 import { SquadComponent } from './features/squad/squad.component';
+import { ErrorComponent } from './features/error/error.component';
 
 export const routes: Routes = [
     {
@@ -46,6 +47,11 @@ export const routes: Routes = [
         component: JoinComponent
     },
     {
+        path: 'error',
+        title: 'Error | IPL Fantasy',
+        component: ErrorComponent
+    },
+    {
         path: ':name',
         title: 'Player | IPL Fantasy',
         component: PlayerComponent
@@ -54,5 +60,10 @@ export const routes: Routes = [
         path: ':league/:name',
         title: 'Squad | IPL Fantasy',
         component: SquadComponent
+    },
+    {
+        path: '**',
+        title: 'Error | IPL Fantasy',
+        component: ErrorComponent
     }
 ];

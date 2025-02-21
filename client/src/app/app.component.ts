@@ -19,6 +19,10 @@ export class AppComponent {
   constructor(private router: Router) {}
 
   visibleHeader(): boolean {
-    return this.router.url !== '/' && this.router.url !== '/login' && this.router.url !== '/signup';
+    return this.router.url !== '/' 
+      && this.router.url !== '/login' 
+      && this.router.url !== '/signup' 
+      && this.router.url !== '/error'
+      && (this.router.url.match(/\//g) || []).length < 3;
   }
 }
