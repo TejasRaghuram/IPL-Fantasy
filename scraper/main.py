@@ -106,5 +106,22 @@ for statline in parser.find_all('div', class_='cb-col cb-col-100 cb-scrd-itms'):
             int(stats[0].text) * 6 if len(stats[0].text) == 1 else int(stats[0].text[0]) * 6 + int(stats[0].text[2])
         players[name]['maidens'] = int(stats[1].text)
         players[name]['runs_conceded'] = int(statline.find('div', class_='cb-col cb-col-10 text-right').text)
+        ball_by_ball = requests.get('https://www.cricbuzz.com/' + \
+            statline.find('a', class_='cb-ico cb-caret-right')['href'])
+        ball_parser = BeautifulSoup(ball_by_ball.text, 'html.parser')
+        wicket_counter = 0
+        for ball in ball_parser.find_all('div', class_='cb-col cb-com-ln cb-col-90'):
+            result = ' '.join(ball.text.split(', ')[1].split(' ')[:2])
+            if result == 'no run' or result == 'leg byes':
+                players[name]['dots'] += 1
+            if result.split(' ')[0] == 'out':
+                wicket_counter += 1
+                if not ('1 run' in ball.text or '2 run' in ball.text or '3 run' in ball.text):
+                    players[name]['dots'] += 1
+            else:
+                wicket_counter = 0
+            if wicket_counter == 3:
+                players[name]['hat_tricks'] += 1
+                wicket_counter = 0
 
 pprint(players)
