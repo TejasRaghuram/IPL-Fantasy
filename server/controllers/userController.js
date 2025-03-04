@@ -9,10 +9,10 @@ const create = async (req, res) => {
     } = req.body;
 
     try {
-        if (username.length() <= 3) {
+        if (username.length <= 3) {
             res.status(400).json({error: 'Usernames must be at least 4 characters long.'});
         }
-        if (password.length() <= 3) {
+        if (password.length <= 3) {
             res.status(400).json({error: 'Passwords must be at least 4 characters long.'});
         }
         bcrypt.hash(password, 0, async (err, hash) => {

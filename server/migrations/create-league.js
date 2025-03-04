@@ -18,11 +18,11 @@ module.exports = {
       squads: {
         type: Sequelize.ARRAY(Sequelize.JSON)
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE
       }

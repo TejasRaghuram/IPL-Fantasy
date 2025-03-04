@@ -1,25 +1,11 @@
+const { Player } = require('../models');
+
 const all = async (req, res) => {
     try {
-        res.status(200).json([
-            {
-                name: 'name0',
-                team: 'team',
-                position: 'position',
-                points: 0
-            },
-            {
-                name: 'name1',
-                team: 'team',
-                position: 'position',
-                points: 0
-            },
-            {
-                name: 'name2',
-                team: 'team',
-                position: 'position',
-                points: 0
-            },
-        ]);
+        const players = Player.findAll({
+            attributes: ['name', 'points']
+        });
+        res.status(200).json(players);
     } catch(error) {
         res.status(400).json({error: error.message});
     }
@@ -31,11 +17,14 @@ const get = async (req, res) => {
     } = req.body;
 
     try {
-        res.status(200).json({
-            name: 'name',
-            points: 'points',
-            stats: {}
-        });
+        const player = await Player.findOne({ where: {
+            name: name
+        }});
+        if (player) {
+            res.status(200).json(player);
+        } else {
+            res.status(400).json({error: 'Player Does Not Exist'});
+        }
     } catch(error) {
         res.status(400).json({error: error.message});
     }
