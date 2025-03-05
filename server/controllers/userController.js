@@ -10,10 +10,16 @@ const create = async (req, res) => {
 
     try {
         if (username.length <= 3) {
-            res.status(400).json({error: 'Usernames must be at least 4 characters long.'});
+            return res.status(400).json({error: 'Usernames Must be at Least 4 Characters Long'});
         }
         if (password.length <= 3) {
-            res.status(400).json({error: 'Passwords must be at least 4 characters long.'});
+            return res.status(400).json({error: 'Passwords Must be at Least 4 Characters Long'});
+        }
+        const exists = await User.findOne({ where: {
+            username: username
+        }});
+        if (exists) {
+            return res.status(400).json({error: 'Username is Already Taken'});
         }
         bcrypt.hash(password, 0, async (err, hash) => {
             const user = await User.create({
@@ -22,10 +28,10 @@ const create = async (req, res) => {
                 password: hash,
                 leagues: []
             });
-            res.status(200).json(user);
+            return res.status(200).json(user);
         });
     } catch(error) {
-        res.status(400).json({error: error.message});
+        return res.status(400).json({error: error.message});
     }
 }
 
@@ -39,15 +45,18 @@ const verify = async (req, res) => {
         const user = await User.findOne({ where: {
             username: username
         }});
+        if (!user) {
+            return res.status(400).json({error: 'Invalid Username or Password'});
+        }
         bcrypt.compare(password, user.password, function(err, result) {
             if (result) {
-                res.status(200).json(user);
+                return res.status(200).json(user);
             } else {
-                res.status(400).json({error: 'Invalid Username or Password'});
+                return res.status(400).json({error: 'Invalid Username or Password'});
             }
         });
     } catch(error) {
-        res.status(400).json({error: error.message});
+        return res.status(400).json({error: error.message});
     }
 }
 
@@ -67,9 +76,9 @@ const leagues = async (req, res) => {
             }});
             response.push(league);
         }
-        res.status(200).json(response);
+        return res.status(200).json(response);
     } catch (error) {
-        res.status(400).json({error: error.message});
+        return res.status(400).json({error: error.message});
     }
 }
 

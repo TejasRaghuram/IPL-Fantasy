@@ -18,6 +18,9 @@ module.exports = {
       squads: {
         type: Sequelize.ARRAY(Sequelize.JSON)
       },
+      players: {
+        type: Sequelize.INTEGER
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE
