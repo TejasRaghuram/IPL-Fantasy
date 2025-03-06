@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     team: DataTypes.STRING,
     position: DataTypes.STRING,
+    foreigner: DataTypes.BOOLEAN,
     base_points: DataTypes.INTEGER,
     bonus_points: DataTypes.INTEGER,
     bonuses: DataTypes.ARRAY(DataTypes.JSON),

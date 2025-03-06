@@ -18,6 +18,9 @@ module.exports = {
       position: {
         type: Sequelize.STRING
       },
+      foreigner: {
+        type: Sequelize.BOOLEAN
+      },
       base_points: {
         type: Sequelize.INTEGER
       },

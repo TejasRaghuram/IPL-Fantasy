@@ -2,7 +2,7 @@ const { Player } = require('../models');
 
 const all = async (req, res) => {
     try {
-        const players = Player.findAll({
+        const players = await Player.findAll({
             attributes: ['name', 'points']
         });
         res.status(200).json(players);
