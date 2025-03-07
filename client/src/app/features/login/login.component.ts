@@ -1,24 +1,29 @@
 import { NgOptimizedImage } from '@angular/common';
 import { Component, ElementRef } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { environment } from '../../../../environment';
+import { UserService } from '../../user.service';
 
 @Component({
   selector: 'app-login',
-  imports: [NgOptimizedImage],
+  imports: [NgOptimizedImage, FormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
   rememberUser = false;
+  username = '';
+  password = '';
   
-  constructor(private elementRef: ElementRef, private router: Router) {}
+  constructor(private elementRef: ElementRef, private router: Router, private userService: UserService) {}
 
   ngAfterViewInit(): void {
-    this.elementRef.nativeElement.ownerDocument.body.style.overflow="hidden";
+    this.elementRef.nativeElement.ownerDocument.body.style.overflow='hidden';
   }
 
   handleSignUp() {
-    this.router.navigate(["/signup"]);
+    this.router.navigate(['/signup']);
   }
 
   handleRemember() {
@@ -26,6 +31,27 @@ export class LoginComponent {
   }
 
   handleLogIn() {
-    this.router.navigate(["/home"]);
+    fetch (environment.API_URL + '/api/user/verify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: this.username,
+        password: this.password
+      })
+    }).then(response => {
+      if (response.ok) {
+        return response.json().then(data => {
+          this.userService.username = data.username;
+          this.userService.name = data.name;
+          this.router.navigate(['/home']);
+        });
+      } else {
+        return response.json().then(data => {
+          alert(data.error);
+        });
+      }
+    });
   }
 }

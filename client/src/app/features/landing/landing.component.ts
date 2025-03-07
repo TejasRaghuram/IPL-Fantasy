@@ -1,6 +1,7 @@
 import { NgOptimizedImage } from '@angular/common';
 import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserService } from '../../user.service';
 
 @Component({
   selector: 'app-landing',
@@ -9,7 +10,7 @@ import { Router } from '@angular/router';
   styleUrl: './landing.component.css'
 })
 export class LandingComponent implements OnInit, OnDestroy {
-  constructor(private elementRef: ElementRef, private router: Router) {}
+  constructor(private elementRef: ElementRef, private router: Router, private userService: UserService) {}
 
   ngOnInit(): void {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = "#FFE6BE";
@@ -21,7 +22,10 @@ export class LandingComponent implements OnInit, OnDestroy {
     this.elementRef.nativeElement.ownerDocument.body.style.overflow="auto";
   }
 
-  handleGetStarted(): void { 
-    this.router.navigate(["/login"]);
+  handleGetStarted(): void {
+    if (this.userService.username != '') {
+      this.router.navigate(['/home']);
+    }
+    this.router.navigate(['/login']);
   }
 }

@@ -1,17 +1,23 @@
 import { NgOptimizedImage } from '@angular/common';
 import { Component, ElementRef } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { environment } from '../../../../environment';
+import { UserService } from '../../user.service';
 
 @Component({
   selector: 'app-signup',
-  imports: [NgOptimizedImage],
+  imports: [NgOptimizedImage, FormsModule],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.css'
 })
 export class SignupComponent {
   rememberUser = false;
+  username = '';
+  name = '';
+  password = '';
   
-  constructor(private elementRef: ElementRef, private router: Router) {}
+  constructor(private elementRef: ElementRef, private router: Router, private userService: UserService) {}
 
   ngAfterViewInit(): void {
     this.elementRef.nativeElement.ownerDocument.body.style.overflow="hidden";
@@ -26,6 +32,28 @@ export class SignupComponent {
   }
 
   handleSignUp() {
-    this.router.navigate(["/home"]);
+    fetch (environment.API_URL + '/api/user/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: this.username,
+        name: this.name,
+        password: this.password
+      })
+    }).then(response => {
+      if (response.ok) {
+        return response.json().then(data => {
+          this.userService.username = data.username;
+          this.userService.name = data.name;
+          this.router.navigate(['/home']);
+        });
+      } else {
+        return response.json().then(data => {
+          alert(data.error);
+        });
+      }
+    });
   }
 }

@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserService } from '../../user.service';
 
 @Component({
   selector: 'app-home',
@@ -7,11 +8,15 @@ import { Router } from '@angular/router';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent {
-  name = 'Name';
+export class HomeComponent implements OnInit {
+  name = '';
   league = 'League 0';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private userService: UserService) {}
+
+  ngOnInit(): void {
+    this.name = this.userService.name;
+  }
 
   handleJoinLeague(): void {
     this.router.navigate(['/join']);

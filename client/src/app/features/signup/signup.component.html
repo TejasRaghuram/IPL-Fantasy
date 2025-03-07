@@ -5,11 +5,11 @@
     <h1 id="title">Sign Up</h1>
     <p id="login-prompt" class="text prompt">Already have an account? <span id="login-link" (click)="handleLogIn()">Log In</span></p>
     <h3 id="username-prompt" class="text prompt">Username</h3>
-    <input type="text" id="username" class="text input">
+    <input type="text" id="username" class="text input" [(ngModel)]="username">
     <h3 id="name-prompt" class="text prompt">First/Preferred Name</h3>
-    <input type="text" id="name" class="text input">
+    <input type="text" id="name" class="text input" [(ngModel)]="name">
     <h3 id="password-prompt" class="text prompt">Password</h3>
-    <input type="password" id="password" class="text input">
+    <input type="password" id="password" class="text input" [(ngModel)]="password">
     <div id="remember" (click)="handleRemember()" [class.checked]="rememberUser" [class.unchecked]="!rememberUser"></div>
     <h3 id="remember-prompt" class="text">Keep me logged in</h3>
     <button id="submit" (click)="handleSignUp()">Sign Up</button>
