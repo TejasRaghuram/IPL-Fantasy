@@ -45,6 +45,9 @@ export class LoginComponent {
         return response.json().then(data => {
           this.userService.username = data.username;
           this.userService.name = data.name;
+          if (this.rememberUser) {
+            this.userService.storeCookies();
+          }
           this.router.navigate(['/home']);
         });
       } else {

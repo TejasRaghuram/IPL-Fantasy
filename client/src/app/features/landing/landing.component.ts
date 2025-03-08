@@ -25,7 +25,8 @@ export class LandingComponent implements OnInit, OnDestroy {
   handleGetStarted(): void {
     if (this.userService.username != '') {
       this.router.navigate(['/home']);
+    } else {
+      this.router.navigate(['/login']);
     }
-    this.router.navigate(['/login']);
   }
 }
