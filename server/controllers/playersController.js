@@ -3,7 +3,7 @@ const { Player } = require('../models');
 const all = async (req, res) => {
     try {
         const players = await Player.findAll({
-            attributes: ['name', 'points']
+            attributes: ['name', 'points', 'position', 'team', 'foreigner']
         });
         res.status(200).json(players);
     } catch(error) {

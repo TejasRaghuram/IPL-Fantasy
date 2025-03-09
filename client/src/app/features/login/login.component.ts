@@ -1,5 +1,5 @@
 import { NgOptimizedImage } from '@angular/common';
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environment';
@@ -11,12 +11,18 @@ import { UserService } from '../../user.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   rememberUser = false;
   username = '';
   password = '';
   
   constructor(private elementRef: ElementRef, private router: Router, private userService: UserService) {}
+
+  ngOnInit(): void {
+    if (this.userService.username != '') {
+      this.router.navigate(['/home']);
+    }
+  }
 
   ngAfterViewInit(): void {
     this.elementRef.nativeElement.ownerDocument.body.style.overflow='hidden';

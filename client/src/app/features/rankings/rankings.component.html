@@ -7,61 +7,19 @@
                 <th class="bio">Player</th>
                 <th class="points">Points</th>
             </tr>
-            <tr class="player gold" (click)="handlePlayer('name')">
-                <td class="rank">1</td>
-                <td class="bio">
-                    <img class="photo" src="image src" (error)="invalidImage($event)"/>
-                    <div class="player-text">
-                        <p class="name">Name</p>
-                        <p class="data">Team | Position</p>
-                    </div>
-                </td>
-                <td class="points">0</td>
-            </tr>
-            <tr class="player silver" (click)="handlePlayer('name')">
-                <td class="rank">2</td>
-                <td class="bio">
-                    <img class="photo" src="image src" (error)="invalidImage($event)"/>
-                    <div class="player-text">
-                        <p class="name">Name</p>
-                        <p class="data">Team | Position</p>
-                    </div>
-                </td>
-                <td class="points">0</td>
-            </tr>
-            <tr class="player bronze" (click)="handlePlayer('name')">
-                <td class="rank">3</td>
-                <td class="bio">
-                    <img class="photo" src="image src" (error)="invalidImage($event)"/>
-                    <div class="player-text">
-                        <p class="name">Name</p>
-                        <p class="data">Team | Position</p>
-                    </div>
-                </td>
-                <td class="points">0</td>
-            </tr>
-            <tr class="player" (click)="handlePlayer('name')">
-                <td class="rank">4</td>
-                <td class="bio">
-                    <img class="photo" src="image src" (error)="invalidImage($event)"/>
-                    <div class="player-text">
-                        <p class="name">Name</p>
-                        <p class="data">Team | Position</p>
-                    </div>
-                </td>
-                <td class="points">0</td>
-            </tr>
-            <tr class="player" (click)="handlePlayer('name')">
-                <td class="rank">5</td>
-                <td class="bio">
-                    <img class="photo" src="image src" (error)="invalidImage($event)"/>
-                    <div class="player-text">
-                        <p class="name">Name</p>
-                        <p class="data">Team | Position</p>
-                    </div>
-                </td>
-                <td class="points">0</td>
-            </tr>
+            @for (player of players; track player.name) {
+                <tr [ngClass]="player.class" (click)="handlePlayer('name')">
+                    <td class="rank">{{player.rank}}</td>
+                    <td class="bio">
+                        <img class="photo" [src]="player.photo" (error)="invalidImage($event)"/>
+                        <div class="player-text">
+                            <p class="name">{{player.name}}</p>
+                            <p class="data">{{player.team}} | {{player.position}}</p>
+                        </div>
+                    </td>
+                    <td class="points">0</td>
+                </tr>
+            }
         </table>
     </div>
 </div>
