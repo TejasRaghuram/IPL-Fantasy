@@ -8,12 +8,12 @@
                 <th class="points">Points</th>
             </tr>
             @for (player of players; track player.name) {
-                <tr [ngClass]="player.class" (click)="handlePlayer('name')">
+                <tr [ngClass]="player.class" (click)="handlePlayer(player.name)">
                     <td class="rank">{{player.rank}}</td>
                     <td class="bio">
                         <img class="photo" [src]="player.photo" (error)="invalidImage($event)"/>
                         <div class="player-text">
-                            <p class="name">{{player.name}}</p>
+                            <p class="name">{{player.name + (player.foreigner ? ' ✈️' : '')}}</p>
                             <p class="data">{{player.team}} | {{player.position}}</p>
                         </div>
                     </td>
