@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 })
 export class RankingsComponent implements OnInit {
   players: Player[] = [];
+  loaded = false;
 
   constructor(private router: Router, private userService: UserService, private elementRef: ElementRef) {}
 
@@ -20,6 +21,7 @@ export class RankingsComponent implements OnInit {
     if (this.userService.username == '') {
       this.router.navigate(['/']);
     }
+    window.scrollTo(0, 0);
     fetch (environment.API_URL + '/api/players/all', {
       method: 'GET'
     }).then(response => {
@@ -52,6 +54,7 @@ export class RankingsComponent implements OnInit {
               'https://ipl-stats-sports-mechanic.s3.ap-south-1.amazonaws.com/ipl/playerimages/'
               + this.players[i].name.replaceAll(' ', '%20') + '.png';
           }
+          this.loaded = true;
         });
       } else {
         return response.json().then(data => {

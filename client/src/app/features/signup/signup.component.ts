@@ -23,10 +23,7 @@ export class SignupComponent implements OnInit {
     if (this.userService.username != '') {
       this.router.navigate(['/home']);
     }
-  }
-
-  ngAfterViewInit(): void {
-    this.elementRef.nativeElement.ownerDocument.body.style.overflow='hidden';
+    this.elementRef.nativeElement.ownerDocument.body.style.overflow="hidden";
   }
 
   handleLogIn() {

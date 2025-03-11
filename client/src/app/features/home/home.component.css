@@ -173,6 +173,41 @@
     background-color: #C28E4D;
 }
 
+#league-prompt {
+    width: 400px;
+    margin-left: calc(50% - 200px);
+}
+
+#leagueless-welcome {
+    font-size: 40px;
+    text-align: center;
+}
+
+#leagueless-subtitle {
+    font-size: 18px;
+    text-align: center;
+}
+
+#leagueless-join {
+    width: 250px;
+    height: 50px;
+    margin-left: 75px;
+    margin-top: 10px;
+    display: block;
+}
+
+#leagueless-create {
+    width: 250px;
+    height: 50px;
+    margin-left: 75px;
+    margin-top: 10px;
+    display: block;
+}
+
+#loading {
+    font-size: 18px;
+}
+
 @media (max-width: 768px) {
     #selector {
         width: calc(100% - 74px);

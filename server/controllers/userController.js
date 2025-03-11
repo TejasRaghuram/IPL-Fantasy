@@ -70,9 +70,9 @@ const leagues = async (req, res) => {
             username: username
         }});
         const response = [];
-        for (league in username.leagues) {
+        for (const name of user.leagues) {
             const league = await League.findOne({ where: {
-                name: league
+                name: name
             }});
             response.push(league);
         }

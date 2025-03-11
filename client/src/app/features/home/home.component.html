@@ -1,57 +1,70 @@
 <div id="home">
-    <h1 id="welcome">Welcome, {{name}}</h1>
-    <div id="selector">
-        <h2 id="selection">{{league}}</h2>
-        <div id="dropdown-icon">
-            <div id="dropdown-left"></div>
-            <div id="dropdown-right"></div>
-        </div>
-        <div id="dropdown-contents">
-            <p class="league-option">League 1</p>
-            <p class="league-option">League 2</p>
-            <p class="league-option">League 3</p>
-            <button class="dropdown-button" (click)="handleJoinLeague()">Join a League</button>
-            <button class="dropdown-button" (click)="handleCreateLeague()">Create a League</button>
-        </div>
-    </div>
-    <div id="selector-space"></div>
-    <div id="league-rankings-border">
-        <table id="league-rankings">
-            <tr id="league-header">
-                <th class="rank">Rank</th>
-                <th class="team">Team</th>
-                <th class="points">Points</th>
-            </tr>
-            <tr class="league-team gold" (click)="handleSquad('name')">
-                <td class="rank">1</td>
-                <td class="team">Name</td>
-                <td class="points">0</td>
-            </tr>
-            <tr class="league-team silver" (click)="handleSquad('name')">
-                <td class="rank">2</td>
-                <td class="team">Name</td>
-                <td class="points">0</td>
-            </tr>
-            <tr class="league-team bronze" (click)="handleSquad('name')">
-                <td class="rank">3</td>
-                <td class="team">Name</td>
-                <td class="points">0</td>
-            </tr>
-            <tr class="league-team" (click)="handleSquad('name')">
-                <td class="rank">4</td>
-                <td class="team">Name</td>
-                <td class="points">0</td>
-            </tr>
-            <tr class="league-team" (click)="handleSquad('name')">
-                <td class="rank">5</td>
-                <td class="team">Name</td>
-                <td class="points">0</td>
-            </tr>
-            <tr class="league-team" (click)="handleSquad('name')">
-                <td class="rank">6</td>
-                <td class="team">Name</td>
-                <td class="points">0</td>
-            </tr>
-        </table>
-    </div>
+    @if (loaded) {
+        @if (data.length > 0) {
+            <h1 id="welcome">Welcome, {{name}}</h1>
+            <div id="selector">
+                <h2 id="selection">{{league}}</h2>
+                <div id="dropdown-icon">
+                    <div id="dropdown-left"></div>
+                    <div id="dropdown-right"></div>
+                </div>
+                <div id="dropdown-contents">
+                    <p class="league-option">League 1</p>
+                    <p class="league-option">League 2</p>
+                    <p class="league-option">League 3</p>
+                    <button class="dropdown-button" (click)="handleJoinLeague()">Join a League</button>
+                    <button class="dropdown-button" (click)="handleCreateLeague()">Create a League</button>
+                </div>
+            </div>
+            <div id="selector-space"></div>
+            <div id="league-rankings-border">
+                <table id="league-rankings">
+                    <tr id="league-header">
+                        <th class="rank">Rank</th>
+                        <th class="team">Team</th>
+                        <th class="points">Points</th>
+                    </tr>
+                    <tr class="league-team gold" (click)="handleSquad('name')">
+                        <td class="rank">1</td>
+                        <td class="team">Name</td>
+                        <td class="points">0</td>
+                    </tr>
+                    <tr class="league-team silver" (click)="handleSquad('name')">
+                        <td class="rank">2</td>
+                        <td class="team">Name</td>
+                        <td class="points">0</td>
+                    </tr>
+                    <tr class="league-team bronze" (click)="handleSquad('name')">
+                        <td class="rank">3</td>
+                        <td class="team">Name</td>
+                        <td class="points">0</td>
+                    </tr>
+                    <tr class="league-team" (click)="handleSquad('name')">
+                        <td class="rank">4</td>
+                        <td class="team">Name</td>
+                        <td class="points">0</td>
+                    </tr>
+                    <tr class="league-team" (click)="handleSquad('name')">
+                        <td class="rank">5</td>
+                        <td class="team">Name</td>
+                        <td class="points">0</td>
+                    </tr>
+                    <tr class="league-team" (click)="handleSquad('name')">
+                        <td class="rank">6</td>
+                        <td class="team">Name</td>
+                        <td class="points">0</td>
+                    </tr>
+                </table>
+            </div>
+        } @else {
+            <div id="league-prompt">
+                <h1 id="leagueless-welcome">Welcome, {{name}}</h1>
+                <p id="leagueless-subtitle">It looks like you aren't in any leagues yet.</p>
+                <button id="leagueless-join" (click)="handleJoinLeague()">Join a League</button>
+                <button id="leagueless-create" (click)="handleCreateLeague()">Create a League</button>
+            </div>
+        }
+    } @else {
+        <p id="loading">Loading...</p>
+    }
 </div>

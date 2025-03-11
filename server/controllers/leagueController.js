@@ -25,13 +25,13 @@ const create = async (req, res) => {
             return res.status(400).json({error: 'Name is Already Taken'});
         }
         bcrypt.hash(password, 0, async (err, hash) => {
-            const user = await League.create({
+            const league = await League.create({
                 name: name,
                 password: hash,
                 squads: [],
                 players: players
             });
-            return res.status(200).json(user);
+            return res.status(200).json(league);
         });
     } catch(error) {
         return res.status(400).json({error: error.message});
@@ -67,9 +67,7 @@ const join = async (req, res) => {
     const {
         username,
         name,
-        players,
-        captain,
-        vice_captain
+        players
     } = req.body;
 
     try {
@@ -97,7 +95,7 @@ const join = async (req, res) => {
         if (exists) {
             return res.status(400).json({error: 'Already in League'});
         }
-        if (players.length + 2 != league.players) {
+        if (players.length != league.players) {
             return res.status(400).json({error: 'Incorrect Number of Players'});
         }
         const members = [];
@@ -109,45 +107,22 @@ const join = async (req, res) => {
                 return res.status(400).json({error: player + ' Does Not Exist'});
             } else {
                 members.push({
-                    name: name,
+                    name: exists.name,
                     active: true,
                     earned: 0
                 });
             }
         }
-        const captainEntry = Player.findOne({ where: {
-            name: captain
-        }});
-        if (!captainEntry) {
-            return res.status(400).json({error: captain + ' Does Not Exist'});
-        } else {
-            members.push({
-                name: captain,
-                active: true,
-                earned: 0
-            });
-        }
-        const viceCaptainEntry = Player.findOne({ where: {
-            name: vice_captain
-        }});
-        if (!viceCaptainEntry) {
-            return res.status(400).json({error: vice_captain + ' Does Not Exist'});
-        } else {
-            members.push({
-                name: vice_captain,
-                active: true,
-                earned: 0
-            });
-        }
-        user.leagues.push(league);
-        squad = {
+        user.leagues.push(league.name);
+        user.changed('leagues', true);
+        const team = {
             username: username,
             name: user.name,
             base_points: 0,
             bonus_points: 0,
             points: 0,
-            captain: captain,
-            vice_captain: vice_captain,
+            captain: players[0],
+            vice_captain: players[1],
             players: members,
             bonuses: [],
             runs: 0,
@@ -177,7 +152,9 @@ const join = async (req, res) => {
             stumpings: 0,
             player_of_matches: 0
         };
-        league.squads.push(squad);
+        console.log(team);
+        league.squads.push(team);
+        league.changed('squads', true);
         await user.save();
         await league.save();
         return res.status(200).json(league);

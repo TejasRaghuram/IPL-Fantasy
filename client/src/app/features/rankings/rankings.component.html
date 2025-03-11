@@ -1,25 +1,29 @@
 <div id="rankings">
-    <h1 id="title">Player Rankings</h1>
-    <div id="rankings-table-border">
-        <table id="rankings-table">
-            <tr id="rankings-header">
-                <th class="rank">Rank</th>
-                <th class="bio">Player</th>
-                <th class="points">Points</th>
-            </tr>
-            @for (player of players; track player.name) {
-                <tr [ngClass]="player.class" (click)="handlePlayer(player.name)">
-                    <td class="rank">{{player.rank}}</td>
-                    <td class="bio">
-                        <img class="photo" [src]="player.photo" (error)="invalidImage($event)"/>
-                        <div class="player-text">
-                            <p class="name">{{player.name + (player.foreigner ? ' ✈️' : '')}}</p>
-                            <p class="data">{{player.team}} | {{player.position}}</p>
-                        </div>
-                    </td>
-                    <td class="points">0</td>
+    @if (loaded) {
+        <h1 id="title">Player Rankings</h1>
+        <div id="rankings-table-border">
+            <table id="rankings-table">
+                <tr id="rankings-header">
+                    <th class="rank">Rank</th>
+                    <th class="bio">Player</th>
+                    <th class="points">Points</th>
                 </tr>
-            }
-        </table>
-    </div>
+                @for (player of players; track player.name) {
+                    <tr [ngClass]="player.class" (click)="handlePlayer(player.name)">
+                        <td class="rank">{{player.rank}}</td>
+                        <td class="bio">
+                            <img class="photo" [src]="player.photo" (error)="invalidImage($event)"/>
+                            <div class="player-text">
+                                <p class="name">{{player.name + (player.foreigner ? ' ✈️' : '')}}</p>
+                                <p class="data">{{player.team}} | {{player.position}}</p>
+                            </div>
+                        </td>
+                        <td class="points">0</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    } @else {
+        <p id="loading">Loading...</p>
+    }
 </div>

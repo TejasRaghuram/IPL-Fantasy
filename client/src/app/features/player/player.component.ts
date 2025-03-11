@@ -2,8 +2,6 @@ import { Component, ElementRef, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../user.service';
 import { environment } from '../../../../environment';
-import { NumberSymbol } from '@angular/common';
-import { NumberValueAccessor } from '@angular/forms';
 
 @Component({
   selector: 'app-player',
@@ -52,6 +50,7 @@ export class PlayerComponent implements OnInit {
     points: 0,
     foreigner: false
   }
+  loaded = false;
 
   constructor(private route: ActivatedRoute, private router: Router, private elementRef: ElementRef, private userService: UserService) {}
 
@@ -60,6 +59,7 @@ export class PlayerComponent implements OnInit {
     if (this.userService.username == '') {
       this.router.navigate(['/']);
     }
+    window.scrollTo(0, 0);
     this.route.paramMap.subscribe(params => {
       let name = params.get('name') || '';
       fetch (environment.API_URL + '/api/players/get', {
@@ -77,6 +77,7 @@ export class PlayerComponent implements OnInit {
             this.data.photo = 
               'https://ipl-stats-sports-mechanic.s3.ap-south-1.amazonaws.com/ipl/playerimages/'
               + this.data.name.replaceAll(' ', '%20') + '.png';
+            this.loaded = true;
           });
         } else {
           return response.json().then(data => {
