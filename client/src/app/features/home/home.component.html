@@ -9,9 +9,11 @@
                     <div id="dropdown-right"></div>
                 </div>
                 <div id="dropdown-contents">
-                    <p class="league-option">League 1</p>
-                    <p class="league-option">League 2</p>
-                    <p class="league-option">League 3</p>
+                    @for (option of data; track option.name) {
+                        @if (option.name != league) {
+                            <p class="league-option" (click)="handleSelection(option.name)">{{option.name}}</p>
+                        }
+                    }
                     <button class="dropdown-button" (click)="handleJoinLeague()">Join a League</button>
                     <button class="dropdown-button" (click)="handleCreateLeague()">Create a League</button>
                 </div>
@@ -24,36 +26,13 @@
                         <th class="team">Team</th>
                         <th class="points">Points</th>
                     </tr>
-                    <tr class="league-team gold" (click)="handleSquad('name')">
-                        <td class="rank">1</td>
-                        <td class="team">Name</td>
-                        <td class="points">0</td>
-                    </tr>
-                    <tr class="league-team silver" (click)="handleSquad('name')">
-                        <td class="rank">2</td>
-                        <td class="team">Name</td>
-                        <td class="points">0</td>
-                    </tr>
-                    <tr class="league-team bronze" (click)="handleSquad('name')">
-                        <td class="rank">3</td>
-                        <td class="team">Name</td>
-                        <td class="points">0</td>
-                    </tr>
-                    <tr class="league-team" (click)="handleSquad('name')">
-                        <td class="rank">4</td>
-                        <td class="team">Name</td>
-                        <td class="points">0</td>
-                    </tr>
-                    <tr class="league-team" (click)="handleSquad('name')">
-                        <td class="rank">5</td>
-                        <td class="team">Name</td>
-                        <td class="points">0</td>
-                    </tr>
-                    <tr class="league-team" (click)="handleSquad('name')">
-                        <td class="rank">6</td>
-                        <td class="team">Name</td>
-                        <td class="points">0</td>
-                    </tr>
+                    @for (squad of squads; track $index) {
+                        <tr [class]="squad.class" (click)="handleSquad(squad.username)">
+                            <td class="rank">{{squad.rank}}</td>
+                            <td class="team">{{squad.name}}</td>
+                            <td class="points">{{squad.points}}</td>
+                        </tr>
+                    }
                 </table>
             </div>
         } @else {
