@@ -78,6 +78,10 @@
     background-color: white;
 }
 
+#loading {
+    font-size: 18px;
+}
+
 @media (max-width: 768px) {
     .rank {
         width: 40px;

@@ -1,12 +1,14 @@
-<div id="results">
-    @for (match of matchData; track match.title) {
-        <app-scorecard
-            [title]="match.title"
-            [stadium]="match.stadium"
-            [team1]="match.team1"
-            [team1Score]="match.team1Score"
-            [team2]="match.team2"
-            [team2Score]="match.team2Score"
-            [result]="match.result"/>
-    }
-</div>
+@if (loaded) {
+    <div id="results">
+        @for (match of matchData; track match.title) {
+            <app-scorecard
+                [title]="match.title"
+                [stadium]="match.stadium"
+                [team1]="match.team1"
+                [team1Score]="match.team1Score"
+                [team2]="match.team2"
+                [team2Score]="match.team2Score"
+                [result]="match.result"/>
+        }
+    </div>
+}

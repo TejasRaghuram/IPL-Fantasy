@@ -24,7 +24,9 @@ export class HomeComponent implements OnInit {
       this.router.navigate(['/']);
     }
     this.name = this.userService.name;
-    window.scrollTo(0, 0);
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
     fetch (environment.API_URL + '/api/user/leagues', {
       method: 'POST',
       headers: {
@@ -37,30 +39,34 @@ export class HomeComponent implements OnInit {
       if (response.ok) {
         return response.json().then(data => {
           this.data = data;
-          this.league = this.data[0].name;
-          const current = this.data.find(item => item.name == this.league) || [];
-          if ('name' in current) {
-            current.squads.sort((a, b) => b.points - a.points);
-            let rank = 1;
-            for (let i = 0; i < current.squads.length; i++) {
-              if (i > 0 && current.squads[i].points == current.squads[i - 1].points) {
-                current.squads[i].rank = current.squads[i - 1].rank;
-              } else {
-                current.squads[i].rank = rank;
+          if (this.data.length > 0) {
+            this.league = this.data[0].name;
+            const current = this.data.find(item => item.name == this.league) || [];
+            if ('name' in current) {
+              current.squads.sort((a, b) => b.points - a.points);
+              let rank = 1;
+              for (let i = 0; i < current.squads.length; i++) {
+                if (i > 0 && current.squads[i].points == current.squads[i - 1].points) {
+                  current.squads[i].rank = current.squads[i - 1].rank;
+                } else {
+                  current.squads[i].rank = rank;
+                }
+                rank++;
               }
-              rank++;
-            }
-            const styles = 'league-team';
-            for (const squad of current.squads) {
-              if (squad.rank == 1 && squad.points > 0) {
-                squad.class = styles + ' gold';
-              } else if (squad.rank == 2 && squad.points > 0) {
-                squad.class = styles + ' silver';
-              } else if (squad.rank == 3 && squad.points > 0) {
-                squad.class = styles + ' bronze';
+              const styles = 'league-team';
+              for (const squad of current.squads) {
+                if (squad.rank == 1 && squad.points > 0) {
+                  squad.class = styles + ' gold';
+                } else if (squad.rank == 2 && squad.points > 0) {
+                  squad.class = styles + ' silver';
+                } else if (squad.rank == 3 && squad.points > 0) {
+                  squad.class = styles + ' bronze';
+                } else {
+                  squad.class = styles;
+                }
               }
+              this.squads = current.squads;
             }
-            this.squads = current.squads;
           }
           this.loaded = true;
         });
@@ -97,7 +103,6 @@ export class HomeComponent implements OnInit {
         } else {
           squad.class = styles;
         }
-        alert(squad.class);
       }
       this.squads = current.squads;
     }

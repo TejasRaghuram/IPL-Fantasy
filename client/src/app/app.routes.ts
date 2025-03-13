@@ -57,7 +57,7 @@ export const routes: Routes = [
         component: PlayerComponent
     },
     {
-        path: ':league/:name',
+        path: ':league/:username',
         title: 'Squad | IPL Fantasy',
         component: SquadComponent
     },

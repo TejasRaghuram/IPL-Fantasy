@@ -21,7 +21,9 @@ export class RankingsComponent implements OnInit {
     if (this.userService.username == '') {
       this.router.navigate(['/']);
     }
-    window.scrollTo(0, 0);
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
     fetch (environment.API_URL + '/api/players/all', {
       method: 'GET'
     }).then(response => {

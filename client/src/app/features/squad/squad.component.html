@@ -1,68 +1,30 @@
 <div id="squad">
-    <h3 id="league">{{league}}</h3>
-    <h1 id="name">{{name}}</h1>
-    <div id="squad-table-border">
-        <table id="squad-table">
-            <tr id="squad-header">
-                <th class="rank">Rank</th>
-                <th class="bio">Player</th>
-                <th class="points">Points</th>
-            </tr>
-            <tr class="player">
-                <td class="rank">1</td>
-                <td class="bio">
-                    <img class="photo" src="image src" (error)="invalidImage($event)"/>
-                    <div class="player-text">
-                        <p class="name">Name</p>
-                        <p class="data">Team | Position</p>
-                    </div>
-                </td>
-                <td class="points">0</td>
-            </tr>
-            <tr class="player">
-                <td class="rank">2</td>
-                <td class="bio">
-                    <img class="photo" src="image src" (error)="invalidImage($event)"/>
-                    <div class="player-text">
-                        <p class="name">Name</p>
-                        <p class="data">Team | Position</p>
-                    </div>
-                </td>
-                <td class="points">0</td>
-            </tr>
-            <tr class="player">
-                <td class="rank">3</td>
-                <td class="bio">
-                    <img class="photo" src="image src" (error)="invalidImage($event)"/>
-                    <div class="player-text">
-                        <p class="name">Name</p>
-                        <p class="data">Team | Position</p>
-                    </div>
-                </td>
-                <td class="points">0</td>
-            </tr>
-            <tr class="player">
-                <td class="rank">4</td>
-                <td class="bio">
-                    <img class="photo" src="image src" (error)="invalidImage($event)"/>
-                    <div class="player-text">
-                        <p class="name">Name</p>
-                        <p class="data">Team | Position</p>
-                    </div>
-                </td>
-                <td class="points">0</td>
-            </tr>
-            <tr class="player">
-                <td class="rank">5</td>
-                <td class="bio">
-                    <img class="photo" src="image src" (error)="invalidImage($event)"/>
-                    <div class="player-text">
-                        <p class="name">Name</p>
-                        <p class="data">Team | Position</p>
-                    </div>
-                </td>
-                <td class="points">0</td>
-            </tr>
-        </table>
-    </div>
+    @if (loaded) {
+        <h3 id="league">{{league}}</h3>
+        <h1 id="name">{{data.squad.name}}</h1>
+        <div id="squad-table-border">
+            <table id="squad-table">
+                <tr id="squad-header">
+                    <th class="rank">Rank</th>
+                    <th class="bio">Player</th>
+                    <th class="points">Points</th>
+                </tr>
+                @for (player of data.players; track $index) {
+                    <tr class="player">
+                        <td class="rank">{{player.rank}}</td>
+                        <td class="bio">
+                            <img class="photo" [src]="player.photo" (error)="invalidImage($event)"/>
+                            <div class="player-text">
+                                <p class="name">{{player.name}}</p>
+                                <p class="data">{{player.team}} | {{player.position}}</p>
+                            </div>
+                        </td>
+                        <td class="points">{{player.points}}</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    } @else {
+        <p id="loading">Loading...</p>
+    }
 </div>

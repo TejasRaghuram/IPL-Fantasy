@@ -1,4 +1,5 @@
 const { League, User, Player } = require('../models');
+const { Op } = require('sequelize');
 const bcrypt = require('bcrypt');
 
 const create = async (req, res) => {
@@ -98,6 +99,9 @@ const join = async (req, res) => {
         if (players.length != league.players) {
             return res.status(400).json({error: 'Incorrect Number of Players'});
         }
+        if (new Set(players).size !== players.length) {
+            return res.status(400).json({error: 'No Duplicates are Allowed'});
+        }
         const members = [];
         for (const player of players) {
             const exists = await Player.findOne({ where: {
@@ -177,14 +181,19 @@ const squad = async (req, res) => {
             return res.status(400).json({error: 'User Does Not Exist'});
         }
         const league = await League.findOne({ where: {
-            name: league
+            name: name
         }});
         if (!league) {
             return res.status(400).json({error: 'League Does Not Exist'});
         }
-        for (squad of league.squads) {
+        for (const squad of league.squads) {
             if (username == squad.username) {
-                return res.status(200).json(squad);
+                const players = await Player.findAll({ where: {
+                    name: {
+                        [Op.in]: squad.players.map(item => item.name)
+                    }
+                }});
+                return res.status(200).json({squad, players});
             }
         }
         return res.status(400).json({error: 'User is not in League'});

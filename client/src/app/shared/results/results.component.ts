@@ -9,6 +9,7 @@ import { ScorecardComponent } from '../scorecard/scorecard.component';
 })
 export class ResultsComponent implements OnInit {
   matchData: Match[] = []
+  loaded = false;
 
   ngOnInit(): void {
     for (let i = 0; i < 10; i++) {

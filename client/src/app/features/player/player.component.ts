@@ -59,7 +59,9 @@ export class PlayerComponent implements OnInit {
     if (this.userService.username == '') {
       this.router.navigate(['/']);
     }
-    window.scrollTo(0, 0);
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
     this.route.paramMap.subscribe(params => {
       let name = params.get('name') || '';
       fetch (environment.API_URL + '/api/players/get', {
