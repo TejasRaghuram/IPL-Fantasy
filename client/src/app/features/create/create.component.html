@@ -14,6 +14,8 @@
             <input type="number" id="size" class="text input" #size>
             <button id="submit" (click)="handleCreate(name.value, password.value, size.value)">Create</button>
         } @else {
+            <h3 class="text prompt">Squad Name:</h3>
+            <input type="text" class="text input" [(ngModel)]="name">
             @for (player of players; track $index; let i = $index;) {
                 @if (i == 0) {
                     <h3 class="text prompt">Captain:</h3>

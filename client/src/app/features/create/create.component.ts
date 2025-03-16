@@ -13,6 +13,7 @@ import { UserService } from '../../user.service';
 export class CreateComponent implements OnInit {
   leagueName = '';
   players: string[] = [];
+  name = '';
 
   constructor(private router: Router, private userService: UserService, private elementRef: ElementRef) {}
 
@@ -57,7 +58,8 @@ export class CreateComponent implements OnInit {
       body: JSON.stringify({
         username: this.userService.username,
         name: this.leagueName,
-        players: this.players
+        players: this.players,
+        display: this.name
       })
     }).then(response => {
       if (response.ok) {

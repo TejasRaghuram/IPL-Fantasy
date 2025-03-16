@@ -68,7 +68,8 @@ const join = async (req, res) => {
     const {
         username,
         name,
-        players
+        players,
+        display
     } = req.body;
 
     try {
@@ -86,6 +87,9 @@ const join = async (req, res) => {
         }
         if (league.squads.length == 10) {
             return res.status(400).json({error: 'League is Full'});
+        }
+        if (display.length == 0) {
+            return res.status(400).json({error: 'Squad Name is Required'});
         }
         let exists = false;
         for (const squad of league.squads) {
@@ -121,7 +125,7 @@ const join = async (req, res) => {
         user.changed('leagues', true);
         const team = {
             username: username,
-            name: user.name,
+            name: display,
             base_points: 0,
             bonus_points: 0,
             points: 0,

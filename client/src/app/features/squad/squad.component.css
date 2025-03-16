@@ -100,6 +100,10 @@
         margin-left: 0;
     }
 
+    .name {
+        font-size: 14px;
+    }
+
     .data {
         font-size: 12px;
     }

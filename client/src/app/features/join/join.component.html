@@ -12,6 +12,8 @@
             <input type="password" id="password" class="text input" #password>
             <button id="submit" (click)="handleVerify(name.value, password.value)">Join</button>
         } @else {
+            <h3 class="text prompt">Squad Name:</h3>
+            <input type="text" class="text input" [(ngModel)]="name">
             @for (player of players; track $index; let i = $index;) {
                 @if (i == 0) {
                     <h3 class="text prompt">Captain:</h3>
