@@ -46,6 +46,13 @@ export class SquadComponent implements OnInit {
         if (response.ok) {
           return response.json().then(data => {
             this.data = data;
+            for (const player of data.players) {
+              if (data.squad.captain == player.name) {
+                player.points = player.points * 2;
+              } else if (data.squad.vice_captain == player.name) {
+                player.points = Math.round(player.points * 1.5);
+              }
+            }
             this.data.players.sort((a, b) => b.points - a.points);
             let rank = 1;
             for (let i = 0; i < this.data.players.length; i++) {

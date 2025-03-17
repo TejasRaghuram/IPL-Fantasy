@@ -24,10 +24,12 @@ def match_data():
         'score2': ' '.join(parser.find('div', class_='cb-col cb-col-100 cb-min-tm').text.split(' ')[1:]),
         'result': parser.find('div', class_='cb-col cb-col-100 cb-min-stts cb-text-complete').text,
         'stadium': parser.find(attrs={'itemprop': 'location'})['title'],
-        'man_of_match': parser.find('a', class_='cb-link-undrln').text
+        'player_of_match': parser.find('a', class_='cb-link-undrln').text
     }
 
-    scorecard = 'https://www.cricbuzz.com/live-cricket-scorecard' + parser.find_all('a', class_='cb-nav-tab')[1]['href'][20:]
+    scorecard_endpoint = parser.find_all('a', class_='cb-nav-tab')[1]['href']
+
+    scorecard = 'https://www.cricbuzz.com/live-cricket-scorecard/' + match_id + scorecard_endpoint[scorecard_endpoint.rfind('/'):]
 
     response = requests.get(scorecard)
 
@@ -67,6 +69,8 @@ def match_data():
             name =  name.removesuffix(" (wk)")
         elif name.endswith(" (c)"):
             name = name.removesuffix(" (c)")
+        if name[0:5] == '(sub)':
+            name = name[5:]
         if name not in players:
             for key, value in players.items():
                 names = name.split(' ')
