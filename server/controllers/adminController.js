@@ -20,7 +20,48 @@ const update = async (req, res) => {
                 }
             }
         }
-        // update player bonuses
+        await Player.update({
+            bonuses: [],
+            bonus_points: 0
+        }, {
+            where: {},
+        });
+        const value = {
+            'runs': 1000,
+            'batting_average': 750,
+            'strike_rate': 750,
+            'centuries': 500,
+            'half_centuries': 500,
+            'highest_score': 500,
+            'sixes': 250,
+            'fours': 250,
+            'not_outs': 250,
+            'ducks': -500,
+            'wickets': 1000,
+            'bowling_average': 750,
+            'bowling_strike_rate': 750,
+            'economy': 750,
+            'four_wicket_hauls': 500,
+            'five_wicket_hauls': 500,
+            'six_wicket_hauls': 500,
+            'hat_tricks': 500,
+            'maidens': 250,
+            'dots': 250,
+            'catches': 1000,
+            'stumpings': 1000,
+            'player_of_matches': 1000
+        }
+        for (const bonus of Object.keys(value)) {
+            await add_bonus(
+                bonus, 
+                bonus != 'bowling_average' && bonus != 'bowling_strike_rate' && bonus != 'economy',
+                bonus == 'strike rate' || bonus == 'batting_average', 
+                bonus == 'bowling_average' || bonus == 'bowling_strike_rate' || bonus == 'economy', 
+                value,
+                ['runs', 'bating_average', 'strike_rate', 'centuries', 'half_centuries', 'highest_score', 'sixes', 'fours', 'not_outs', 'ducks'].includes(bonus),
+                ['wickets', 'bowling_average', 'bowling_strike_rate', 'economy', 'four_wicket_hauls', 'five_wicket_hauls', 'six_wicket_hauls', 'hat_tricks', 'maidens', 'dots'].includes(bonus)
+            );
+        }
         // update league bonuses
         await update_players();
         await update_leagues();
@@ -315,11 +356,74 @@ async function update_leagues() {
         id: league.id,
         squads: league.squads
     }));
-    console.log(updates);
     await League.bulkCreate(updates, {
         updateOnDuplicate: ['squads'],
     });
 }
+
+async function add_bonus(property, most, batting_threshold, bowling_theshold, value, batting, bowling) {
+    const best = await Player.findOne({
+        order: most
+            ? [[property, 'DESC']]
+            : [[property, 'ASC']],
+        limit: 1,
+        where: {
+            'balls_faced': {
+                [Op.gt]: batting_threshold ? 50 : -1
+            },
+            'balls_bowled': {
+                [Op.gt]: bowling_theshold ? 30 : -1
+            }
+        }
+    });
+
+    const receivers = await Player.findAll({ where: {
+            [property]: best[property],
+            'balls_faced': {
+                [Op.gt]: batting_threshold ? 50 : -1
+            },
+            'balls_bowled': {
+                [Op.gt]: bowling_theshold ? 30 : -1
+            }
+        }
+    });
+
+    const updates = [];
+    for (const player of receivers) {
+        let amount = value[property] / receivers.length;
+        if (batting && (player.position == 'Pacer' || player.position == 'Spinner')) {
+            if (amount > 0.0) {
+                amount *= 2;
+            } else {
+                amount *= 0.5;
+            }
+        }
+        if (bowling && (player.position == 'Batsman' || player.position == 'Wicketkeeper')) {
+            if (amount > 0.0) {
+                amount *= 2;
+            } else {
+                amount *= 0.5;
+            }
+        }
+        amount = Math.round(amount);
+        player.bonuses.push({
+            [property]: amount
+        });
+        player.bonus_points += amount;
+        player.points = player.base_points + player.bonus_points;
+        updates.push({
+            id: player.id,
+            bonuses: player.bonuses,
+            bonus_points: player.bonus_points,
+            points: player.points
+        });
+    }
+
+    await Player.bulkCreate(updates, {
+        updateOnDuplicate: ['bonuses', 'bonus_points', 'points'],
+    });
+}
+
 
 const reset_players = async (req, res) => {
     try {

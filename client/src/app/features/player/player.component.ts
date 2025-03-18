@@ -42,7 +42,7 @@ export class PlayerComponent implements OnInit {
     stumpings: 0,
     player_of_matches: 0,
     bonuses: [{
-      name: '',
+      name: 'hi',
       points: 0
     }],
     base_points: 0,
@@ -77,6 +77,13 @@ export class PlayerComponent implements OnInit {
         if (response.ok) {
           return response.json().then(data => {
             this.data = data;
+            this.data.bonuses = data.bonuses.map((bonus: { [s: string]: unknown; } | ArrayLike<unknown>) => {
+              const [name, points] = Object.entries(bonus)[0];
+              return {
+                'name': this.getBonus(name), 
+                'points': points
+              };
+            });
             const bowler = data.position == 'Pacer' || data.position == 'Spinner';
             const batsman = data.position == 'Batsman' || data.position == 'Wicketkeeper';
             this.data.photo = 
@@ -229,6 +236,15 @@ export class PlayerComponent implements OnInit {
   invalidImage(event: any): void {
     event.target.src = "https://scores.iplt20.com/ipl/images/default-player-statsImage.png?v=4";
   }
+
+  getBonus(name: string): string {
+    return (['strike_rate', 'batting_average', 'highest_score', 'economy', 'bowling_average', 'bowling_strike_rate']
+      .includes(name) ? 'Best ' : 'Most ')
+      + name.replaceAll('_', ' ')
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');;
+  }
 }
 
 interface Player {
@@ -263,8 +279,8 @@ interface Player {
   stumpings: number,
   player_of_matches: number,
   bonuses: [{
-    name: string,
-    points: number
+    'name': string,
+    'points': number
   }],
   base_points: number,
   bonus_points: number,

@@ -193,7 +193,7 @@
                             <th class="text">Name</th>
                             <th class="text">Points</th>
                         </tr>
-                        @for (bonus of data.bonuses; track bonus.name) {
+                        @for (bonus of data.bonuses; let i=$index; track $index) {
                             <tr class="stats-row">
                                 <td class="text">{{bonus.name}}</td>
                                 <td class="text">{{bonus.points}}</td>
