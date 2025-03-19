@@ -10,7 +10,7 @@
                     <th class="points">Points</th>
                 </tr>
                 @for (player of data.players; track $index) {
-                    <tr class="player">
+                    <tr class="player" (click)="handlePlayer(player.name)">
                         <td class="rank">{{player.rank}}</td>
                         <td class="bio">
                             <img class="photo" [src]="player.photo" (error)="invalidImage($event)"/>

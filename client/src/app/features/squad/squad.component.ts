@@ -93,6 +93,11 @@ export class SquadComponent implements OnInit {
   invalidImage(event: any): void {
     event.target.src = "https://scores.iplt20.com/ipl/images/default-player-statsImage.png?v=4";
   }
+
+  handlePlayer(name: string): void {
+    let route = "/" + name.replaceAll(' (C)', '').replaceAll(' (VC)', '').replaceAll(' ✈️', '');
+    this.router.navigate([route]);
+  }
 }
 
 interface Data {

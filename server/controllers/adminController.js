@@ -55,14 +55,24 @@ const update = async (req, res) => {
             await add_bonus(
                 bonus, 
                 bonus != 'bowling_average' && bonus != 'bowling_strike_rate' && bonus != 'economy',
-                bonus == 'strike rate' || bonus == 'batting_average', 
+                bonus == 'strike_rate' || bonus == 'batting_average', 
                 bonus == 'bowling_average' || bonus == 'bowling_strike_rate' || bonus == 'economy', 
                 value,
                 ['runs', 'bating_average', 'strike_rate', 'centuries', 'half_centuries', 'highest_score', 'sixes', 'fours', 'not_outs', 'ducks'].includes(bonus),
                 ['wickets', 'bowling_average', 'bowling_strike_rate', 'economy', 'four_wicket_hauls', 'five_wicket_hauls', 'six_wicket_hauls', 'hat_tricks', 'maidens', 'dots'].includes(bonus)
             );
         }
-        // update league bonuses
+        const leagues = await League.findAll();
+        for (const league of leagues) {
+            league.squads = add_league_bonuses(league.squads, value);
+        }
+        const updates = leagues.map((league) => ({
+            id: league.id,
+            squads: league.squads
+        }));
+        await League.bulkCreate(updates, {
+            updateOnDuplicate: ['squads'],
+        });
         await update_players();
         await update_leagues();
 
@@ -157,6 +167,7 @@ function base_points(player) {
     batting_points -= (bowler ? 0.5 : 1) * 6 * player.ducks;
     batting_points += (bowler ? 2 : 1) * 50 * player.half_centuries;
     batting_points += (bowler ? 2 : 1) * 150 * player.centuries;
+    batting_points += (bowler ? 2 : 1) * 10 * player.not_outs;
 
     if (player.runs >= 850) {
         batting_points += (bowler ? 2 : 1) * 5000;
@@ -361,7 +372,7 @@ async function update_leagues() {
     });
 }
 
-async function add_bonus(property, most, batting_threshold, bowling_theshold, value, batting, bowling) {
+async function add_bonus(property, most, batting_threshold, bowling_threshold, value, batting, bowling) {
     const best = await Player.findOne({
         order: most
             ? [[property, 'DESC']]
@@ -372,7 +383,7 @@ async function add_bonus(property, most, batting_threshold, bowling_theshold, va
                 [Op.gt]: batting_threshold ? 50 : -1
             },
             'balls_bowled': {
-                [Op.gt]: bowling_theshold ? 30 : -1
+                [Op.gt]: bowling_threshold ? 30 : -1
             }
         }
     });
@@ -383,7 +394,7 @@ async function add_bonus(property, most, batting_threshold, bowling_theshold, va
                 [Op.gt]: batting_threshold ? 50 : -1
             },
             'balls_bowled': {
-                [Op.gt]: bowling_theshold ? 30 : -1
+                [Op.gt]: bowling_threshold ? 30 : -1
             }
         }
     });
@@ -422,6 +433,56 @@ async function add_bonus(property, most, batting_threshold, bowling_theshold, va
     await Player.bulkCreate(updates, {
         updateOnDuplicate: ['bonuses', 'bonus_points', 'points'],
     });
+}
+
+function add_league_bonuses(squads, value) {
+    for (const squad of squads) {
+        squad.bonuses = [];
+        squad.bonus_points = 0;
+    }
+    for (const bonus of Object.keys(value)) {
+        if (bonus != 'highest_score') {
+            squads = add_league_bonus(
+                squads,
+                bonus, 
+                bonus != 'bowling_average' && bonus != 'bowling_strike_rate' && bonus != 'economy',
+                bonus == 'strike_rate' || bonus == 'batting_average', 
+                bonus == 'bowling_average' || bonus == 'bowling_strike_rate' || bonus == 'economy', 
+                value
+            );
+        }
+    }
+    return squads;
+}
+
+function add_league_bonus(squads, property, most, batting_threshold, bowling_threshold, value) {
+    let receivers = [];
+    let best = most ? -Number.MAX_VALUE : Number.MAX_VALUE;
+    for (const squad of squads) {
+        if (most) {
+            if (squad[property] > best && squad.balls_faced > (batting_threshold ? 50 : -1)) {
+                best = squad[property];
+                receivers = [squad];
+            } else if (squad[property] == best && squad.balls_faced > (batting_threshold ? 50 : -1)) {
+                receivers.push(squad);
+            }
+        } else {
+            if (squad[property] < best && squad.balls_bowled > (bowling_threshold ? 30 : -1)) {
+                best = squad[property];
+                receivers = [squad];
+            } else if (squad[property] == best && squad.balls_bowled > (bowling_threshold ? 30 : -1)) {
+                receivers.push(squad);
+            }
+        }
+    }
+    const amount = 2 * value[property] / receivers.length;
+    for (const squad of receivers) {
+        squad.bonuses.push({
+            [property]: amount
+        });
+        squad.bonus_points += amount;
+    }
+    return squads;
 }
 
 

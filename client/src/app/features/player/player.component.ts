@@ -77,13 +77,14 @@ export class PlayerComponent implements OnInit {
         if (response.ok) {
           return response.json().then(data => {
             this.data = data;
-            this.data.bonuses = data.bonuses.map((bonus: { [s: string]: unknown; } | ArrayLike<unknown>) => {
+            this.data.bonuses = data.bonuses.map((bonus: { [s: string]: number; }) => {
               const [name, points] = Object.entries(bonus)[0];
               return {
                 'name': this.getBonus(name), 
                 'points': points
               };
             });
+            this.data.bonuses.sort((a, b) => (b.points - a.points));
             const bowler = data.position == 'Pacer' || data.position == 'Spinner';
             const batsman = data.position == 'Batsman' || data.position == 'Wicketkeeper';
             this.data.photo = 
@@ -95,6 +96,7 @@ export class PlayerComponent implements OnInit {
             this.points.ducks = (bowler ? 0.5 : 1) * data.ducks * -6;
             this.points.half_centuries = (bowler ? 2 : 1) * data.half_centuries * 50;
             this.points.centuries = (bowler ? 2 : 1) * data.centuries * 100;
+            this.points.not_outs = (bowler ? 2 : 1) * data.not_outs * 10;
             this.points.wickets = (batsman ? 2 : 1) * data.wickets * 50;
             this.points.dots = (batsman ? 2 : 1) * data.dots * 5;
             this.points.maidens = (batsman ? 2 : 1) * data.maidens * 150;
@@ -298,6 +300,7 @@ interface Points {
   half_centuries?: number,
   centuries?: number,
   strike_rate?: number,
+  not_outs?: number,
   wickets?: number,
   wickets_aggregate?: number,
   dots?: number,

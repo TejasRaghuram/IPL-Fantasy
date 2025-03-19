@@ -65,10 +65,12 @@ def match_data():
                     }
 
     def get_name(name):
-        if name.endswith(" (wk)"):
-            name =  name.removesuffix(" (wk)")
-        elif name.endswith(" (c)"):
-            name = name.removesuffix(" (c)")
+        if name.endswith(' (wk)'):
+            name =  name.removesuffix(' (wk)')
+        elif name.endswith(' (c)'):
+            name = name.removesuffix(' (c)')
+        elif name.endswith(' (c & wk)'):
+            name = name.removesuffice(' (c & wk)')
         if name[0:5] == '(sub)':
             name = name[5:]
         if name not in players:

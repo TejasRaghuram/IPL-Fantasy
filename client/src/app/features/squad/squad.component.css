@@ -78,6 +78,15 @@
     background-color: white;
 }
 
+.player:hover {
+    cursor: pointer;
+}
+
+.player:hover .name {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
 #loading {
     font-size: 18px;
 }
