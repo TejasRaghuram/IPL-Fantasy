@@ -42,11 +42,13 @@ def match_data():
         if role != None:
             if role.text.strip() in ['Playing', 'Bench']:
                 for player in people.find_all('a', class_='margin0 text-black text-hvr-underline'):
-                    name = player.text
+                    name = player.text.rstrip()
                     if player.text.endswith(" (wk)"):
                         name =  name.removesuffix(" (wk)")
                     elif player.text.endswith(" (c)"):
                         name = name.removesuffix(" (c)")
+                    elif player.text.endswith(" (c & wk)"):
+                        name = name.removesuffix(" (c & wk)")
                     players[name] = {
                         'runs': 0,
                         'fours': 0,
@@ -70,7 +72,7 @@ def match_data():
         elif name.endswith(' (c)'):
             name = name.removesuffix(' (c)')
         elif name.endswith(' (c & wk)'):
-            name = name.removesuffice(' (c & wk)')
+            name = name.removesuffix(' (c & wk)')
         if name[0:5] == '(sub)':
             name = name[5:]
         if name not in players:

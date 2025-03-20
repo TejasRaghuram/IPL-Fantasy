@@ -645,10 +645,46 @@ const add_matches = async (req, res) => {
     }
 }
 
+const replace_player = async (req, res) => {
+    const {
+        old_name,
+        new_name
+    } = req.body;
+
+    try {
+        const player = await Player.findOne({ where: {
+            name: old_name
+        }});
+        player.name = new_name;
+        await player.save();
+        const leagues = await League.findAll();
+        for (const league of leagues) {
+            for (const squad of league.squads) {
+                for (const player of squad.players) {
+                    if (player.name == old_name) {
+                        player.name = new_name;
+                    }
+                }
+            }
+        }
+        const updates = leagues.map((league) => ({
+            id: league.id,
+            squads: league.squads
+        }));
+        await League.bulkCreate(updates, {
+            updateOnDuplicate: ['squads'],
+        });
+        res.status(200).json();
+    } catch (error) {
+        res.status(400).json({error: error.message});
+    }
+}
+
 module.exports = {
     update,
     add_player,
     add_matches,
     reset_players,
-    reset_leagues
+    reset_leagues,
+    replace_player
 }
