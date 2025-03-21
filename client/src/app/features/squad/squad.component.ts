@@ -76,6 +76,18 @@ export class SquadComponent implements OnInit {
               }
               this.data.players[i].name = name;
             }
+            this.data.squad.strike_rate = Math.round(data.squad.strike_rate * 100) / 100;
+            this.data.squad.batting_average = Math.round(data.squad.batting_average * 100) / 100;
+            this.data.squad.economy = Math.round(data.squad.economy * 100) / 100;
+            this.data.squad.bowling_average = Math.round(data.squad.bowling_average * 100) / 100;
+            this.data.squad.bowling_strike_rate = Math.round(data.squad.bowling_strike_rate * 100) / 100;
+            this.data.squad.bonuses = data.squad.bonuses.map((bonus: { [s: string]: number; }) => {
+              const [name, points] = Object.entries(bonus)[0];
+              return {
+                'name': this.getBonus(name), 
+                'points': points
+              };
+            });
             this.loaded = true;
           });
         } else {
@@ -98,6 +110,15 @@ export class SquadComponent implements OnInit {
     let route = "/" + name.replaceAll(' (C)', '').replaceAll(' (VC)', '').replaceAll(' ✈️', '');
     this.router.navigate([route]);
   }
+
+  getBonus(name: string): string {
+    return (['strike_rate', 'batting_average', 'highest_score', 'economy', 'bowling_average', 'bowling_strike_rate']
+      .includes(name) ? 'Best ' : 'Most ')
+      + name.replaceAll('_', ' ')
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');;
+  }
 }
 
 interface Data {
@@ -108,7 +129,41 @@ interface Data {
 interface Squad {
   name: string,
   captain: string,
-  vice_captain: string
+  vice_captain: string,
+  points?: number,
+  base_points?: number,
+  bonus_points?: number,
+  runs?: number,
+  fours?: number,
+  sixes?: number,
+  ducks?: number,
+  half_centuries?: number,
+  centuries?: number,
+  strike_rate?: number,
+  not_outs?: number,
+  balls_faced?: number,
+  batting_average?: number,
+  dismissals?: number,
+  highest_score?: number,
+  wickets?: number,
+  dots?: number,
+  four_wicket_hauls?: number,
+  five_wicket_hauls?: number,
+  six_wicket_hauls?: number,
+  maidens?: number,
+  hat_tricks?: number,
+  economy?: number,
+  bowling_average?: number,
+  bowling_strike_rate?: number,
+  balls_bowled?: number,
+  runs_conceded?: number,
+  catches?: number,
+  stumpings?: number,
+  player_of_matches?: number
+  bonuses?: [{
+    name: string,
+    points: number
+  }]
 }
 
 interface Player {

@@ -24,6 +24,181 @@
                 }
             </table>
         </div>
+        <div class="stats-section first">
+            <h3 class="stats-header">Batting Stats</h3>
+            <div id="stats-table-border">
+                <table id="stats-table">
+                    <tr id="stats-header">
+                        <th class="text">Name</th>
+                        <th class="text">Amount</th>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Runs</td>
+                        <td class="text">{{data.squad.runs}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Fours</td>
+                        <td class="text">{{data.squad.fours}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Sixes</td>
+                        <td class="text">{{data.squad.sixes}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Ducks</td>
+                        <td class="text">{{data.squad.ducks}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Half Centuries</td>
+                        <td class="text">{{data.squad.half_centuries}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Centuries</td>
+                        <td class="text">{{data.squad.centuries}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Strike Rate</td>
+                        <td class="text">{{data.squad.strike_rate}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Not Outs</td>
+                        <td class="text">{{data.squad.not_outs}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Balls Faced</td>
+                        <td class="text">{{data.squad.balls_faced}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Batting Average</td>
+                        <td class="text">{{data.squad.batting_average}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Dismissals</td>
+                        <td class="text">{{data.squad.dismissals}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Highest Score</td>
+                        <td class="text">{{data.squad.highest_score}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="stats-section">
+            <h3 class="stats-header">Bowling Stats</h3>
+            <div id="stats-table-border">
+                <table id="stats-table">
+                    <tr id="stats-header">
+                        <th class="text">Name</th>
+                        <th class="text">Amount</th>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Wickets</td>
+                        <td class="text">{{data.squad.wickets}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Dots</td>
+                        <td class="text">{{data.squad.dots}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Four Wicket Hauls</td>
+                        <td class="text">{{data.squad.four_wicket_hauls}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Five Wicket Hauls</td>
+                        <td class="text">{{data.squad.five_wicket_hauls}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Six Wicket Hauls</td>
+                        <td class="text">{{data.squad.six_wicket_hauls}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Maidens</td>
+                        <td class="text">{{data.squad.maidens}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Hat Tricks</td>
+                        <td class="text">{{data.squad.hat_tricks}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Economy</td>
+                        <td class="text">{{data.squad.economy}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Bowling Average</td>
+                        <td class="text">{{data.squad.bowling_average}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Bowling Strike Rate</td>
+                        <td class="text">{{data.squad.bowling_strike_rate}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Balls Bowled</td>
+                        <td class="text">{{data.squad.balls_bowled}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Runs Conceded</td>
+                        <td class="text">{{data.squad.runs_conceded}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="stats-section">
+            <h3 class="stats-header">General Stats</h3>
+            <div id="stats-table-border">
+                <table id="stats-table">
+                    <tr id="stats-header">
+                        <th class="text">Name</th>
+                        <th class="text">Amount</th>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Catches</td>
+                        <td class="text">{{data.squad.catches}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Stumpings</td>
+                        <td class="text">{{data.squad.stumpings}}</td>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">Player of the Match Awards</td>
+                        <td class="text">{{data.squad.player_of_matches}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="stats-section">
+            <h3 class="stats-header">Bonus Points</h3>
+            <div id="stats-table-border">
+                <table id="stats-table">
+                    <tr id="stats-header">
+                        <th class="text">Name</th>
+                        <th class="text">Points</th>
+                    </tr>
+                    @for (bonus of data.squad.bonuses; let i=$index; track $index) {
+                        <tr class="stats-row">
+                            <td class="text">{{bonus.name}}</td>
+                            <td class="text">{{bonus.points}}</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+        <div class="stats-section">
+            <h3 class="stats-header">Total Points</h3>
+            <div id="stats-table-border">
+                <table id="stats-table">
+                    <tr id="stats-header">
+                        <th class="text">Base Points</th>
+                        <th class="text">Bonus Points</th>
+                        <th class="text">Total Points</th>
+                    </tr>
+                    <tr class="stats-row">
+                        <td class="text">{{data.squad.base_points}}</td>
+                        <td class="text">{{data.squad.bonus_points}}</td>
+                        <td class="text">{{data.squad.points}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     } @else {
         <p id="loading">Loading...</p>
     }

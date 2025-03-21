@@ -315,7 +315,7 @@ function update_squads_stats(squads, data) {
                 squad.runs_conceded += player.runs_conceded;
                 squad.catches += player.catches;
                 squad.stumpings += player.stumpings;
-                squad.player_of_matches += player.player_of_match ? 1 : 0;
+                squad.player_of_matches += (data.player_of_match == name ? 1 : 0);
             }
         }
         squad.strike_rate = 100 * squad.runs / (squad.balls_faced > 0 ? squad.balls_faced : 1);
@@ -475,7 +475,7 @@ function add_league_bonus(squads, property, most, batting_threshold, bowling_thr
             }
         }
     }
-    const amount = 2 * value[property] / receivers.length;
+    const amount = Math.round(2 * value[property] / receivers.length);
     for (const squad of receivers) {
         squad.bonuses.push({
             [property]: amount

@@ -91,6 +91,75 @@
     font-size: 18px;
 }
 
+.stats-section {
+    width: calc(100% - 44px);
+    margin-top: 10px;
+    padding: 20px;
+    background-color: white;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #CCCCCC;
+    border-radius: 10px;
+}
+
+.first {
+    margin-top: 10px;
+}
+
+.stats-header {
+    font-size: 24px;
+}
+
+#stats-table-border {
+    margin-top: 5px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #CCCCCC;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+#stats-table tr {
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    border-bottom-color: #CCCCCC;
+}
+
+#stats-table tr:last-child {
+    border-bottom-style: none;
+}
+
+#stats-header {
+    color: white;
+    background-color: #073763;
+}
+
+.text {
+    padding: 5px;
+    font-size: 18px;
+    text-align: center;
+}
+
+.stats-row:nth-child(odd) {
+    background-color: #EEEEEE;
+}
+
+.stats-row td {
+    border-right-style: solid;
+    border-right-width: 2px;
+    border-right-color: #CCCCCC;
+}
+
+.stats-row td:last-child {
+    border-right-style: none;
+}
+
 @media (max-width: 768px) {
     .rank {
         width: 40px;
@@ -119,5 +188,9 @@
 
     .points {
         width: 55px;
+    }
+
+    .text {
+        font-size: 16px;
     }
 }
