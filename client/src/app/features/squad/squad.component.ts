@@ -16,7 +16,11 @@ export class SquadComponent implements OnInit {
     squad: {
       name: '',
       captain: '',
-      vice_captain: ''
+      vice_captain: '',
+      bonuses: [{
+        name: '',
+        points: 0
+      }]
     },
     players: [{
       name: '',
@@ -88,6 +92,7 @@ export class SquadComponent implements OnInit {
                 'points': points
               };
             });
+            this.data.squad.bonuses.sort((a, b) => (b.points - a.points));
             this.loaded = true;
           });
         } else {
@@ -160,7 +165,7 @@ interface Squad {
   catches?: number,
   stumpings?: number,
   player_of_matches?: number
-  bonuses?: [{
+  bonuses: [{
     name: string,
     points: number
   }]

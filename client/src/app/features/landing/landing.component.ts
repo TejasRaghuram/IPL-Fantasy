@@ -14,12 +14,10 @@ export class LandingComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = "#FFE6BE";
-    this.elementRef.nativeElement.ownerDocument.body.style.overflow="hidden";
   }
 
   ngOnDestroy(): void {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = "#EEEEEE";
-    this.elementRef.nativeElement.ownerDocument.body.style.overflow="auto";
   }
 
   handleGetStarted(): void {

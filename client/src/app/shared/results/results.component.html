@@ -1,5 +1,5 @@
-@if (loaded) {
-    <div id="results">
+<div id="results">
+    @if (loaded) {
         @for (match of matchData; track match.title) {
             <app-scorecard
                 [title]="match.title"
@@ -10,5 +10,5 @@
                 [team2Score]="match.team2Score"
                 [result]="match.result"/>
         }
-    </div>
-}
+    }
+</div>

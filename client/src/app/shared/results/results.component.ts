@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ScorecardComponent } from '../scorecard/scorecard.component';
+import { environment } from '../../../../environment';
 
 @Component({
   selector: 'app-results',
@@ -12,16 +13,45 @@ export class ResultsComponent implements OnInit {
   loaded = false;
 
   ngOnInit(): void {
-    for (let i = 0; i < 10; i++) {
-      this.matchData.push({
-        title: "Title " + i,
-        stadium: "Stadium",
-        team1: "Team 1",
-        team1Score: "Score 1",
-        team2: "Team 2",
-        team2Score: "Score 2",
-        result: "Result"
-      });
+    fetch (environment.API_URL + '/api/admin/matches', {
+      method: 'GET'
+    }).then(response => {
+      if (response.ok) {
+        return response.json().then(data => {
+          for(const match of data) {
+            this.matchData.push({
+              title: this.getName(match.id),
+              stadium: match.data.stadium.slice(match.data.stadium.lastIndexOf(', ') + 2),
+              team1: match.data.team1,
+              team1Score: match.data.score1,
+              team2: match.data.team2,
+              team2Score: match.data.score2,
+              result: match.data.result
+            });
+          }
+          this.loaded = true;
+        });
+      } else {
+        return response.json().then(data => {
+          alert(data.error);
+        });
+      }
+    });
+  }
+
+  getName(id: number): string {
+    if (id <= 70) {
+      return "Match " + id + " - IPL";
+    } else if (id == 71) {
+      return "Qualifier 1 - IPL";
+    } else if (id == 72) {
+      return "Eliminator 1 - IPL";
+    } else if (id == 73) {
+      return "Eliminator 2 - IPL";
+    } else if (id == 74) {
+      return "Finals - IPL";
+    } else {
+      return "";
     }
   }
 }

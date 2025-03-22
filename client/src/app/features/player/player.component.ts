@@ -114,7 +114,6 @@ export class PlayerComponent implements OnInit {
             this.data.bowling_average = Math.round(this.data.bowling_average * 100) / 100;
             this.data.bowling_strike_rate = Math.round(this.data.bowling_strike_rate * 100) / 100;
           
-            this.loaded = true;
             if (this.data.runs >= 850) {
               this.points.runs_aggregate = (bowler ? 2 : 1) * 5000;
             } else if (this.data.runs >= 800) {
@@ -225,6 +224,8 @@ export class PlayerComponent implements OnInit {
             } else {
               this.points.economy = 0;
             }
+
+            this.loaded = true;
           });
         } else {
           return response.json().then(data => {
