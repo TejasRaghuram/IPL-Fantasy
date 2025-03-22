@@ -43,12 +43,6 @@ def match_data():
             if role.text.strip() in ['Playing', 'Bench']:
                 for player in people.find_all('a', class_='margin0 text-black text-hvr-underline'):
                     name = player.text.rstrip()
-                    if player.text.endswith(" (wk)"):
-                        name =  name.removesuffix(" (wk)")
-                    elif player.text.endswith(" (c)"):
-                        name = name.removesuffix(" (c)")
-                    elif player.text.endswith(" (c & wk)"):
-                        name = name.removesuffix(" (c & wk)")
                     players[name] = {
                         'runs': 0,
                         'fours': 0,
@@ -67,12 +61,6 @@ def match_data():
                     }
 
     def get_name(name):
-        if name.endswith(' (wk)'):
-            name =  name.removesuffix(' (wk)')
-        elif name.endswith(' (c)'):
-            name = name.removesuffix(' (c)')
-        elif name.endswith(' (c & wk)'):
-            name = name.removesuffix(' (c & wk)')
         if name[0:5] == '(sub)':
             name = name[5:]
         if name not in players:
@@ -132,6 +120,12 @@ def match_data():
                     players[name]['hat_tricks'] += 1
                     wicket_counter = 0
 
+    players = {
+        key.removesuffix(' (c & wk)')
+        .removesuffix(' (wk)')
+        .removesuffix(' (c)'): value
+        for key, value in players.items()
+    }
     data['players'] = players
 
     return jsonify(data)

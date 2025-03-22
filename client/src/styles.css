@@ -4,10 +4,6 @@
     font-family: "Space Grotesk";
 }
 
-html {
-    overflow-y: auto;
-}
-
 body {
     background-color: #EEEEEE;
     overflow-x: hidden;

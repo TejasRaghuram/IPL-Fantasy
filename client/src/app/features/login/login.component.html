@@ -5,9 +5,9 @@
     <h1 id="title">Log In</h1>
     <p id="signup-prompt" class="text prompt">Need an Account? <span id="signup-link" (click)="handleSignUp()">Sign Up</span></p>
     <h3 id="username-prompt" class="text prompt">Username</h3>
-    <input type="text" id="username" class="text input" [(ngModel)]="username">
+    <input type="text" id="username" class="text input" [(ngModel)]="username" name="username" autocomplete="username">
     <h3 id="password-prompt" class="text prompt">Password</h3>
-    <input type="password" id="password" class="text input" [(ngModel)]="password">
+    <input type="password" id="password" class="text input" [(ngModel)]="password" name="password" autocomplete="current-password">
     <div id="remember" (click)="handleRemember()" [class.checked]="rememberUser" [class.unchecked]="!rememberUser"></div>
     <h3 id="remember-prompt" class="text">Keep me logged in</h3>
     <button id="submit" (click)="handleLogIn()">Log In</button>

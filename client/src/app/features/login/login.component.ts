@@ -22,7 +22,6 @@ export class LoginComponent implements OnInit {
     if (this.userService.username != '') {
       this.router.navigate(['/home']);
     }
-    this.elementRef.nativeElement.ownerDocument.body.style.overflow="hidden";
   }
 
   handleSignUp() {

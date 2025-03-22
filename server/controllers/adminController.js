@@ -148,7 +148,7 @@ async function update_stats(data, match) {
     for (const [team, abbreviation] of Object.entries(teamAbbreviations)) {
         data.result = data.result.replaceAll(team, abbreviation);
     }
-    data.result = data.result.replaceAll('wkts', 'wickets');
+    data.result = data.result.replaceAll('wkt', 'wicket');
     match.data = data;
     await match.save();
 }
@@ -485,6 +485,23 @@ function add_league_bonus(squads, property, most, batting_threshold, bowling_thr
     return squads;
 }
 
+const matches = async (req, res) => {
+    try {
+        const matches = await Match.findAll({
+            order: [
+                ['date', 'DESC']
+            ],
+            where: {
+                data: {
+                    [Op.ne]: null
+                }
+            }
+        });
+        res.status(200).json(matches);
+    } catch (error) {
+        res.status(400).json({error: error.message});
+    }
+}
 
 const reset_players = async (req, res) => {
     try {
@@ -573,6 +590,22 @@ const reset_leagues = async (req, res) => {
         return res.status(200).json();
     } catch (error) {
         return res.status(400).json({error: error.message});
+    }
+}
+
+const reset_matches = async (req, res) => {
+    try {
+        const matches = await Match.findAll();
+        const updates = matches.map((match) => ({
+            id: match.id,
+            data: null
+        }));
+        await Match.bulkCreate(updates, {
+            updateOnDuplicate: ['data'],
+        });
+        res.status(200).json();
+    } catch (error) {
+        res.status(400).json({error: error.message});
     }
 }
 
@@ -682,9 +715,11 @@ const replace_player = async (req, res) => {
 
 module.exports = {
     update,
+    matches,
     add_player,
     add_matches,
     reset_players,
     reset_leagues,
+    reset_matches,
     replace_player
 }

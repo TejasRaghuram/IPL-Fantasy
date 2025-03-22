@@ -1,7 +1,10 @@
 #navbar {
     width: 100vw;
     height: 75px;
+    position: sticky;
+    top: 0;
     background-color: #073763;
+    z-index: 2;
 }
 
 .navbar-component {
