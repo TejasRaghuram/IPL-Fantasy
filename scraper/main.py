@@ -84,10 +84,13 @@ def match_data():
             status = statline.find('span', class_='text-gray').text
             if status == 'not out':
                 players[name]['not_out'] = True
-            else:
+            elif status != 'retd hurt':
                 players[name]['out'] = True
                 if status[0] == 'c':
-                    players[get_name(status[2:].split(' b')[0])]['catches'] += 1
+                    if status.split(' ')[1] == 'and':
+                        players[get_name(status[8:])]['catches'] += 1
+                    else:
+                        players[get_name(status[2:].split(' b')[0])]['catches'] += 1
                 elif status[0] == 's':
                     players[get_name(status[3:].split(' b')[0])]['stumpings'] += 1
             players[name]['runs'] += int(statline.find('div', class_='cb-col cb-col-8 text-right text-bold').text)
@@ -111,7 +114,8 @@ def match_data():
                 if result == 'no run' or result == 'leg byes':
                     players[name]['dots'] += 1
                 if result.split(' ')[0] == 'out':
-                    wicket_counter += 1
+                    if not 'Run Out' in ball.text:
+                        wicket_counter += 1
                     if not ('1 run' in ball.text or '2 run' in ball.text or '3 run' in ball.text):
                         players[name]['dots'] += 1
                 else:

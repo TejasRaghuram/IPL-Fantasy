@@ -66,9 +66,6 @@ export class SquadComponent implements OnInit {
                 this.data.players[i].rank = rank;
               }
               rank++;
-              this.data.players[i].photo = 
-                'https://ipl-stats-sports-mechanic.s3.ap-south-1.amazonaws.com/ipl/playerimages/'
-                + this.data.players[i].name.replaceAll(' ', '%20') + '.png';
               let name = this.data.players[i].name;
               if (this.data.players[i].foreigner) {
                 name += ' ✈️';
@@ -177,6 +174,6 @@ interface Player {
   team?: string,
   position?: string,
   points: number,
-  photo?: string,
+  image?: string,
   foreigner?: boolean
 }

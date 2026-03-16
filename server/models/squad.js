@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Player extends Model {
+  class Squad extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,16 +13,17 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  Player.init({
+  Squad.init({
+    league: DataTypes.STRING,
+    username: DataTypes.STRING,
     name: DataTypes.STRING,
-    team: DataTypes.STRING,
-    position: DataTypes.STRING,
-    image: DataTypes.STRING,
-    foreigner: DataTypes.BOOLEAN,
+    points: DataTypes.INTEGER,
     base_points: DataTypes.INTEGER,
     bonus_points: DataTypes.INTEGER,
     bonuses: DataTypes.ARRAY(DataTypes.JSON),
-    points: DataTypes.INTEGER,
+    captain: DataTypes.STRING,
+    vice_captain: DataTypes.STRING,
+    players: DataTypes.ARRAY(DataTypes.JSON),
     runs: DataTypes.INTEGER,
     fours: DataTypes.INTEGER,
     sixes: DataTypes.INTEGER,
@@ -30,11 +31,10 @@ module.exports = (sequelize, DataTypes) => {
     half_centuries: DataTypes.INTEGER,
     centuries: DataTypes.INTEGER,
     strike_rate: DataTypes.FLOAT,
+    not_outs: DataTypes.INTEGER,
     balls_faced: DataTypes.INTEGER,
     batting_average: DataTypes.FLOAT,
-    not_outs: DataTypes.INTEGER,
     dismissals: DataTypes.INTEGER,
-    highest_score: DataTypes.INTEGER,
     wickets: DataTypes.INTEGER,
     dots: DataTypes.INTEGER,
     four_wicket_hauls: DataTypes.INTEGER,
@@ -52,8 +52,8 @@ module.exports = (sequelize, DataTypes) => {
     player_of_matches: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'Player',
+    modelName: 'Squad',
     underscored: true
   });
-  return Player;
+  return Squad;
 };

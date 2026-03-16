@@ -15,9 +15,6 @@ module.exports = {
       date: {
         type: Sequelize.DATE
       },
-      data: {
-        type: Sequelize.JSON
-      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE

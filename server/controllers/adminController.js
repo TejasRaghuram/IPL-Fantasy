@@ -237,17 +237,17 @@ function base_points(player) {
     bowling_points += (batsman ? 2 : 1) * 500 * player.five_wicket_hauls;
     bowling_points += (batsman ? 2 : 1) * 1000 * player.six_wicket_hauls;
 
-    if (player.wickets > 35) {
+    if (player.wickets >= 35) {
         bowling_points += (batsman ? 2 : 1) * 5000;
-    } else if (player.wickets > 30) {
+    } else if (player.wickets >= 30) {
         bowling_points += (batsman ? 2 : 1) * 4000;
-    } else if (player.wickets > 25) {
+    } else if (player.wickets >= 25) {
         bowling_points += (batsman ? 2 : 1) * 3000;
-    } else if (player.wickets > 20) {
+    } else if (player.wickets >= 20) {
         bowling_points += (batsman ? 2 : 1) * 2000;
-    } else if (player.wickets > 15) {
+    } else if (player.wickets >= 15) {
         bowling_points += (batsman ? 2 : 1) * 1000;
-    } else if (player.wickets > 10) {
+    } else if (player.wickets >= 10) {
         bowling_points += (batsman ? 2 : 1) * 500;
     }
 
@@ -352,12 +352,18 @@ async function update_leagues() {
         for (const squad of league.squads) {
             squad.base_points = 0;
             for (const player of squad.players) {
-                if (player.name == squad.captain) {
-                    squad.base_points += 2 * map[player.name];
-                } else if (player.name == squad.vice_captain) {
-                    squad.base_points += 1.5 * map[player.name];
+                let points;
+                if (player.active) {
+                    points = map[player.name] - player.earned;
                 } else {
-                    squad.base_points += map[player.name];
+                    points = player.earned;
+                }
+                if (player.name == squad.captain) {
+                    squad.base_points += 2 * points;
+                } else if (player.name == squad.vice_captain) {
+                    squad.base_points += 1.5 * points;
+                } else {
+                    squad.base_points += points;
                 }
             }
             squad.points = Math.round(squad.base_points + squad.bonus_points);
@@ -622,6 +628,8 @@ const add_player = async (req, res) => {
             name: name,
             position: position,
             team: team,
+            image: 'https://ipl-stats-sports-mechanic.s3.ap-south-1.amazonaws.com/ipl/playerimages/'
+              + name.replaceAll(' ', '%20') + '.png',
             foreigner: foreigner,
             base_points: 0,
             bonus_points: 0,

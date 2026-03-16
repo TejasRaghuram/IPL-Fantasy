@@ -1,4 +1,4 @@
-const { League, User, Player } = require('../models');
+const { League, Squad, User, Player } = require('../models');
 const { Op } = require('sequelize');
 const bcrypt = require('bcrypt');
 
@@ -29,7 +29,6 @@ const create = async (req, res) => {
             const league = await League.create({
                 name: name,
                 password: hash,
-                squads: [],
                 players: players
             });
             return res.status(200).json(league);
@@ -85,18 +84,21 @@ const join = async (req, res) => {
         if (!league) {
             return res.status(400).json({error: 'League Does Not Exist'});
         }
-        if (league.squads.length == 10) {
+        const squads = await Squad.findAll({ where: {
+            league: name
+        }});
+        if (squads.length == 10) {
             return res.status(400).json({error: 'League is Full'});
         }
         if (display.length == 0) {
             return res.status(400).json({error: 'Squad Name is Required'});
         }
-        let exists = false;
-        for (const squad of league.squads) {
-            if (username == squad.username) {
-                exists = true;
+        const exists = await Squad.findOne({
+            where: {
+                league: name,
+                username: username
             }
-        }
+        });
         if (exists) {
             return res.status(400).json({error: 'Already in League'});
         }
@@ -112,7 +114,7 @@ const join = async (req, res) => {
                 name: player
             }});
             if (!exists) {
-                return res.status(400).json({error: player + ' Does Not Exist'});
+                return res.status(400).json({error: player + ' Does Not Exist (Check Spelling)'});
             } else {
                 members.push({
                     name: exists.name,
@@ -124,6 +126,7 @@ const join = async (req, res) => {
         user.leagues.push(league.name);
         user.changed('leagues', true);
         const team = {
+            league: league.name,
             username: username,
             name: display,
             base_points: 0,
@@ -160,12 +163,9 @@ const join = async (req, res) => {
             stumpings: 0,
             player_of_matches: 0
         };
-        console.log(team);
-        league.squads.push(team);
-        league.changed('squads', true);
         await user.save();
-        await league.save();
-        return res.status(200).json(league);
+        const squad = await Squad.create(team);
+        return res.status(200).json(squad);
     } catch (error) {
         return res.status(400).json({error: error.message});
     }
@@ -178,29 +178,20 @@ const squad = async (req, res) => {
     } = req.body;
 
     try {
-        const user = await User.findOne({ where: {
-            username: username
+        const squad = await Squad.findOne({ where: {
+            username: username,
+            league: name
         }});
-        if (!user) {
-            return res.status(400).json({error: 'User Does Not Exist'});
+        if (!squad) {
+            return res.status(400).json({error: 'Squad Does Not Exist'});
         }
-        const league = await League.findOne({ where: {
-            name: name
-        }});
-        if (!league) {
-            return res.status(400).json({error: 'League Does Not Exist'});
-        }
-        for (const squad of league.squads) {
-            if (username == squad.username) {
-                const players = await Player.findAll({ where: {
-                    name: {
-                        [Op.in]: squad.players.map(item => item.name)
-                    }
-                }});
-                return res.status(200).json({squad, players});
+        const players = await Player.findAll({ where: {
+            name: {
+                [Op.in]: squad.players.map(item => item.name)
             }
-        }
-        return res.status(400).json({error: 'User is not in League'});
+        }});
+
+        return res.status(200).json({squad, players});
     } catch (error) {
         return res.status(400).json({error: error.message});
     }

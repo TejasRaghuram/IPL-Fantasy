@@ -1,4 +1,4 @@
-const { User, League } = require('../models');
+const { User, League, Squad } = require('../models');
 const bcrypt = require('bcrypt');
 
 const create = async (req, res) => {
@@ -71,9 +71,14 @@ const leagues = async (req, res) => {
         }});
         const response = [];
         for (const name of user.leagues) {
-            const league = await League.findOne({ where: {
+            let league = await League.findOne({ where: {
                 name: name
             }});
+            const squads = await Squad.findAll({ where: {
+                league: name
+            }});
+            league = league.toJSON();
+            league.squads = squads;
             response.push(league);
         }
         return res.status(200).json(response);

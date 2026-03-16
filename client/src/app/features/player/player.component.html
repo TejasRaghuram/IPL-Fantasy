@@ -1,7 +1,7 @@
 <div id="player">
     @if (loaded) {
         <div id="card">
-            <img id="photo" [src]="data.photo" (error)="invalidImage($event)"/>
+            <img id="photo" [src]="data.image" (error)="invalidImage($event)"/>
             <div id="player-text">
                 <h3 id="name" 
                 [class]="

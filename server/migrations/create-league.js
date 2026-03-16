@@ -15,9 +15,6 @@ module.exports = {
       password: {
         type: Sequelize.STRING
       },
-      squads: {
-        type: Sequelize.ARRAY(Sequelize.JSON)
-      },
       players: {
         type: Sequelize.INTEGER
       },

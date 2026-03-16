@@ -14,6 +14,7 @@ export class PlayerComponent implements OnInit {
     name: '',
     team: '',
     position: '',
+    image: '',
     runs: 0,
     fours: 0,
     sixes: 0,
@@ -87,9 +88,7 @@ export class PlayerComponent implements OnInit {
             this.data.bonuses.sort((a, b) => (b.points - a.points));
             const bowler = data.position == 'Pacer' || data.position == 'Spinner';
             const batsman = data.position == 'Batsman' || data.position == 'Wicketkeeper';
-            this.data.photo = 
-              'https://ipl-stats-sports-mechanic.s3.ap-south-1.amazonaws.com/ipl/playerimages/'
-              + this.data.name.replaceAll(' ', '%20') + '.png';
+            this.data.image = data.image;
             this.points.runs = (bowler ? 2 : 1) * data.runs * 2;
             this.points.fours = (bowler ? 2 : 1) * data.fours * 4;
             this.points.sixes = (bowler ? 2 : 1) * data.sixes * 8;
@@ -289,7 +288,7 @@ interface Player {
   bonus_points: number,
   points: number,
   foreigner: boolean,
-  photo?: string
+  image: string
 }
 
 interface Points {

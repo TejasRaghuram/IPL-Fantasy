@@ -2,27 +2,24 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('players', {
+    await queryInterface.createTable('squads', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      league: {
+        type: Sequelize.STRING
+      },
+      username: {
+        type: Sequelize.STRING
+      },
       name: {
         type: Sequelize.STRING
       },
-      team: {
-        type: Sequelize.STRING
-      },
-      position: {
-        type: Sequelize.STRING
-      },
-      image: {
-        type: Sequelize.STRING
-      },
-      foreigner: {
-        type: Sequelize.BOOLEAN
+      points: {
+        type: Sequelize.INTEGER
       },
       base_points: {
         type: Sequelize.INTEGER
@@ -33,8 +30,14 @@ module.exports = {
       bonuses: {
         type: Sequelize.ARRAY(Sequelize.JSON)
       },
-      points: {
-        type: Sequelize.INTEGER
+      captain: {
+        type: Sequelize.STRING
+      },
+      vice_captain: {
+        type: Sequelize.STRING
+      },
+      players: {
+        type: Sequelize.ARRAY(Sequelize.JSON)
       },
       runs: {
         type: Sequelize.INTEGER
@@ -57,19 +60,16 @@ module.exports = {
       strike_rate: {
         type: Sequelize.FLOAT
       },
+      not_outs: {
+        type: Sequelize.INTEGER
+      },
       balls_faced: {
         type: Sequelize.INTEGER
       },
       batting_average: {
         type: Sequelize.FLOAT
       },
-      not_outs: {
-        type: Sequelize.INTEGER
-      },
       dismissals: {
-        type: Sequelize.INTEGER
-      },
-      highest_score: {
         type: Sequelize.INTEGER
       },
       wickets: {
@@ -128,6 +128,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('players');
+    await queryInterface.dropTable('Squads');
   }
 };

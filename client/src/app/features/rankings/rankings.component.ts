@@ -52,9 +52,7 @@ export class RankingsComponent implements OnInit {
               this.players[i].class = 'player';
             }
             rank++;
-            this.players[i].photo = 
-              'https://ipl-stats-sports-mechanic.s3.ap-south-1.amazonaws.com/ipl/playerimages/'
-              + this.players[i].name.replaceAll(' ', '%20') + '.png';
+            this.players[i].image = this.players[i].image;
           }
           this.loaded = true;
         });
@@ -83,6 +81,6 @@ interface Player {
   team: string;
   foreigner: boolean;
   rank?: number;
-  photo?: string;
+  image?: string;
   class?: string;
 }
