@@ -10,6 +10,33 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       match_id: {
+        type: Sequelize.INTEGER
+      },
+      title: {
+        type: Sequelize.STRING
+      },
+      stadium: {
+        type: Sequelize.STRING
+      },
+      team1: {
+        type: Sequelize.STRING
+      },
+      team2: {
+        type: Sequelize.STRING
+      },
+      team1_score: {
+        type: Sequelize.STRING
+      },
+      team2_score: {
+        type: Sequelize.STRING
+      },
+      result: {
+        type: Sequelize.STRING
+      },
+      scorecard: {
+        type: Sequelize.JSON
+      },
+      player_of_match: {
         type: Sequelize.STRING
       },
       date: {

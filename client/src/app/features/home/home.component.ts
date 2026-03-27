@@ -22,6 +22,7 @@ export class HomeComponent implements OnInit {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = "#EEEEEE";
     if (this.userService.username == '') {
       this.router.navigate(['/']);
+      return;
     }
     this.name = this.userService.name;
     if (typeof window !== 'undefined') {

@@ -43,7 +43,7 @@ export class PlayerComponent implements OnInit {
     stumpings: 0,
     player_of_matches: 0,
     bonuses: [{
-      name: 'hi',
+      name: '',
       points: 0
     }],
     base_points: 0,
@@ -53,6 +53,7 @@ export class PlayerComponent implements OnInit {
   }
   points: Points = {}
   loaded = false;
+  Object = Object;
 
   constructor(private route: ActivatedRoute, private router: Router, private elementRef: ElementRef, private userService: UserService) {}
 

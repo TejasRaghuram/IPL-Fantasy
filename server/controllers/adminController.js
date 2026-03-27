@@ -1,32 +1,112 @@
 require('dotenv').config();
 
-const { Player, Match, League } = require('../models');
-const { Op } = require('sequelize');
+const { Player, Match, League, Squad } = require('../models');
+const { Op, Sequelize } = require('sequelize');
 
 const update = async (req, res) => {
+    const {
+        match_id,
+        team1,
+        score1,
+        team2,
+        score2,
+        result,
+        stadium,
+        player_of_match,
+        scorecard
+    } = req.body;
+
     try {
+        const match = await Match.findOne({ where: { match_id: match_id } });
+        match.team1 = team1;
+        match.team1_score = score1;
+        match.team2 = team2;
+        match.team2_score = score2;
+        match.result = result;
+        match.stadium = stadium;
+        match.player_of_match = player_of_match;
+        match.scorecard = scorecard;
+        await match.save();
+
+        const players = await Player.findAll({});
+        const map = {};
+        for (const player of players) {
+            map[player.name] = player;
+            map[player.name].bonuses = [];
+            map[player.name].bonus_points = 0;
+            map[player.name].runs = 0;
+            map[player.name].fours = 0;
+            map[player.name].sixes = 0;
+            map[player.name].ducks = 0;
+            map[player.name].half_centuries = 0;
+            map[player.name].centuries = 0;
+            map[player.name].balls_faced = 0;
+            map[player.name].not_outs = 0;
+            map[player.name].dismissals = 0;
+            map[player.name].highest_score = 0;
+            map[player.name].wickets = 0;
+            map[player.name].dots = 0;
+            map[player.name].four_wicket_hauls = 0;
+            map[player.name].five_wicket_hauls = 0;
+            map[player.name].six_wicket_hauls = 0;
+            map[player.name].maidens = 0;
+            map[player.name].hat_tricks = 0;
+            map[player.name].balls_bowled = 0;
+            map[player.name].runs_conceded = 0;
+            map[player.name].catches = 0;
+            map[player.name].stumpings = 0;
+            map[player.name].player_of_matches = 0;
+        }
+
         const matches = await Match.findAll({
-            order: [
-                ['id', 'ASC']
-            ],
+            where: Sequelize.literal("scorecard::jsonb <> '{}'::jsonb")
         });
-        const date = new Date(Date.now() - 4 * 60 * 60 * 1000);
+
+        const not_found = [];
+
         for (const match of matches) {
-            if (date.toISOString() > match.date.toISOString() && match.data == null) {
-                const response = await fetch(process.env.SCRAPER_URL + match.match_id);
-                if (response.ok) {
-                    const data = await response.json();
-                    await update_stats(data, match);
+            if (match.player_of_match in map) map[match.player_of_match].player_of_matches++;
+            else not_found.push(match.player_of_match);
+            for (const [player, stats] of Object.entries(match.scorecard)) {
+                if (!(player in map)) {
+                    not_found.push(player);
+                    continue;
                 }
+
+                map[player].runs += stats.runs;
+                map[player].fours += stats.fours;
+                map[player].sixes += stats.sixes;
+                map[player].ducks += stats.out && stats.runs == 0 ? 1 : 0;
+                map[player].half_centuries += stats.runs >= 50 && stats.runs < 100 ? 1 : 0;
+                map[player].centuries += stats.runs >= 100 ? 1 : 0;
+                map[player].balls_faced += stats.balls_faced;
+                map[player].not_outs += stats.not_out ? 1 : 0;
+                map[player].dismissals += stats.out ? 1 : 0;
+                map[player].highest_score = Math.max(map[player].highest_score, stats.runs);
+                map[player].wickets += stats.wickets;
+                map[player].dots += stats.dots;
+                map[player].four_wicket_hauls += stats.wickets == 4 ? 1 : 0;
+                map[player].five_wicket_hauls += stats.wickets == 5 ? 1 : 0;
+                map[player].six_wicket_hauls += stats.wickets == 6 ? 1 : 0;
+                map[player].maidens += stats.maidens;
+                map[player].hat_tricks += stats.hat_tricks;
+                map[player].balls_bowled += stats.balls_bowled;
+                map[player].runs_conceded += stats.runs_conceded;
+                map[player].catches += stats.catches;
+                map[player].stumpings += stats.stumpings;
             }
         }
-        await Player.update({
-            bonuses: [],
-            bonus_points: 0
-        }, {
-            where: {},
-        });
-        const value = {
+
+        for (const player of Object.keys(map)) {
+            map[player].base_points = base_points(map[player]);
+            map[player].strike_rate = map[player].balls_faced > 0 ? 100 * map[player].runs / map[player].balls_faced : 0;
+            map[player].batting_average = map[player].dismissals > 0 ? map[player].runs / map[player].dismissals : map[player].runs;
+            map[player].economy = map[player].balls_bowled > 0 ? 6 * map[player].runs_conceded / map[player].balls_bowled : map[player].runs_conceded;
+            map[player].bowling_average = map[player].wickets > 0 ? map[player].runs_conceded / map[player].wickets : map[player].runs_conceded;
+            map[player].bowling_strike_rate = map[player].wickets > 0 ? map[player].balls_bowled / map[player].wickets : map[player].balls_bowled;
+        }
+
+        const bonuses = {
             'runs': 1000,
             'batting_average': 750,
             'strike_rate': 750,
@@ -51,106 +131,150 @@ const update = async (req, res) => {
             'stumpings': 1000,
             'player_of_matches': 1000
         }
-        for (const bonus of Object.keys(value)) {
-            await add_bonus(
-                bonus, 
-                bonus != 'bowling_average' && bonus != 'bowling_strike_rate' && bonus != 'economy',
-                bonus == 'strike_rate' || bonus == 'batting_average', 
-                bonus == 'bowling_average' || bonus == 'bowling_strike_rate' || bonus == 'economy', 
-                value,
-                ['runs', 'bating_average', 'strike_rate', 'centuries', 'half_centuries', 'highest_score', 'sixes', 'fours', 'not_outs', 'ducks'].includes(bonus),
-                ['wickets', 'bowling_average', 'bowling_strike_rate', 'economy', 'four_wicket_hauls', 'five_wicket_hauls', 'six_wicket_hauls', 'hat_tricks', 'maidens', 'dots'].includes(bonus)
-            );
-        }
-        const leagues = await League.findAll();
-        for (const league of leagues) {
-            league.squads = add_league_bonuses(league.squads, value);
-        }
-        const updates = leagues.map((league) => ({
-            id: league.id,
-            squads: league.squads
-        }));
-        await League.bulkCreate(updates, {
-            updateOnDuplicate: ['squads'],
-        });
-        await update_players();
-        await update_leagues();
 
-        res.status(200).json({});
+        for (const [bonus, value] of Object.entries(bonuses)) {
+            const most = bonus != 'bowling_average' && bonus != 'bowling_strike_rate' && bonus != 'economy';
+            const batting_threshold = bonus == 'strike_rate' || bonus == 'batting_average';
+            const bowling_threshold = bonus == 'bowling_average' || bonus == 'bowling_strike_rate' || bonus == 'economy';
+            const batting = ['runs', 'bating_average', 'strike_rate', 'centuries', 'half_centuries', 'highest_score', 'sixes', 'fours', 'not_outs', 'ducks'].includes(bonus);
+            const bowling = ['wickets', 'bowling_average', 'bowling_strike_rate', 'economy', 'four_wicket_hauls', 'five_wicket_hauls', 'six_wicket_hauls', 'hat_tricks', 'maidens', 'dots'].includes(bonus);
+            let best = most ? Number.MIN_VALUE : Number.MAX_VALUE;
+            for (const stats of Object.values(map))
+                if ((!batting_threshold || stats.balls_faced >= 50) &&
+                    (!bowling_threshold || stats.balls_bowled >= 30))
+                    best = most ? Math.max(best, stats[bonus]) : Math.min(best, stats[bonus]);
+            best = Math.round(best * 1e10) / 1e10;
+            if (best == 0 && most) best = Number.MAX_VALUE;
+            const to_add = []
+            for (const player of Object.keys(map)) {
+                if ((!batting_threshold || map[player].balls_faced >= 50) &&
+                    (!bowling_threshold || map[player].balls_bowled >= 30) &&
+                    map[player][bonus] == best)  {
+                    to_add.push(player);
+                }
+            }
+            for (const player of to_add) {
+                const points = (((batting && (map[player].position == 'Pacer' || map[player].position == 'Spinner')) ||
+                        (bowling && (map[player].position == 'Batsman' || map[player].position == 'Wicketkeeper'))) ? 2 : 1) * value / to_add.length;
+                if (bonus == 'ducks' && bowling) points /= 4;
+                map[player].bonuses = [...map[player].bonuses, {[bonus]: Math.round(points)}];
+                map[player].bonus_points += Math.round(points);
+            }
+        }
+
+        for (const player of Object.keys(map)) map[player].points = map[player].base_points + map[player].bonus_points;
+
+        await Promise.all(players.map(player => player.save()));
+
+        const squads = await Squad.findAll({});
+
+        for (const squad of squads) {
+            squad.points = 0;
+            squad.bonuses = [];
+            squad.bonus_points = 0;
+            squad.base_points = 0;
+            squad.runs = 0;
+            squad.fours = 0;
+            squad.sixes = 0;
+            squad.ducks = 0;
+            squad.half_centuries = 0;
+            squad.centuries = 0;
+            squad.not_outs = 0;
+            squad.balls_faced = 0;
+            squad.dismissals = 0;
+            squad.wickets = 0;
+            squad.dots = 0;
+            squad.four_wicket_hauls = 0;
+            squad.five_wicket_hauls = 0;
+            squad.six_wicket_hauls = 0;
+            squad.maidens = 0;
+            squad.hat_tricks = 0;
+            squad.balls_bowled = 0;
+            squad.runs_conceded = 0;
+            squad.catches = 0;
+            squad.stumpings = 0;
+            squad.player_of_matches = 0;
+            for (const player of squad.players) {
+                if (player == squad.captain) {
+                    squad.base_points += 2 * map[player.name].points;
+                } else if (player == squad.vice_captain) {
+                    squad.base_points += Math.round(1.5 * map[player.name].points);
+                } else {
+                    squad.base_points += map[player.name].points;
+                }
+                squad.runs += map[player.name].runs;
+                squad.fours += map[player.name].fours;
+                squad.sixes += map[player.name].sixes;
+                squad.ducks += map[player.name].ducks;
+                squad.half_centuries += map[player.name].half_centuries;
+                squad.centuries += map[player.name].centuries;
+                squad.not_outs += map[player.name].not_outs;
+                squad.balls_faced += map[player.name].balls_faced;
+                squad.dismissals += map[player.name].dismissals;
+                squad.wickets += map[player.name].wickets;
+                squad.dots += map[player.name].dots;
+                squad.four_wicket_hauls += map[player.name].four_wicket_hauls;
+                squad.five_wicket_hauls += map[player.name].five_wicket_hauls;
+                squad.six_wicket_hauls += map[player.name].six_wicket_hauls;
+                squad.maidens += map[player.name].maidens;
+                squad.hat_tricks += map[player.name].hat_tricks;
+                squad.balls_bowled += map[player.name].balls_bowled;
+                squad.runs_conceded += map[player.name].runs_conceded;
+                squad.catches += map[player.name].catches;
+                squad.stumpings += map[player.name].stumpings;
+                squad.player_of_matches += map[player.name].player_of_matches;
+            }
+            squad.strike_rate = squad.balls_faced > 0 ? 100 * squad.runs / squad.balls_faced : 0;
+            squad.batting_average = squad.dismissals > 0 ? squad.runs / squad.dismissals : squad.runs;
+            squad.economy = squad.balls_bowled > 0 ? 6 * squad.runs_conceded / squad.balls_bowled : squad.runs_conceded;
+            squad.bowling_average = squad.wickets > 0 ? squad.runs_conceded / squad.wickets : squad.runs_conceded;
+            squad.bowling_strike_rate = squad.wickets > 0 ? squad.balls_bowled / squad.wickets : squad.balls_bowled;
+        }
+
+        const leagues = await League.findAll({});
+
+        for (const league of leagues) {
+            for (const [bonus, value] of Object.entries(bonuses)) {
+                const most = bonus != 'bowling_average' && bonus != 'bowling_strike_rate' && bonus != 'economy';
+                const batting_threshold = bonus == 'strike_rate' || bonus == 'batting_average';
+                const bowling_threshold = bonus == 'bowling_average' || bonus == 'bowling_strike_rate' || bonus == 'economy';
+                let best = most ? Number.MIN_VALUE : Number.MAX_VALUE;
+                for (const squad of squads)
+                    if (squad.league == league.name &&
+                        (!batting_threshold || squad.balls_faced >= 50) &&
+                        (!bowling_threshold || squad.balls_bowled >= 30))
+                        best = most ? Math.max(best, squad[bonus]) : Math.min(best, squad[bonus]);
+                best = Math.round(best * 1e10) / 1e10;
+                if (best == 0 && most) best = Number.MAX_VALUE;
+                const to_add = new Set();
+                for (const squad of squads) {
+                    if (squad.league == league.name &&
+                        (!batting_threshold || squad.balls_faced >= 50) &&
+                        (!bowling_threshold || squad.balls_bowled >= 30) &&
+                        squad[bonus] == best)  {
+                        to_add.add(squad);
+                    }
+                }
+                for (const squad of squads) {
+                    if (to_add.has(squad)) {
+                        const points = 2 * value / to_add.size;
+                        squad.bonuses = [...squad.bonuses, {[bonus]: Math.round(points)}];
+                        squad.bonus_points += Math.round(points);
+                    }
+                }
+            }
+        }
+
+        for (const squad of squads) squad.points = squad.base_points + squad.bonus_points;
+
+        await Promise.all(squads.map(squad => squad.save()));
+
+        res.status(200).json({
+            not_found: not_found
+        });
     } catch(error) {
         res.status(400).json({error: error.message});
     }
-}
-
-async function update_stats(data, match) {
-    const players = await Player.findAll({ where: {
-        name: {
-            [Op.in]: Object.keys(data.players)
-        }
-    }});
-    const playerUpdates = players.map((player) => ({
-        id: player.id,
-        position: player.position,
-        runs: player.runs + data.players[player.name].runs,
-        fours: player.fours + data.players[player.name].fours,
-        sixes: player.sixes + data.players[player.name].sixes,
-        ducks: player.ducks + (data.players[player.name].runs == 0 && data.players[player.name].out ? 1 : 0),
-        half_centuries: player.half_centuries + (50 <= data.players[player.name].runs && data.players[player.name].runs < 100 ? 1 : 0),
-        centuries: player.centuries + (data.players[player.name].runs >= 100 ? 1 : 0),
-        strike_rate: 100 * (player.runs + data.players[player.name].runs) / (player.balls_faced + data.players[player.name].balls_faced > 0 ? player.balls_faced + data.players[player.name].balls_faced : 1),
-        balls_faced: player.balls_faced + data.players[player.name].balls_faced,
-        batting_average: (player.runs + data.players[player.name].runs) / (player.dismissals + (data.players[player.name].out ? 1 : 0) > 0 ? player.dismissals + (data.players[player.name].out ? 1 : 0) : 1),
-        not_outs: player.not_outs + (data.players[player.name].not_out ? 1 : 0),
-        dismissals: player.dismissals + (data.players[player.name].out ? 1 : 0),
-        highest_score: data.players[player.name].runs > player.highest_score ? data.players[player.name].runs : player.highest_score,
-        wickets: player.wickets + data.players[player.name].wickets,
-        dots: player.dots + data.players[player.name].dots,
-        four_wicket_hauls: player.four_wicket_hauls + (data.players[player.name].wickets == 4 ? 1 : 0),
-        five_wicket_hauls: player.five_wicket_hauls + (data.players[player.name].wickets == 5 ? 1 : 0),
-        six_wicket_hauls: player.six_wicket_hauls + (data.players[player.name].wickets == 6 ? 1 : 0),
-        maidens: player.maidens + data.players[player.name].maidens,
-        hat_tricks: player.hat_tricks + data.players[player.name].hat_tricks,
-        economy: 6 * (player.runs_conceded + data.players[player.name].runs_conceded) / (player.balls_bowled + data.players[player.name].balls_bowled > 0 ? player.balls_bowled + data.players[player.name].balls_bowled : 1),
-        bowling_average: (player.runs_conceded + data.players[player.name].runs_conceded) / (player.wickets + data.players[player.name].wickets > 0 ? player.wickets + data.players[player.name].wickets : 1),
-        bowling_strike_rate: (player.balls_bowled + data.players[player.name].balls_bowled) / (player.wickets + data.players[player.name].wickets > 0 ? player.wickets + data.players[player.name].wickets : 1),
-        balls_bowled: player.balls_bowled + data.players[player.name].balls_bowled,
-        runs_conceded: player.runs_conceded + data.players[player.name].runs_conceded,
-        catches: player.catches + data.players[player.name].catches,
-        stumpings: player.stumpings + data.players[player.name].stumpings,
-        player_of_matches: player.player_of_matches + (data.player_of_match == player.name ? 1 : 0)
-    }));
-    playerUpdates.forEach((player) => {
-        player.base_points = base_points(player);
-    });
-    await Player.bulkCreate(playerUpdates, {
-        updateOnDuplicate: Object.keys(playerUpdates[0]).filter(key => key != 'id'),
-    });
-    const leagues = await League.findAll();
-    const leagueUpdates = leagues.map((league) => ({
-        id: league.id,
-        squads: update_squads_stats(league.squads, data)
-    }));
-    await League.bulkCreate(leagueUpdates, {
-        updateOnDuplicate: ['squads'],
-    });
-    const teamAbbreviations = {
-        "Chennai Super Kings": "CSK",
-        "Mumbai Indians": "MI",
-        "Royal Challengers Bengaluru": "RCB",
-        "Kolkata Knight Riders": "KKR",
-        "Delhi Capitals": "DC",
-        "Rajasthan Royals": "RR",
-        "Punjab Kings": "PBKS",
-        "Sunrisers Hyderabad": "SRH",
-        "Lucknow Super Giants": "LSG",
-        "Gujarat Titans": "GT"
-    };
-    for (const [team, abbreviation] of Object.entries(teamAbbreviations)) {
-        data.result = data.result.replaceAll(team, abbreviation);
-    }
-    data.result = data.result.replaceAll('wkt', 'wicket');
-    match.data = data;
-    await match.save();
 }
 
 function base_points(player) {
@@ -290,326 +414,15 @@ function base_points(player) {
     return batting_points + bowling_points + neutral_points;
 }
 
-function update_squads_stats(squads, data) {
-    for (const squad of squads) {
-        for (const [name, player] of Object.entries(data.players)) {
-            if (squad.players.find(member => member.name == name)) {
-                squad.runs += player.runs;
-                squad.fours += player.fours;
-                squad.sixes += player.sixes;
-                squad.ducks += player.out && player.runs == 0 ? 1 : 0;
-                squad.half_centuries += 50 <= player.runs && player.runs < 100 ? 1 : 0;
-                squad.centuries += player.runs > 100 ? 1 : 0;
-                squad.balls_faced += player.balls_faced;
-                squad.not_outs += player.not_out ? 1 : 0;
-                squad.dismissals += player.out ? 1 : 0;
-                squad.highest_score = player.highest_score > squad.highest_score ? player.highest_score : squad.highest_score;
-                squad.wickets += player.wickets;
-                squad.dots += player.dots;
-                squad.four_wicket_hauls += player.wickets == 4 ? 1 : 0;
-                squad.five_wicket_hauls += player.wickets == 5 ? 1 : 0;
-                squad.six_wicket_hauls += player.wickets == 6 ? 1 : 0;
-                squad.maidens += player.maidens;
-                squad.hat_tricks += player.hat_tricks;
-                squad.balls_bowled += player.balls_bowled;
-                squad.runs_conceded += player.runs_conceded;
-                squad.catches += player.catches;
-                squad.stumpings += player.stumpings;
-                squad.player_of_matches += (data.player_of_match == name ? 1 : 0);
-            }
-        }
-        squad.strike_rate = 100 * squad.runs / (squad.balls_faced > 0 ? squad.balls_faced : 1);
-        squad.batting_average = squad.runs / (squad.dismissals > 0 ? squad.dismissals : 1);
-        squad.economy = 6 * squad.runs_conceded / (squad.balls_bowled > 0 ? squad.balls_bowled : 1);
-        squad.bowling_average = squad.runs_conceded / (squad.wickets > 0 ? squad.wickets : 1);
-        squad.bowling_strike_rate = squad.balls_bowled / (squad.wickets > 0 ? squad.wickets : 1);
-    }
-    return squads;
-}
-
-async function update_players() {
-    const players = await Player.findAll();
-    for (const player of players) {
-        player.points = player.base_points + player.bonus_points;
-    }
-    const updates = players.map((player) => ({
-        id: player.id,
-        points: player.points
-    }));
-    await Player.bulkCreate(updates, {
-        updateOnDuplicate: ['points'],
-    });
-}
-
-async function update_leagues() {
-    const leagues = await League.findAll();
-    const players = await Player.findAll();
-    const map = players.reduce((entry, data) => {
-        entry[data.name] = data.points;
-        return entry;
-    }, {});
-    for (const league of leagues) {
-        for (const squad of league.squads) {
-            squad.base_points = 0;
-            for (const player of squad.players) {
-                let points;
-                if (player.active) {
-                    points = map[player.name] - player.earned;
-                } else {
-                    points = player.earned;
-                }
-                if (player.name == squad.captain) {
-                    squad.base_points += 2 * points;
-                } else if (player.name == squad.vice_captain) {
-                    squad.base_points += 1.5 * points;
-                } else {
-                    squad.base_points += points;
-                }
-            }
-            squad.points = Math.round(squad.base_points + squad.bonus_points);
-        }
-    }
-    const updates = leagues.map((league) => ({
-        id: league.id,
-        squads: league.squads
-    }));
-    await League.bulkCreate(updates, {
-        updateOnDuplicate: ['squads'],
-    });
-}
-
-async function add_bonus(property, most, batting_threshold, bowling_threshold, value, batting, bowling) {
-    const best = await Player.findOne({
-        order: most
-            ? [[property, 'DESC']]
-            : [[property, 'ASC']],
-        limit: 1,
-        where: {
-            'balls_faced': {
-                [Op.gt]: batting_threshold ? 50 : -1
-            },
-            'balls_bowled': {
-                [Op.gt]: bowling_threshold ? 30 : -1
-            }
-        }
-    });
-
-    const receivers = await Player.findAll({ where: {
-            [property]: best[property],
-            'balls_faced': {
-                [Op.gt]: batting_threshold ? 50 : -1
-            },
-            'balls_bowled': {
-                [Op.gt]: bowling_threshold ? 30 : -1
-            }
-        }
-    });
-
-    const updates = [];
-    for (const player of receivers) {
-        let amount = value[property] / receivers.length;
-        if (batting && (player.position == 'Pacer' || player.position == 'Spinner')) {
-            if (amount > 0.0) {
-                amount *= 2;
-            } else {
-                amount *= 0.5;
-            }
-        }
-        if (bowling && (player.position == 'Batsman' || player.position == 'Wicketkeeper')) {
-            if (amount > 0.0) {
-                amount *= 2;
-            } else {
-                amount *= 0.5;
-            }
-        }
-        amount = Math.round(amount);
-        player.bonuses.push({
-            [property]: amount
-        });
-        player.bonus_points += amount;
-        player.points = player.base_points + player.bonus_points;
-        updates.push({
-            id: player.id,
-            bonuses: player.bonuses,
-            bonus_points: player.bonus_points,
-            points: player.points
-        });
-    }
-
-    await Player.bulkCreate(updates, {
-        updateOnDuplicate: ['bonuses', 'bonus_points', 'points'],
-    });
-}
-
-function add_league_bonuses(squads, value) {
-    for (const squad of squads) {
-        squad.bonuses = [];
-        squad.bonus_points = 0;
-    }
-    for (const bonus of Object.keys(value)) {
-        if (bonus != 'highest_score') {
-            squads = add_league_bonus(
-                squads,
-                bonus, 
-                bonus != 'bowling_average' && bonus != 'bowling_strike_rate' && bonus != 'economy',
-                bonus == 'strike_rate' || bonus == 'batting_average', 
-                bonus == 'bowling_average' || bonus == 'bowling_strike_rate' || bonus == 'economy', 
-                value
-            );
-        }
-    }
-    return squads;
-}
-
-function add_league_bonus(squads, property, most, batting_threshold, bowling_threshold, value) {
-    let receivers = [];
-    let best = most ? -Number.MAX_VALUE : Number.MAX_VALUE;
-    for (const squad of squads) {
-        if (most) {
-            if (squad[property] > best && squad.balls_faced > (batting_threshold ? 50 : -1)) {
-                best = squad[property];
-                receivers = [squad];
-            } else if (squad[property] == best && squad.balls_faced > (batting_threshold ? 50 : -1)) {
-                receivers.push(squad);
-            }
-        } else {
-            if (squad[property] < best && squad.balls_bowled > (bowling_threshold ? 30 : -1)) {
-                best = squad[property];
-                receivers = [squad];
-            } else if (squad[property] == best && squad.balls_bowled > (bowling_threshold ? 30 : -1)) {
-                receivers.push(squad);
-            }
-        }
-    }
-    const amount = Math.round(2 * value[property] / receivers.length);
-    for (const squad of receivers) {
-        squad.bonuses.push({
-            [property]: amount
-        });
-        squad.bonus_points += amount;
-    }
-    return squads;
-}
-
 const matches = async (req, res) => {
     try {
         const matches = await Match.findAll({
             order: [
                 ['date', 'DESC']
             ],
-            where: {
-                data: {
-                    [Op.ne]: null
-                }
-            }
+            where: Sequelize.literal("scorecard::jsonb <> '{}'::jsonb")
         });
         res.status(200).json(matches);
-    } catch (error) {
-        res.status(400).json({error: error.message});
-    }
-}
-
-const reset_players = async (req, res) => {
-    try {
-        await Player.update({
-            base_points: 0,
-            bonus_points: 0,
-            points: 0,
-            bonuses: [],
-            runs: 0,
-            fours: 0,
-            sixes: 0,
-            ducks: 0,
-            half_centuries: 0,
-            centuries: 0,
-            strike_rate: 0,
-            balls_faced: 0,
-            batting_average: 0,
-            not_outs: 0,
-            dismissals: 0,
-            highest_score: 0,
-            wickets: 0,
-            dots: 0,
-            four_wicket_hauls: 0,
-            five_wicket_hauls: 0,
-            six_wicket_hauls: 0,
-            maidens: 0,
-            hat_tricks: 0,
-            economy: 0,
-            bowling_average: 0,
-            bowling_strike_rate: 0,
-            balls_bowled: 0,
-            runs_conceded: 0,
-            catches: 0,
-            stumpings: 0,
-            player_of_matches: 0
-        }, {
-            where: {},
-        });
-        res.status(200).json({});
-    } catch (error) {
-        return res.status(400).json({error: error.message});
-    }
-}
-
-const reset_leagues = async (req, res) => {
-    try {
-        const leagues = await League.findAll();
-        for (const league of leagues) {
-            for (const squad of league.squads) {
-                squad.runs = 0;
-                squad.fours = 0;
-                squad.sixes = 0;
-                squad.ducks = 0;
-                squad.half_centuries = 0;
-                squad.centuries = 0;
-                squad.balls_faced = 0;
-                squad.not_outs = 0;
-                squad.dismissals = 0;
-                squad.highest_score = 0;
-                squad.wickets = 0;
-                squad.dots = 0;
-                squad.four_wicket_hauls = 0;
-                squad.five_wicket_hauls = 0;
-                squad.six_wicket_hauls = 0;
-                squad.maidens = 0;
-                squad.hat_tricks = 0;
-                squad.balls_bowled = 0;
-                squad.runs_conceded = 0;
-                squad.catches = 0;
-                squad.stumpings = 0;
-                squad.player_of_matches = 0;
-                squad.strike_rate = 0;
-                squad.batting_average = 0;
-                squad.economy = 0;
-                squad.bowling_average = 0;
-                squad.bowling_strike_rate = 0;
-            }
-        }
-        const updates = leagues.map((league) => ({
-            id: league.id,
-            squads: league.squads
-        }));
-        await League.bulkCreate(updates, {
-            updateOnDuplicate: ['squads'],
-        });
-        return res.status(200).json();
-    } catch (error) {
-        return res.status(400).json({error: error.message});
-    }
-}
-
-const reset_matches = async (req, res) => {
-    try {
-        const matches = await Match.findAll();
-        const updates = matches.map((match) => ({
-            id: match.id,
-            data: null
-        }));
-        await Match.bulkCreate(updates, {
-            updateOnDuplicate: ['data'],
-        });
-        res.status(200).json();
     } catch (error) {
         res.status(400).json({error: error.message});
     }
@@ -677,45 +490,19 @@ const add_matches = async (req, res) => {
     try {
         for (const match of matches) {
             await Match.create({
-                match_id: match
+                match_id: match.match_id,
+                title: match.title,
+                stadium: '-',
+                team1: '-',
+                team2: '-',
+                team1_score: '-',
+                team2_score: '-',
+                date: match.date,
+                scorecard: {},
+                result: '-'
             });
         }
         res.status(200).json({});
-    } catch (error) {
-        res.status(400).json({error: error.message});
-    }
-}
-
-const replace_player = async (req, res) => {
-    const {
-        old_name,
-        new_name
-    } = req.body;
-
-    try {
-        const player = await Player.findOne({ where: {
-            name: old_name
-        }});
-        player.name = new_name;
-        await player.save();
-        const leagues = await League.findAll();
-        for (const league of leagues) {
-            for (const squad of league.squads) {
-                for (const player of squad.players) {
-                    if (player.name == old_name) {
-                        player.name = new_name;
-                    }
-                }
-            }
-        }
-        const updates = leagues.map((league) => ({
-            id: league.id,
-            squads: league.squads
-        }));
-        await League.bulkCreate(updates, {
-            updateOnDuplicate: ['squads'],
-        });
-        res.status(200).json();
     } catch (error) {
         res.status(400).json({error: error.message});
     }
@@ -725,9 +512,5 @@ module.exports = {
     update,
     matches,
     add_player,
-    add_matches,
-    reset_players,
-    reset_leagues,
-    reset_matches,
-    replace_player
+    add_matches
 }

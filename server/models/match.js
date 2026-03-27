@@ -14,13 +14,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Match.init({
-    match_id: DataTypes.STRING,
+    match_id: DataTypes.INTEGER,
     title: DataTypes.STRING,
-    stadim: DataTypes.STRING,
+    stadium: DataTypes.STRING,
     team1: DataTypes.STRING,
     team2: DataTypes.STRING,
     team1_score: DataTypes.STRING,
     team2_score: DataTypes.STRING,
+    scorecard: DataTypes.JSON,
+    player_of_match: DataTypes.STRING,
     result: DataTypes.STRING,
     date: DataTypes.DATE,
   }, {

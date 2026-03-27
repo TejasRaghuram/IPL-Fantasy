@@ -27,6 +27,8 @@ export class SquadComponent implements OnInit {
       points: 0
     }]
   };
+  
+  Object = Object;
 
   constructor(private route: ActivatedRoute, private router: Router, private userService: UserService, private elementRef: ElementRef) {}
 

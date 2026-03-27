@@ -18,17 +18,7 @@ export class ResultsComponent implements OnInit {
     }).then(response => {
       if (response.ok) {
         return response.json().then(data => {
-          for(const match of data) {
-            this.matchData.push({
-              title: this.getName(match.id),
-              stadium: match.data.stadium.slice(match.data.stadium.lastIndexOf(', ') + 2),
-              team1: match.data.team1,
-              team1Score: match.data.score1,
-              team2: match.data.team2,
-              team2Score: match.data.score2,
-              result: match.data.result
-            });
-          }
+          this.matchData = data;
           this.loaded = true;
         });
       } else {
@@ -38,30 +28,14 @@ export class ResultsComponent implements OnInit {
       }
     });
   }
-
-  getName(id: number): string {
-    if (id <= 70) {
-      return "Match " + id + " - IPL";
-    } else if (id == 71) {
-      return "Qualifier 1 - IPL";
-    } else if (id == 72) {
-      return "Eliminator 1 - IPL";
-    } else if (id == 73) {
-      return "Eliminator 2 - IPL";
-    } else if (id == 74) {
-      return "Finals - IPL";
-    } else {
-      return "";
-    }
-  }
 }
 
 interface Match {
   title: string;
   stadium: string;
   team1: string;
-  team1Score: string;
+  team1_score: string;
   team2: string;
-  team2Score: string;
+  team2_score: string;
   result: string;
 }
