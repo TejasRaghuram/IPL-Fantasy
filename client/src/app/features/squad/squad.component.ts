@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../user.service';
 import { environment } from '../../../../environment';
@@ -9,7 +9,7 @@ import { environment } from '../../../../environment';
   templateUrl: './squad.component.html',
   styleUrl: './squad.component.css'
 })
-export class SquadComponent implements OnInit {
+export class SquadComponent implements OnInit, OnDestroy {
   loaded = false;
   league = ''
   data: Data = {
@@ -27,8 +27,7 @@ export class SquadComponent implements OnInit {
       points: 0
     }]
   };
-  
-  Object = Object;
+  interval: any;
 
   constructor(private route: ActivatedRoute, private router: Router, private userService: UserService, private elementRef: ElementRef) {}
 
@@ -39,71 +38,83 @@ export class SquadComponent implements OnInit {
     }
     this.route.paramMap.subscribe(params => {
       this.league = params.get('league') || '';
-      fetch (environment.API_URL + '/api/league/squad', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: params.get('username') || '',
-          name: params.get('league') || ''
-        })
-      }).then(response => {
-        if (response.ok) {
-          return response.json().then(data => {
-            this.data = data;
-            for (const player of data.players) {
-              if (data.squad.captain == player.name) {
-                player.points = player.points * 2;
-              } else if (data.squad.vice_captain == player.name) {
-                player.points = Math.round(player.points * 1.5);
-              }
-            }
-            this.data.players.sort((a, b) => b.points - a.points);
-            let rank = 1;
-            for (let i = 0; i < this.data.players.length; i++) {
-              if (i > 0 && this.data.players[i].points === this.data.players[i - 1].points) {
-                this.data.players[i].rank = this.data.players[i - 1].rank;
-              } else {
-                this.data.players[i].rank = rank;
-              }
-              rank++;
-              let name = this.data.players[i].name;
-              if (this.data.players[i].foreigner) {
-                name += ' ✈️';
-              }
-              if (this.data.squad.captain == this.data.players[i].name) {
-                name += ' (C)';
-              } else if (this.data.squad.vice_captain == this.data.players[i].name) {
-                name += ' (VC)';
-              }
-              this.data.players[i].name = name;
-            }
-            this.data.squad.strike_rate = Math.round(data.squad.strike_rate * 100) / 100;
-            this.data.squad.batting_average = Math.round(data.squad.batting_average * 100) / 100;
-            this.data.squad.economy = Math.round(data.squad.economy * 100) / 100;
-            this.data.squad.bowling_average = Math.round(data.squad.bowling_average * 100) / 100;
-            this.data.squad.bowling_strike_rate = Math.round(data.squad.bowling_strike_rate * 100) / 100;
-            this.data.squad.bonuses = data.squad.bonuses.map((bonus: { [s: string]: number; }) => {
-              const [name, points] = Object.entries(bonus)[0];
-              return {
-                'name': this.getBonus(name), 
-                'points': points
-              };
-            });
-            this.data.squad.bonuses.sort((a, b) => (b.points - a.points));
-            this.loaded = true;
-          });
-        } else {
-          return response.json().then(data => {
-            this.router.navigate(['/error']);
-          });
-        }
-      });
+      this.loadSquad(params.get('username') || '', params.get('league') || '');
+
+      this.interval = setInterval(() => {
+        this.loadSquad(params.get('username') || '', params.get('league') || '');
+      }, 60000);
     });
     if (typeof window !== 'undefined') {
       window.scrollTo(0, 0);
     }
+  }
+
+  ngOnDestroy(): void {
+    clearInterval(this.interval);
+  }
+
+  loadSquad(username: string | null, name: string | null): void {
+    fetch (environment.API_URL + '/api/league/squad', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: username,
+        name: name
+      })
+    }).then(response => {
+      if (response.ok) {
+        return response.json().then(data => {
+          this.data = data;
+          for (const player of data.players) {
+            if (data.squad.captain == player.name) {
+              player.points = player.points * 2;
+            } else if (data.squad.vice_captain == player.name) {
+              player.points = Math.round(player.points * 1.5);
+            }
+          }
+          this.data.players.sort((a, b) => b.points - a.points);
+          let rank = 1;
+          for (let i = 0; i < this.data.players.length; i++) {
+            if (i > 0 && this.data.players[i].points === this.data.players[i - 1].points) {
+              this.data.players[i].rank = this.data.players[i - 1].rank;
+            } else {
+              this.data.players[i].rank = rank;
+            }
+            rank++;
+            let name = this.data.players[i].name;
+            if (this.data.players[i].foreigner) {
+              name += ' ✈️';
+            }
+            if (this.data.squad.captain == this.data.players[i].name) {
+              name += ' (C)';
+            } else if (this.data.squad.vice_captain == this.data.players[i].name) {
+              name += ' (VC)';
+            }
+            this.data.players[i].name = name;
+          }
+          this.data.squad.strike_rate = Math.round(data.squad.strike_rate * 100) / 100;
+          this.data.squad.batting_average = Math.round(data.squad.batting_average * 100) / 100;
+          this.data.squad.economy = Math.round(data.squad.economy * 100) / 100;
+          this.data.squad.bowling_average = Math.round(data.squad.bowling_average * 100) / 100;
+          this.data.squad.bowling_strike_rate = Math.round(data.squad.bowling_strike_rate * 100) / 100;
+          this.data.squad.bonuses = data.squad.bonuses.map((bonus: { [s: string]: number; }) => {
+            const [name, points] = Object.entries(bonus)[0];
+            return {
+              'name': this.getBonus(name), 
+              'points': points
+            };
+          });
+          this.data.squad.bonuses.sort((a, b) => (b.points - a.points));
+          this.loaded = true;
+        });
+      } else {
+        return response.json().then(data => {
+          this.router.navigate(['/error']);
+        });
+      }
+    });
   }
 
   invalidImage(event: any): void {

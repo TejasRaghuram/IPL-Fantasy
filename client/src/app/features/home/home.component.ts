@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../../user.service';
 import { environment } from '../../../../environment';
@@ -9,12 +9,13 @@ import { environment } from '../../../../environment';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   name = '';
   league = '';
   data: League[] = []
   squads: Squad[] = []
   loaded = false;
+  interval: any;
 
   constructor(private router: Router, private userService: UserService, private elementRef: ElementRef) {}
 
@@ -28,6 +29,18 @@ export class HomeComponent implements OnInit {
     if (typeof window !== 'undefined') {
       window.scrollTo(0, 0);
     }
+    this.loadHome();
+
+    this.interval = setInterval(() => {
+      this.loadHome();
+    }, 60000);
+  }
+
+  ngOnDestroy(): void {
+    clearInterval(this.interval);
+  }
+
+  loadHome(): void {
     fetch (environment.API_URL + '/api/user/leagues', {
       method: 'POST',
       headers: {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ScorecardComponent } from '../scorecard/scorecard.component';
 import { environment } from '../../../../environment';
 
@@ -8,11 +8,24 @@ import { environment } from '../../../../environment';
   templateUrl: './results.component.html',
   styleUrl: './results.component.css'
 })
-export class ResultsComponent implements OnInit {
+export class ResultsComponent implements OnInit, OnDestroy {
   matchData: Match[] = []
   loaded = false;
+  interval: any;
 
   ngOnInit(): void {
+    this.loadMatches();
+
+    this.interval = setInterval(() => {
+      this.loadMatches();
+    }, 60000);
+  }
+
+  ngOnDestroy(): void {
+    clearInterval(this.interval);
+  }
+
+  loadMatches(): void {
     fetch (environment.API_URL + '/api/admin/matches', {
       method: 'GET'
     }).then(response => {

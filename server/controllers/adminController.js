@@ -149,14 +149,14 @@ const update = async (req, res) => {
             for (const player of Object.keys(map)) {
                 if ((!batting_threshold || map[player].balls_faced >= 50) &&
                     (!bowling_threshold || map[player].balls_bowled >= 30) &&
-                    map[player][bonus] == best)  {
+                    Math.round(map[player][bonus] * 1e10) / 1e10 == best)  {
                     to_add.push(player);
                 }
             }
             for (const player of to_add) {
-                const points = (((batting && (map[player].position == 'Pacer' || map[player].position == 'Spinner')) ||
+                let points = (((batting && (map[player].position == 'Pacer' || map[player].position == 'Spinner')) ||
                         (bowling && (map[player].position == 'Batsman' || map[player].position == 'Wicketkeeper'))) ? 2 : 1) * value / to_add.length;
-                if (bonus == 'ducks' && bowling) points /= 4;
+                if (bonus == 'ducks' && (map[player].position == 'Pacer' || map[player].position == 'Spinner')) points /= 4;
                 map[player].bonuses = [...map[player].bonuses, {[bonus]: Math.round(points)}];
                 map[player].bonus_points += Math.round(points);
             }
@@ -195,9 +195,9 @@ const update = async (req, res) => {
             squad.stumpings = 0;
             squad.player_of_matches = 0;
             for (const player of squad.players) {
-                if (player == squad.captain) {
+                if (player.name == squad.captain) {
                     squad.base_points += 2 * map[player.name].points;
-                } else if (player == squad.vice_captain) {
+                } else if (player.name == squad.vice_captain) {
                     squad.base_points += Math.round(1.5 * map[player.name].points);
                 } else {
                     squad.base_points += map[player.name].points;
@@ -251,7 +251,7 @@ const update = async (req, res) => {
                     if (squad.league == league.name &&
                         (!batting_threshold || squad.balls_faced >= 50) &&
                         (!bowling_threshold || squad.balls_bowled >= 30) &&
-                        squad[bonus] == best)  {
+                        Math.round(squad[bonus] * 1e10) / 1e10 == best)  {
                         to_add.add(squad);
                     }
                 }
@@ -270,7 +270,7 @@ const update = async (req, res) => {
         await Promise.all(squads.map(squad => squad.save()));
 
         res.status(200).json({
-            not_found: not_found
+            not_found: not_found.filter(item => item !== '-')
         });
     } catch(error) {
         res.status(400).json({error: error.message});
@@ -320,33 +320,33 @@ function base_points(player) {
     }
 
     if (player.balls_faced >= 50) {
-        if (player.strike_rate >= 250) {
+        if (player.strike_rate >= 265) {
             batting_points += (bowler ? 2 : 1) * 2000;
-        } else if (player.strike_rate >= 235) {
+        } else if (player.strike_rate >= 250) {
             batting_points += (bowler ? 2 : 1) * 1500
-        } else if (player.strike_rate >= 220) {
+        } else if (player.strike_rate >= 235) {
             batting_points += (bowler ? 2 : 1) * 1250
-        } else if (player.strike_rate >= 205) {
+        } else if (player.strike_rate >= 220) {
             batting_points += (bowler ? 2 : 1) * 1000
-        } else if (player.strike_rate >= 190) {
+        } else if (player.strike_rate >= 205) {
             batting_points += (bowler ? 2 : 1) * 750
-        } else if (player.strike_rate >= 175) {
+        } else if (player.strike_rate >= 190) {
             batting_points += (bowler ? 2 : 1) * 500
-        } else if (player.strike_rate >= 160) {
+        } else if (player.strike_rate >= 175) {
             batting_points += (bowler ? 2 : 1) * 250
-        } else if (player.strike_rate >= 145) {
+        } else if (player.strike_rate >= 160) {
             batting_points += (bowler ? 2 : 1) * 100
-        } else if (player.strike_rate >= 130) {
+        } else if (player.strike_rate >= 145) {
             batting_points += (bowler ? 2 : 1) * 0
-        } else if (player.strike_rate >= 125) {
+        } else if (player.strike_rate >= 140) {
             batting_points -= (bowler ? 0.5 : 1) * 100
-        } else if (player.strike_rate >= 120) {
+        } else if (player.strike_rate >= 135) {
             batting_points -= (bowler ? 0.5 : 1) * 200
-        } else if (player.strike_rate >= 115) {
+        } else if (player.strike_rate >= 130) {
             batting_points -= (bowler ? 0.5 : 1) * 400;
-        } else if (player.strike_rate >= 110) {
+        } else if (player.strike_rate >= 125) {
             batting_points -= (bowler ? 0.5 : 1) * 600; 
-        } else if (player.strike_rate >= 105) {
+        } else if (player.strike_rate >= 120) {
             batting_points -= (bowler ? 0.5 : 1) * 800; 
         } else {
             batting_points -= (bowler ? 0.5 : 1) * 1000;
@@ -377,30 +377,36 @@ function base_points(player) {
 
     if (player.balls_bowled >= 30) {
         if (player.economy <= 5) {
-            bowling_points += (batsman ? 2 : 1) * 2500;
+            bowling_points += (batsman ? 2 : 1) * 3000;
         } else if (player.economy <= 5.5) {
-            bowling_points += (batsman ? 2 : 1) * 2000;
+            bowling_points += (batsman ? 2 : 1) * 2500;
         } else if (player.economy <= 6) {
+            bowling_points += (batsman ? 2 : 1) * 2000;
+        } else if (player.economy <= 6.5) {
             bowling_points += (batsman ? 2 : 1) * 1500;
         } else if (player.economy <= 7) {
             bowling_points += (batsman ? 2 : 1) * 1000;
         } else if (player.economy <= 7.5) {
-            bowling_points += (batsman ? 2 : 1) * 500;
+            bowling_points += (batsman ? 2 : 1) * 750;
         } else if (player.economy <= 8) {
-            bowling_points += (batsman ? 2 : 1) * 250;
+            bowling_points += (batsman ? 2 : 1) * 500;
         } else if (player.economy <= 8.5) {
+            bowling_points += (batsman ? 2 : 1) * 250;
+        } else if (player.economy <= 9) {
             bowling_points += (batsman ? 2 : 1) * 100;
-        } else if (player.economy <= 9.5) {
-            bowling_points += (batsman ? 2 : 1) * 0;
         } else if (player.economy <= 10) {
-            bowling_points -= (batsman ? 0.5 : 1) * 100;
+            bowling_points += (batsman ? 2 : 1) * 0;
         } else if (player.economy <= 10.5) {
-            bowling_points -= (batsman ? 0.5 : 1) * 200;
+            bowling_points -= (batsman ? 0.5 : 1) * 100;
         } else if (player.economy <= 11) {
-            bowling_points -= (batsman ? 0.5 : 1) * 400;
+            bowling_points -= (batsman ? 0.5 : 1) * 200;
         } else if (player.economy <= 11.5) {
-            bowling_points -= (batsman ? 0.5 : 1) * 600;
+            bowling_points -= (batsman ? 0.5 : 1) * 300;
+        } else if (player.economy <= 12) {
+            bowling_points -= (batsman ? 0.5 : 1) * 400;
         } else if (player.economy <= 12.5) {
+            bowling_points -= (batsman ? 0.5 : 1) * 600;
+        } else if (player.economy <= 13) {
             bowling_points -= (batsman ? 0.5 : 1) * 800;
         } else {
             bowling_points -= (batsman ? 0.5 : 1) * 1000;
@@ -423,6 +429,34 @@ const matches = async (req, res) => {
             where: Sequelize.literal("scorecard::jsonb <> '{}'::jsonb")
         });
         res.status(200).json(matches);
+    } catch (error) {
+        res.status(400).json({error: error.message});
+    }
+}
+
+const current = async (req, res) => {
+    try {
+        await Match.update(
+            { result: 'LIVE' },
+            {
+                where: {
+                result: '-',
+                date: {
+                    [Op.lt]: new Date()
+                }
+                }
+            }
+        );
+
+        const matches = await Match.findAll({
+            where: {
+                result: 'LIVE'
+            },
+            attributes: ['match_id']
+        });
+        const matchIds = matches.map(m => m.match_id);
+
+        res.status(400).json(matchIds);
     } catch (error) {
         res.status(400).json({error: error.message});
     }
@@ -508,9 +542,63 @@ const add_matches = async (req, res) => {
     }
 }
 
+const test = async (req, res) => {
+    try {
+        const batsmen = await Player.findAll({
+            where: {
+                position: {
+                    [Op.in]: ['Batsman', 'Wicketkeeper']
+                },
+                points: {
+                    [Op.ne]: 0
+                }
+            }
+        });
+        const bowlers = await Player.findAll({
+            where: {
+                position: {
+                    [Op.in]: ['Pacer', 'Spinner']
+                },
+                points: {
+                    [Op.ne]: 0
+                }
+            }
+        });
+        const all_rounders = await Player.findAll({
+            where: {
+                position: 'All Rounder',
+                points: {
+                    [Op.ne]: 0
+                }
+            }
+        });
+        res.status(400).json({
+            batsmen: {
+                amount: batsmen.length,
+                average: batsmen.reduce((sum, player) => sum + player.points, 0) / batsmen.length,
+                median: batsmen.length ? ((s => s.length % 2 ? s[Math.floor(s.length/2)] : (s[s.length/2 - 1] + s[s.length/2]) / 2)(batsmen.map(p => p.points).sort((a,b)=>a-b))) : 0
+            },
+            bowlers: {
+                amount: bowlers.length,
+                average: bowlers.reduce((sum, player) => sum + player.points, 0) / bowlers.length,
+                median: bowlers.length ? ((s => s.length % 2 ? s[Math.floor(s.length/2)] : (s[s.length/2 - 1] + s[s.length/2]) / 2)(bowlers.map(p => p.points).sort((a,b)=>a-b))) : 0
+            },
+            all_rounders: {
+                amount: all_rounders.length,
+                average: all_rounders.reduce((sum, player) => sum + player.points, 0) / all_rounders.length,
+                median: all_rounders.length ? ((s => s.length % 2 ? s[Math.floor(s.length/2)] : (s[s.length/2 - 1] + s[s.length/2]) / 2)(all_rounders.map(p => p.points).sort((a,b)=>a-b))) : 0
+            },
+        });
+    } catch (error) {
+        res.status(400).json({error: error.message});
+    }
+}
+
 module.exports = {
     update,
     matches,
+    current,
     add_player,
-    add_matches
+    add_matches,
+    test
 }

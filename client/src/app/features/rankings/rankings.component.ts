@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../../user.service';
 import { environment } from '../../../../environment';
@@ -10,9 +10,10 @@ import { CommonModule } from '@angular/common';
   templateUrl: './rankings.component.html',
   styleUrl: './rankings.component.css'
 })
-export class RankingsComponent implements OnInit {
+export class RankingsComponent implements OnInit, OnDestroy {
   players: Player[] = [];
   loaded = false;
+  interval: any;
 
   constructor(private router: Router, private userService: UserService, private elementRef: ElementRef) {}
 
@@ -24,6 +25,18 @@ export class RankingsComponent implements OnInit {
     if (typeof window !== 'undefined') {
       window.scrollTo(0, 0);
     }
+    this.loadPlayers();
+
+    this.interval = setInterval(() => {
+      this.loadPlayers();
+    }, 60000);
+  }
+
+  ngOnDestroy(): void {
+    clearInterval(this.interval);
+  }
+
+  loadPlayers(): void {
     fetch (environment.API_URL + '/api/players/all', {
       method: 'GET'
     }).then(response => {
